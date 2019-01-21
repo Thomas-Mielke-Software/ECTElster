@@ -1,0 +1,349 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#ifndef APSTUDIO_INVOKED
+#include "targetver.h"
+#endif
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Deutsch (Deutschland) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
+LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
+#pragma code_page(1252)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#ifndef APSTUDIO_INVOKED\r\n"
+    "#include ""targetver.h""\r\n"
+    "#endif\r\n"
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "1 TYPELIB ""ECTElster.tlb""\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 2,10,0,1
+ PRODUCTVERSION 2,10,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x2L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904e4"
+        BEGIN
+            VALUE "CompanyName", "Thomas Mielke Softwareentwicklung"
+            VALUE "FileDescription", "Elster Export Plugin ActiveX"
+            VALUE "FileVersion", "2.9.0.1"
+            VALUE "InternalName", "ECTElster.ocx"
+            VALUE "LegalCopyright", "(c) 1999-2018 Thomas Mielke.  All rights reserved."
+            VALUE "OriginalFilename", "ECTElster.ocx"
+            VALUE "ProductName", "Elster Export Plugin"
+            VALUE "ProductVersion", "2.9.0.1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1252
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ABOUTDLL            ICON                    "ECTElster.ico"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_ECTELSTER           BITMAP                  "ECTElsterCtrl.bmp"
+
+IDB_ELSTER48X48         BITMAP                  "Elster48x48.bmp"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX_ECTELSTER DIALOGEX 0, 0, 269, 130
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About ECTElster Control"
+FONT 8, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    CONTROL         IDC_EINSTELLUNGCTRL1,IDC_STATIC,"Static",SS_BITMAP,14,14,32,30
+    LTEXT           "Elster Plugin für EasyCash&Tax",IDC_STATIC,53,17,102,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2019 Thomas Mielke ",IDC_STATIC,53,29,114,8
+    DEFPUSHBUTTON   "OK",IDOK,212,109,50,14,WS_GROUP
+    LTEXT           "",IDC_VERSION,207,17,55,8
+    LTEXT           "Bei Problemen oder Wünschen bitte bei www.easyct.de/tracker registrieren und einen kurzen Bericht unter der Kategorie 'Plugin: Elster' hinterlassen. So ist gewährleistet, dass nichts in Vergessenheit gerät.",IDC_STATIC,54,69,208,36
+    LTEXT           "Veröffentlich unter der GNU LGPL 2.1\r\nhttps://github.com/Thomas-Mielke-Software/ECTElster",IDC_STATIC,54,44,208,17
+END
+
+IDD_PROPPAGE_ECTELSTER DIALOG 0, 0, 250, 62
+STYLE DS_SETFONT | WS_CHILD
+FONT 8, "MS Shell Dlg"
+BEGIN
+    LTEXT           "TODO: Place controls to manipulate properties of ECTElster Control on this dialog.",IDC_STATIC,7,25,229,16
+END
+
+IDD_ELSTERDLG DIALOGEX 0, 0, 553, 322
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    LTEXT           "&Passwort",IDC_PASSWORT_STATIC,14,69,72,8
+    EDITTEXT        IDC_PASSWORT,93,68,80,12,ES_PASSWORD | ES_AUTOHSCROLL
+    LTEXT           "Anmerkung: Bei Nutzung eines Softwarezertifikats den Pfad zur Zertifikatdatei (.pfx), ansonsten den Pfad zur Treiberdatei des USB-Sticks oder des Kartenlesers bitte oben bei Datei angeben. Beim G&&D StarSign Crypto USB Token S nur aetpkss1.dll eintragen.",IDC_SIGNATURANMERKUNG_STATIC,14,82,517,19
+    LTEXT           "",IDC_PASSWORT_STATUS,181,72,356,8,NOT WS_VISIBLE
+    CONTROL         "",IDC_LISTE,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_OWNERDATA | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,8,109,539,142,WS_EX_CLIENTEDGE
+    EDITTEXT        IDC_ERGEBNIS,8,109,539,143,ES_MULTILINE | ES_AUTOHSCROLL | ES_READONLY | NOT WS_VISIBLE | WS_VSCROLL | WS_HSCROLL
+    PUSHBUTTON      "&Aktualisieren",IDC_AKTUALISIEREN,496,255,50,14
+    CONTROL         "&korrigierte Anmeldung (Feld 10)",IDC_KORRIGIERTE_ANMELDUNG,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,260,140,10
+    CONTROL         "&Belege werden nachgereicht (Feld 22)",IDC_BELEGE_WERDEN_NACHGEREICHT,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,275,140,10
+    CONTROL         "&Verrechnung des Erstattungsanspruchs ewünscht (Feld 29)",IDC_VERRECHNUNG_DES_ERSTATTUNGSANSPRUCHS,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,290,210,10
+    CONTROL         "&Einzugsermächtigung für diese Anmeldung widerrufen (Feld 26)",IDC_EINZUGSERMAECHTIGUNG_WIDERRUFEN,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,305,219,10
+    LTEXT           "E-Mail Adresse",IDC_EMAIL_ADRESSE_STATIC,190,261,53,8
+    EDITTEXT        IDC_EMAIL_ADRESSE,250,260,120,12,ES_AUTOHSCROLL
+    LTEXT           "Telefon",IDC_TELEFON_STATIC,190,276,53,8
+    EDITTEXT        IDC_TELEFON,250,275,120,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "&Signaturparameter ausblenden",IDC_SIGNATUROPTIONEN,260,301,116,14
+    PUSHBUTTON      "&Zeige Log",IDC_ZEIGE,383,301,50,14
+    DEFPUSHBUTTON   "Senden",IDOK,440,301,50,14
+    PUSHBUTTON      "Zurück",IDCANCEL,496,301,50,14
+    LTEXT           "&Datei",IDC_DATEI_STATIC,14,54,72,8
+    EDITTEXT        IDC_DATEI,94,52,371,12,ES_AUTOHSCROLL
+    LTEXT           "Voranmeldungs&zeitraum",IDC_STATIC,7,9,91,8
+    COMBOBOX        IDC_VORANMELDUNGSZEITRAUM,99,7,175,269,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "senden an &Finanzamt",IDC_FINANZAMT_STATIC,283,9,91,8
+    COMBOBOX        IDC_FINANZAMT,376,7,170,269,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Finanzamt nicht in der Liste?",IDC_FINANZAMT_NICHT_IN_DER_LISTE,376,20,170,14
+    GROUPBOX        "Signaturparameter",IDC_SIGNATUROPTIONENRAHMEN,7,39,539,66
+    PUSHBUTTON      "Durch&suchen",IDC_DURCHSUCHEN,470,51,50,14
+    PUSHBUTTON      "&Info",IDC_INFO,516,282,30,14
+    CONTROL         "",IDC_FORMULARCTRL1,
+                    "{DFA091A6-D040-444F-800A-656BEA3361C4}",WS_TABSTOP,430,273,21,20
+    CONTROL         "",IDC_EINSTELLUNGCTRL1,
+                    "{DFA091A6-D040-444F-800A-656BEA3361C3}",WS_TABSTOP,456,273,22,20
+    CONTROL         "",IDC_DOKUMENTCTRL1,
+                    "{ED09076F-B744-47A1-8D60-F9EF093F19F0}",WS_TABSTOP,482,273,21,20
+END
+
+IDD_SIGNATUR DIALOGEX 0, 0, 316, 139
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
+CAPTION "Signatur"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,205,118,50,14
+    PUSHBUTTON      "Abbrechen",IDCANCEL,259,118,50,14
+    CONTROL         "Signatur mittels Softwarezertifikat (Zertifikatdatei bitte hier angeben)",IDC_RADIO1,
+                    "Button",BS_AUTORADIOBUTTON | WS_GROUP,7,7,302,10
+    CONTROL         "Signatur mittels Signaturkarte",IDC_RADIO2,"Button",BS_AUTORADIOBUTTON | WS_GROUP,7,67,302,10
+    CONTROL         "Signatur mittels ElsterStick",IDC_RADIO3,"Button",BS_AUTORADIOBUTTON | WS_GROUP,7,52,302,10
+    CONTROL         "ohne Signatur übertragen (ab 2013 nicht mehr möglich)",IDC_RADIO4,
+                    "Button",BS_AUTORADIOBUTTON | WS_GROUP,7,82,302,10
+    EDITTEXT        IDC_DATEI,76,21,176,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "Durchsuchen",IDC_DURCHSUCHEN,259,20,50,14
+    LTEXT           "Datei",IDC_STATIC,21,22,47,8
+    EDITTEXT        IDC_PASSWORT,75,35,176,12,ES_PASSWORD | ES_AUTOHSCROLL
+    LTEXT           "Passwort",IDC_STATIC,21,36,47,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_ABOUTBOX_ECTELSTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 262
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 123
+    END
+
+    IDD_PROPPAGE_ECTELSTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 243
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 55
+    END
+
+    IDD_ELSTERDLG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 546
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 315
+    END
+
+    IDD_SIGNATUR, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 309
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 132
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_ELSTERDLG DLGINIT
+BEGIN
+    IDC_FORMULARCTRL1, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x034f, 0x0000, 0x0369, 0x0000, 0x0000, 
+0x0000, 
+    IDC_EINSTELLUNGCTRL1, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x0369, 0x0000, 0x0369, 0x0000, 0x0000, 
+0x0000, 
+    IDC_DOKUMENTCTRL1, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x034f, 0x0000, 0x0369, 0x0000, 0x0000, 
+0x0000, 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_ELSTERDLG AFX_DIALOG_LAYOUT
+BEGIN
+    0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 100, 0,
+    0, 0, 100, 0,
+    0, 0, 100, 100,
+    0, 0, 100, 100,
+    100, 100, 0, 0,
+    0, 100, 0, 0,
+    0, 100, 0, 0,
+    0, 100, 0, 0,
+    0, 100, 0, 0,
+    0, 100, 0, 0,
+    0, 100, 100, 0,
+    0, 100, 0, 0,
+    0, 100, 100, 0,
+    0, 100, 100, 0,
+    100, 100, 0, 0,
+    100, 100, 0, 0,
+    100, 100, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 100, 0,
+    0, 0, 0, 0,
+    0, 0, 100, 0,
+    100, 0, 0, 0,
+    100, 0, 0, 0,
+    100, 0, 0, 0,
+    0, 0, 100, 0,
+    100, 0, 0, 0,
+    100, 100, 0, 0,
+    100, 100, 0, 0,
+    100, 100, 0, 0,
+    100, 100, 0, 0
+END
+
+IDD_ABOUTBOX_ECTELSTER AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDS_ECTELSTER           "ECTElster Control"
+    IDS_ECTELSTER_PPG       "ECTElster Property Page"
+    IDS_UMSATZSTEUER        "Umsatzsteuer"
+    IDS_SEPARATOR           "-----------"
+    IDS_VERBLEIBENDER_BETRAG "Verbleibender Betrag"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_ECTELSTER_PPG_CAPTION "General"
+END
+
+#endif    // Deutsch (Deutschland) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+1 TYPELIB "ECTElster.tlb"
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

@@ -1,0 +1,53 @@
+// ECTElster.idl : type library source for ActiveX Control project.
+
+// This file will be processed by the MIDL compiler tool to
+// produce the type library (ECTElster.tlb) that will become a resource in
+// ECTElster.ocx.
+
+#include <olectl.h>
+#include <idispids.h>
+
+[ uuid(5AC861D7-8E3E-4F83-83AA-C916648DC800), version(1.0),
+  helpfile("ECTElster.hlp"),
+  helpstring("ECTElster ActiveX Control module"),
+  control ]
+library ECTElsterLib
+{
+	importlib(STDOLE_TLB);
+
+	//  Primary dispatch interface for CECTElsterCtrl
+
+	[ uuid(EE4BCF66-82D9-4103-8CA4-9782B1A28D0A),
+	  helpstring("Dispatch interface for ECTElster Control")]
+	dispinterface _DECTElster
+	{
+		properties:
+		methods:
+
+			[id(DISPID_ABOUTBOX)] void AboutBox();
+			[id(1), helpstring("method Init")] void Init(LONG ID);
+	};
+
+	//  Event dispatch interface for CECTElsterCtrl
+
+	[ uuid(C66F423E-538C-4120-A4E6-5C41345B3DAE),
+	  helpstring("Event interface for ECTElster Control") ]
+	dispinterface _DECTElsterEvents
+	{
+		properties:
+			//  Event interface has no properties
+
+		methods:
+	};
+
+	//  Class information for CECTElsterCtrl
+
+	[ uuid(DF841939-5148-4E3A-8D6E-DD99DE049776),
+	  helpstring("ECTElster Control"), control ]
+	coclass ECTElster
+	{
+		[default] dispinterface _DECTElster;
+		[default, source] dispinterface _DECTElsterEvents;
+	};
+
+};
