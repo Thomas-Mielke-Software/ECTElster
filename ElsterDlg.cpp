@@ -429,18 +429,17 @@ void CElsterDlg::UpdateListe(BOOL bNurSpaltenbreitenAnpassen)
 			94, 96, 0, 0,
 			0, 0, 0, 0,
 			42, 0, 0, 0,
-			68, 0, 0, 0,
+			68, 0, 0, 0,	// veraltet
 			60, 0, 0, 0,
 			21, 0, 0, 0,
 			45, 0, 0, 0,
 			0, 0, 0, 0,
 			46, 47, 0, 0,			
-			52, 53, 0, 0,
+			52, 53, 0, 0,	// veraltet
 			73, 74, 0, 0,
-			78, 79, 0, 0,
+			78, 79, 0, 0,	// veraltet
 			84, 85, 0, 0,
 			0, 0, 0, 0,
-			0, 65, 0, 0,
 			-IDS_SEPARATOR, 0, 0, 0,
 			-IDS_UMSATZSTEUER, 2003, 0, 0,
 			0, 0, 0, 0,
@@ -454,6 +453,7 @@ void CElsterDlg::UpdateListe(BOOL bNurSpaltenbreitenAnpassen)
 			-IDS_SEPARATOR, 0, 0, 0,
 			-IDS_VERBLEIBENDER_BETRAG, 2004, 0, 0,
 			0, 0, 0, 0,
+			0, 65, 0, 0,
 			0, 69, 0, 0,
 			-IDS_SEPARATOR, 0, 0, 0,
 			0, 39, 0, 0,
@@ -510,7 +510,8 @@ void CElsterDlg::UpdateListe(BOOL bNurSpaltenbreitenAnpassen)
 					{
 						CString FeldwertAlsString;
 						FeldwertAlsString.Format(_T("%d"), LayoutWert);
-						m_ListeInhalt[Zeile][1] = FeldwertAlsString;	// Feld ID (KZ) in 2. Spalte eintragen
+						if ((LayoutWert != 68 && LayoutWert != 52 && LayoutWert != 78) || Feldwert != _T(""))  // veraltete Felder nur anzeigen, wenn sie Werte enthalten (Validierung springt dann an!)
+							m_ListeInhalt[Zeile][1] = FeldwertAlsString;	// Feld ID (KZ) in 2. Spalte eintragen
 					}
 					m_ListeInhalt[Zeile][2] = Feldwert;					// den Feldwert zu der ID in 3. Spalte eintragen
 				}
@@ -525,7 +526,8 @@ void CElsterDlg::UpdateListe(BOOL bNurSpaltenbreitenAnpassen)
 					{
 						CString Feldwert2AlsString;
 						Feldwert2AlsString.Format(_T("%d"), LayoutWert2);
-						m_ListeInhalt[Zeile][3] = Feldwert2AlsString;	// Feld ID (KZ) in 4. Spalte eintragen
+						if ((LayoutWert2 != 53 && LayoutWert2 != 79) || Feldwert2 != _T(""))  // veraltete Felder nur anzeigen, wenn sie Werte enthalten (Validierung springt dann an!)
+							m_ListeInhalt[Zeile][3] = Feldwert2AlsString;	// Feld ID (KZ) in 4. Spalte eintragen
 					}
 					if (LayoutWert2 > 100 && (LayoutWert2 - 1000 == LayoutWert || LayoutWert2 - 1100 == LayoutWert) && Feldwert2 != _T(""))
 					{

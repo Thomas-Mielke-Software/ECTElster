@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=Elster-Export Plugin für EasyCash&Tax
-AppVerName=Elster-Export 2.10
+AppVerName=Elster-Export 2.11 (Release Kandidat 1)
 DiskSpanning=no
 AppPublisher=tm
 AppPublisherURL=http://www.easyct.de
@@ -28,15 +28,7 @@ Source: D:\Work\ECTElster\Release\ECTElster.ocx; DestDir: {app}; Flags: regserve
 Source: D:\Work\ECTElster\Elster.gif; DestDir: {app}; Flags: ignoreversion
 
 Source: "C:\Program Files (x86)\Elster\ERiC-29.2.6.0\Windows-x86\dll\ericapi.dll"; DestDir: {app}; Flags: ignoreversion 
-;Source: "C:\Program Files (x86)\Elster\ERiC-29.2.6.0\Windows-x86\dll\ericbasis2.dll"; DestDir: {app}; Flags: ignoreversion
-;Source: "C:\Program Files (x86)\Elster\ERiC-29.2.6.0\Windows-x86\dll\ericcrypt.dll"; DestDir: {app}; Flags: ignoreversion
-;Source: "C:\Program Files (x86)\Elster\ERiC-29.2.6.0\Windows-x86\dll\ericctrl2.dll"; DestDir: {app}; Flags: ignoreversion
-;Source: "C:\Program Files (x86)\Elster\ERiC-29.2.6.0\Windows-x86\dll\ericplugin2.dll"; DestDir: {app}; Flags: ignoreversion
-;Source: "C:\Program Files (x86)\Elster\ERiC-29.2.6.0\Windows-x86\dll\ericprint2.dll"; DestDir: {app}; Flags: ignoreversion 
-;Source: "C:\Program Files (x86)\Elster\ERiC-29.2.6.0\Windows-x86\dll\erictools.dll"; DestDir: {app}; Flags: ignoreversion
-;Source: "C:\Program Files (x86)\Elster\ERiC-29.2.6.0\Windows-x86\dll\erictransfer.dll"; DestDir: {app}; Flags: ignoreversion
 Source: "C:\Program Files (x86)\Elster\ERiC-29.2.6.0\Windows-x86\dll\ericxerces.dll"; DestDir: {app}; Flags: ignoreversion
-;Source: "C:\Program Files (x86)\Elster\ERiC-29.2.6.0\Windows-x86\dll\ericxml2.dll"; DestDir: {app}; Flags: ignoreversion
 Source: "C:\Program Files (x86)\Elster\ERiC-29.2.6.0\Windows-x86\dll\eSigner.dll"; DestDir: {app}; Flags: ignoreversion
 
 Source: "C:\Program Files (x86)\Elster\ERiC-29.2.6.0\Windows-x86\dll\plugins2\checkUStVA_2014.dll"; DestDir: {app}\plugins2; Flags: ignoreversion   
@@ -47,24 +39,24 @@ Source: "C:\Program Files (x86)\Elster\ERiC-29.2.6.0\Windows-x86\dll\plugins2\ch
 Source: "C:\Program Files (x86)\Elster\ERiC-29.2.6.0\Windows-x86\dll\plugins2\checkUStVA_2019.dll"; DestDir: {app}\plugins2; Flags: ignoreversion
 Source: "C:\Program Files (x86)\Elster\ERiC-29.2.6.0\Windows-x86\dll\plugins2\commonData.dll"; DestDir: {app}\plugins2; Flags: ignoreversion
 
-;Source: D:\Work\EasyCash\UVA\D-2018\uva-d-2018-1.png; DestDir: {app}\..\..; Flags: ignoreversion
-;Source: D:\Work\EasyCash\UVA\D-2018\uva-d-2018-2.png; DestDir: {app}\..\..; Flags: ignoreversion
-;Source: D:\Work\EasyCash\UVA\D-2018\uva-d-2018-01.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-;Source: D:\Work\EasyCash\UVA\D-2018\uva-d-2018-02.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-;Source: D:\Work\EasyCash\UVA\D-2018\uva-d-2018-03.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-;Source: D:\Work\EasyCash\UVA\D-2018\uva-d-2018-04.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-;Source: D:\Work\EasyCash\UVA\D-2018\uva-d-2018-05.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-;Source: D:\Work\EasyCash\UVA\D-2018\uva-d-2018-06.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-;Source: D:\Work\EasyCash\UVA\D-2018\uva-d-2018-07.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-;Source: D:\Work\EasyCash\UVA\D-2018\uva-d-2018-08.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-;Source: D:\Work\EasyCash\UVA\D-2018\uva-d-2018-09.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-;Source: D:\Work\EasyCash\UVA\D-2018\uva-d-2018-10.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-;Source: D:\Work\EasyCash\UVA\D-2018\uva-d-2018-11.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-;Source: D:\Work\EasyCash\UVA\D-2018\uva-d-2018-12.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-;Source: D:\Work\EasyCash\UVA\D-2018\uva-d-2018-q1.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-;Source: D:\Work\EasyCash\UVA\D-2018\uva-d-2018-q2.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-;Source: D:\Work\EasyCash\UVA\D-2018\uva-d-2018-q3.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-;Source: D:\Work\EasyCash\UVA\D-2018\uva-d-2018-q4.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-1.png; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-2.png; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-01.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-02.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-03.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-04.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-05.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-06.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-07.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-08.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-09.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-10.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-11.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-12.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-q1.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-q2.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-q3.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-q4.ecf; DestDir: {app}\..\..; Flags: ignoreversion
 
 [Registry]
 Root: HKLM; Subkey: Software\Tools; Flags: uninsdeletekeyifempty

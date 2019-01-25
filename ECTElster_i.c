@@ -6,7 +6,7 @@
 
 
  /* File created by MIDL compiler version 8.00.0603 */
-/* at Mon Jan 21 18:32:08 2019
+/* at Fri Jan 25 21:49:38 2019
  */
 /* Compiler settings for ECTElster.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0603 
