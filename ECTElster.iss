@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=Elster-Export Plugin für EasyCash&Tax
-AppVerName=Elster-Export 2.11 (Release Kandidat 1)
+AppVerName=Elster-Export 2.11
 DiskSpanning=no
 AppPublisher=tm
 AppPublisherURL=http://www.easyct.de
