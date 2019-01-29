@@ -643,7 +643,7 @@ void CElsterDlg::ERiC(BOOL bNurValidieren = FALSE)
 		> CTimeSpan(180, 0, 0, 0))
 	{
 		int n;
-		if ((n=AfxMessageBox(_T("Die Frist für die Abgabe der UST-Voranmeldung für den ausgewählten Zeitraum ist schon seit einiger Zeit verstrichen. \
+		if (!bNurValidieren && (n=AfxMessageBox(_T("Die Frist für die Abgabe der UST-Voranmeldung für den ausgewählten Zeitraum ist schon seit einiger Zeit verstrichen. \
 Vielleicht ist das falsche Buchungsjahr geöffnet oder der falsche Zeitraum ausgewählt? Soll die Voranmeldung trotzdem verschickt werden?"), MB_YESNO)) != IDYES)
 		{
 			m_VoranmeldungszeitraumCtrl.SetFocus();			
@@ -1193,7 +1193,7 @@ _T("<DatenTeil> \
 
 		goto PufferFreigeben; 
     }
-	else
+	else if (!bNurValidieren)
 	{	// erfolgreich übertragen
 		if (!m_ErgebnisCtrl.IsWindowVisible())
 			OnBnClickedZeige();
@@ -1723,6 +1723,12 @@ void CElsterDlg::OnEnKillfocusDatei()
 void CElsterDlg::OnBnClickedAktualisieren()
 {
 	UpdateListe();
-	(GetDlgItem(IDOK))->EnableWindow();
-	m_Liste.InvalidateRect(NULL, TRUE);
+
+	// falls Übertragunslog angezeigt wird und die Liste überlagert:
+	m_Zeige.SetWindowText(_T("&Zeige Log"));
+	m_ErgebnisCtrl.ShowWindow(SW_HIDE);
+	m_Liste.ShowWindow(SW_SHOW);
+
+	GetDlgItem(IDOK)->EnableWindow();	 // Senden-Button kann wieder gedrückt werden
+	m_Liste.InvalidateRect(NULL, TRUE);	 // Liste neu aufbauen
 }
