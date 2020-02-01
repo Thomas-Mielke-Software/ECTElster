@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=Elster-Export Plugin für EasyCash&Tax
-AppVerName=Elster-Export 2.12
+AppVerName=Elster-Export 2.13
 DiskSpanning=no
 AppPublisher=tm
 AppPublisherURL=http://www.easyct.de
@@ -20,24 +20,25 @@ SignTool=winsdk81sha1   ; dual sign the
 SignTool=winsdk81sha256 ; installer
 
 [Files]                                                                                                    
-Source: "C:\Program Files (x86)\Elster\ERiC-29.2.6.0\VC_redist.x86.exe"; DestDir: {tmp}; Flags: dontcopy    
-;Source: "C:\Program Files (x86)\Elster\ERiC-29.2.6.0\msvcp140.dll"; DestDir: {app}; Flags: ignoreversion
-;Source: "C:\Program Files (x86)\Elster\ERiC-29.2.6.0\msvcr140.dll"; DestDir: {app}; Flags: ignoreversion 
+Source: "C:\Program Files (x86)\Elster\ERiC-31.4.2.0\VC_redist.x86.exe"; DestDir: {tmp}; Flags: dontcopy    
+;Source: "C:\Program Files (x86)\Elster\ERiC-31.4.2.0\msvcp140.dll"; DestDir: {app}; Flags: ignoreversion
+;Source: "C:\Program Files (x86)\Elster\ERiC-31.4.2.0\msvcr140.dll"; DestDir: {app}; Flags: ignoreversion 
 
 Source: D:\Work\ECTElster\Release\ECTElster.ocx; DestDir: {app}; Flags: regserver ignoreversion
 Source: D:\Work\ECTElster\Elster.gif; DestDir: {app}; Flags: ignoreversion
 
-Source: "C:\Program Files (x86)\Elster\ERiC-29.2.6.0\Windows-x86\dll\ericapi.dll"; DestDir: {app}; Flags: ignoreversion 
-Source: "C:\Program Files (x86)\Elster\ERiC-29.2.6.0\Windows-x86\dll\ericxerces.dll"; DestDir: {app}; Flags: ignoreversion
-Source: "C:\Program Files (x86)\Elster\ERiC-29.2.6.0\Windows-x86\dll\eSigner.dll"; DestDir: {app}; Flags: ignoreversion
+Source: "C:\Program Files (x86)\Elster\ERiC-31.4.2.0\Windows-x86\dll\ericapi.dll"; DestDir: {app}; Flags: ignoreversion 
+Source: "C:\Program Files (x86)\Elster\ERiC-31.4.2.0\Windows-x86\dll\ericxerces.dll"; DestDir: {app}; Flags: ignoreversion
+Source: "C:\Program Files (x86)\Elster\ERiC-31.4.2.0\Windows-x86\dll\eSigner.dll"; DestDir: {app}; Flags: ignoreversion
 
-Source: "C:\Program Files (x86)\Elster\ERiC-29.2.6.0\Windows-x86\dll\plugins2\checkUStVA_2014.dll"; DestDir: {app}\plugins2; Flags: ignoreversion   
-Source: "C:\Program Files (x86)\Elster\ERiC-29.2.6.0\Windows-x86\dll\plugins2\checkUStVA_2015.dll"; DestDir: {app}\plugins2; Flags: ignoreversion     
-Source: "C:\Program Files (x86)\Elster\ERiC-29.2.6.0\Windows-x86\dll\plugins2\checkUStVA_2016.dll"; DestDir: {app}\plugins2; Flags: ignoreversion     
-Source: "C:\Program Files (x86)\Elster\ERiC-29.2.6.0\Windows-x86\dll\plugins2\checkUStVA_2017.dll"; DestDir: {app}\plugins2; Flags: ignoreversion     
-Source: "C:\Program Files (x86)\Elster\ERiC-29.2.6.0\Windows-x86\dll\plugins2\checkUStVA_2018.dll"; DestDir: {app}\plugins2; Flags: ignoreversion     
-Source: "C:\Program Files (x86)\Elster\ERiC-29.2.6.0\Windows-x86\dll\plugins2\checkUStVA_2019.dll"; DestDir: {app}\plugins2; Flags: ignoreversion
-Source: "C:\Program Files (x86)\Elster\ERiC-29.2.6.0\Windows-x86\dll\plugins2\commonData.dll"; DestDir: {app}\plugins2; Flags: ignoreversion
+Source: "C:\Program Files (x86)\Elster\ERiC-31.4.2.0\Windows-x86\dll\plugins2\checkUStVA_2014.dll"; DestDir: {app}\plugins2; Flags: ignoreversion   
+Source: "C:\Program Files (x86)\Elster\ERiC-31.4.2.0\Windows-x86\dll\plugins2\checkUStVA_2015.dll"; DestDir: {app}\plugins2; Flags: ignoreversion     
+Source: "C:\Program Files (x86)\Elster\ERiC-31.4.2.0\Windows-x86\dll\plugins2\checkUStVA_2016.dll"; DestDir: {app}\plugins2; Flags: ignoreversion     
+Source: "C:\Program Files (x86)\Elster\ERiC-31.4.2.0\Windows-x86\dll\plugins2\checkUStVA_2017.dll"; DestDir: {app}\plugins2; Flags: ignoreversion     
+Source: "C:\Program Files (x86)\Elster\ERiC-31.4.2.0\Windows-x86\dll\plugins2\checkUStVA_2018.dll"; DestDir: {app}\plugins2; Flags: ignoreversion     
+Source: "C:\Program Files (x86)\Elster\ERiC-31.4.2.0\Windows-x86\dll\plugins2\checkUStVA_2019.dll"; DestDir: {app}\plugins2; Flags: ignoreversion     
+Source: "C:\Program Files (x86)\Elster\ERiC-31.4.2.0\Windows-x86\dll\plugins2\checkUStVA_2020.dll"; DestDir: {app}\plugins2; Flags: ignoreversion
+Source: "C:\Program Files (x86)\Elster\ERiC-31.4.2.0\Windows-x86\dll\plugins2\commonData.dll"; DestDir: {app}\plugins2; Flags: ignoreversion
 
 Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-1.png; DestDir: {app}\..\..; Flags: ignoreversion
 Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-2.png; DestDir: {app}\..\..; Flags: ignoreversion

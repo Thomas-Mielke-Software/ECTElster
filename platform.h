@@ -1,5 +1,5 @@
 /*
- * Copyright © LfSt Bayern, Muenchen, IuK 111, 2006-2012
+ * Copyright Â© LfSt Bayern, Muenchen, IuK 111, 2006-2012
  */
 
 #ifndef ERIC_PLATFORM_H
@@ -7,17 +7,70 @@
 
 /**
  * @file
- * @brief Konstanten für verschiedene Betriebssysteme
+ * @brief Konstanten fÃ¼r verschiedene Betriebssysteme
  */
 
 
-/* OS X */
+
+/* Definitionen fÃ¼r die Eigenschaften der unterstÃ¼tzten Prozessorarchitekturen */
+
+/* AMD64 */
+#if defined(__amd64__) || defined(__x86_64__) || defined(__amd64) || defined(__x86_64) || defined(_M_AMD64) || defined(_M_X64)
+#   define ARCH_CPU_X86
+#   define ARCH_BIT_64
+#   define ARCH_ENDIAN_LITTLE
+#   define ARCH_AMD64
+
+/* Intel x86 */
+#elif defined(i386) || defined(__i386) || defined(__i386__) || defined(__i486__) || defined(__i586__) || defined(__i686__) || \
+      defined(_M_IX86) || defined(__X86__)  || defined(_X86_) || defined(__I86__) || defined(__INTEL__) || defined(__THW_INTEL__)
+#   define ARCH_CPU_X86
+#   define ARCH_BIT_32
+#   define ARCH_ENDIAN_LITTLE
+#   ifndef __i386__
+#       define __i386__ 1
+#   endif
+
+/* ARM 64-Bit */
+#elif defined(__aarch64__)
+#   define ARCH_CPU_ARM
+#   define ARCH_BIT_64
+#   define ARCH_ENDIAN_LITTLE
+
+/* ARM 32-Bit */
+#elif defined(__arm__) || defined(_ARM) || defined(_M_ARM) || defined (__arm) || defined(__TARGET_ARCH_ARM)
+#   define ARCH_CPU_ARM
+#   define ARCH_BIT_32
+#   define ARCH_ENDIAN_LITTLE
+
+/* Power 64-Bit */
+#elif defined(_ARCH_PPC64) || defined(__PPC64__) || defined(__powerpc64__)
+#   define ARCH_CPU_POWER
+#   define ARCH_BIT_64
+    /* Endian ermitteln */
+#   if defined(_BIG_ENDIAN) || defined(__BIG_ENDIAN__)
+#       define ARCH_ENDIAN_BIG
+#   elif defined(_LITTLE_ENDIAN) || defined(__LITTLE_ENDIAN__)
+#       define ARCH_ENDIAN_LITTLE
+#   else
+#       error Die Bytereihenfolge (Endian) der Architektur konnte nicht ermittelt werden!
+#   endif
+
+/* Nicht unterstÃ¼tzte Architekturen */
+#else
+#   error Archtitektur wird nicht unterstuetzt!
+#endif
+
+
+
+/* macOS, iOS */
 
 #if defined(__APPLE__)
     #include "TargetConditionals.h"
     #if TARGET_IPHONE_SIMULATOR
 		#define __IOS_SIMULATOR__
 		#define __IOS__
+		#define I_OS
 
 		#define FILENAMES_CASE_SENSITIVE 0
 		#define strcasecmp strcmp
@@ -25,6 +78,7 @@
     #elif TARGET_OS_IPHONE
 		#define __IOS_DEVICE__
 		#define __IOS__
+		#define I_OS
 
 		#define FILENAMES_CASE_SENSITIVE 0
 		#define strcasecmp strcmp
@@ -39,10 +93,6 @@
 
 		#define FILENAMES_CASE_SENSITIVE 0
 		#define strcasecmp strcmp
-
-		#if defined(__amd64__) || defined(__x86_64__)
-		#   define ARCH_AMD64
-		#endif
     #endif
 #endif
 
@@ -54,38 +104,24 @@
 #   ifndef PLATFORM_NAME
 #       define PLATFORM_NAME "Windows"
 #   endif
-#   if defined(_M_AMD64) || defined(_M_X64)
-#      define ARCH_AMD64
-#   endif
 #endif
+
 
 /* Linux */
 
 #if defined(linux) || defined(__linux__)
-
-#define LINUX_OS
-
-#if !defined(__i386__) && defined(i386)
-#   define __i386__
-#endif
-
-#if defined(__i386__) || defined(__i486__) || defined(__i586__) || defined(__i686__)
+#   define LINUX_OS
 
 #   ifndef PLATFORM_NAME
-#       define PLATFORM_NAME "Linux/x86"
-#   endif
-
-#else
-
-#   if defined(__amd64__) || defined(__x86_64__)
-#      define ARCH_AMD64
-#      ifndef PLATFORM_NAME
-#          define PLATFORM_NAME "Linux/x86-64"
-#      endif
-#   else
-#      ifndef PLATFORM_NAME
-#          define PLATFORM_NAME "Linux" /* Generic Linux */
-#      endif
+#       if defined(ARCH_CPU_X86) && defined(ARCH_BIT_32)
+#           define PLATFORM_NAME "Linux/x86"
+#       elif defined(ARCH_CPU_X86) && defined(ARCH_BIT_64)
+#           define PLATFORM_NAME "Linux/x86-64"
+#       elif defined(ARCH_CPU_POWER)
+#           define PLATFORM_NAME "Linux/PPC"
+#       else
+#           define PLATFORM_NAME "Linux" /* Generic Linux */
+#       endif
 #   endif
 
 #endif
@@ -94,13 +130,22 @@
 #   define LINUX 1
 #endif
 
+
+/* AIX */
+#if defined(_AIX) && !defined(AIX_OS)
+#   define AIX_OS
 #endif
 
+
+/* Android */
+#if defined(__ANDROID__) && !defined(ANDROID_OS)
+#   define ANDROID_OS
+#endif
 
 /**************************************************/
 
 /* Der gesamte Code innerhalb dieses #ifndef-Blocks wird von Doxygen
- * für die Generierung der ERiC API HTML-Referenz ignoriert.
+ * fÃ¼r die Generierung der ERiC API HTML-Referenz ignoriert.
  */
 #ifndef ERIC_DOXYGEN_MODE
 
@@ -114,21 +159,21 @@ typedef unsigned char byte;
 /**
  * @brief Definition eines vorzeichenlosen, 32 Bit breiten Integer-Typs.
  *
- * Der Typ uint32_t wird für Ganzzahl-Ausgaben der ERiC API verwendet, um
- * unabhängig von Betriebssystem und Compiler eine eindeutig spezifizierte
- * Bit-Breite und Kodierung zu gewährleisten.
+ * Der Typ uint32_t wird fÃ¼r Ganzzahl-Ausgaben der ERiC API verwendet, um
+ * unabhÃ¤ngig von Betriebssystem und Compiler eine eindeutig spezifizierte
+ * Bit-Breite und Kodierung zu gewÃ¤hrleisten.
  *
  * Die in ERiC implementierte Definition von uint32_t kommt nur zum Einsatz,
- * wenn im Code des ERiC-Anwenders kein Präprozessor-define gleichen Namens
+ * wenn im Code des ERiC-Anwenders kein PrÃ¤prozessor-define gleichen Namens
  * existiert und wenn der Header <stdint.h> oder eine Compiler-spezifische
  * Variante davon nicht bereits importiert wurden.  Eventuelle Konflikte zu
- * gleichnamigen Typ-Definitionen im Code des ERiC-Anwenders können evtl. durch
- * Auskommentieren der ERiC-spezifischen Variante gelöst werden.
+ * gleichnamigen Typ-Definitionen im Code des ERiC-Anwenders kÃ¶nnen evtl. durch
+ * Auskommentieren der ERiC-spezifischen Variante gelÃ¶st werden.
  *
  * @note In der HTML-Darstellung dieser Dokumentation wird keine konkrete
  * Implementierung angezeigt, sondern nur der Platzhalter
- * <i>__plattformabhaengige_Implementierung__</i>.  Die für eine bestimmte
- * Plattform tatsächlich verwendete Typdefinition wird aus dem betreffenden
+ * <i>__plattformabhaengige_Implementierung__</i>.  Die fÃ¼r eine bestimmte
+ * Plattform tatsÃ¤chlich verwendete Typdefinition wird aus dem betreffenden
  * Quell-Code in der Datei ericdef.h ersichtlich.
  */
 
@@ -146,7 +191,7 @@ typedef unsigned char byte;
 #            define ERIC_STDINT_VORHANDEN 1
 #        endif
 #    elif defined(__STDC__) && defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L)
-         /* Wenn der Compiler den C99-Standard unterstützt, gibt es eine stdint.h */
+         /* Wenn der Compiler den C99-Standard unterstÃ¼tzt, gibt es eine stdint.h */
 #        include "stdint.h"
 #        define ERIC_STDINT_VORHANDEN 1
 #	elif (_MSC_VER >= 1600)
@@ -170,13 +215,13 @@ typedef unsigned char byte;
 #endif
 
 #else
-/* Dieser Block wird von Doxygen für die Generierung der
+/* Dieser Block wird von Doxygen fÃ¼r die Generierung der
    ERiC API HTML-Referenz ausgewertet */
 
 /**
  * @brief Definition eines vorzeichenlosen, 32 Bit breiten Integer-Typs.
  *
- * Siehe Quellcode von platform.h für Implementierung.
+ * Siehe Quellcode von platform.h fÃ¼r Implementierung.
  */
 typedef __plattformabhaengige_Implementierung__ uint32_t;
 
@@ -210,7 +255,7 @@ typedef __plattformabhaengige_Implementierung__ uint32_t;
 #      undef CDECL
 #    endif
 
-#    if defined(__i386__) && !defined(__IOS__) && !defined(ANDROID_OS)
+#    if defined(ARCH_CPU_X86) && defined(ARCH_BIT_32) && !defined(__IOS__) && !defined(ANDROID_OS)
 #      define STDCALL           __attribute__((__stdcall__))
 #    else
 #      define STDCALL
@@ -225,44 +270,6 @@ typedef __plattformabhaengige_Implementierung__ uint32_t;
 #  endif
 #endif
 
-#if defined(__GNUC__)   &&  (__GNUC__ - 0 > 3 || (__GNUC__ - 0 == 3 && __GNUC_MINOR__ - 0 >= 5))
-#  define GCC_VISIBILITY_SUPPORTED
-#endif
-
-
-#ifndef ERIC_DECL_EXPORT
-#  ifdef WINDOWS_OS
-#    define ERIC_DECL_EXPORT __declspec(dllexport)
-# elif defined(_AIX)
-#     define ERIC_DECL_EXPORT __attribute__((visibility("default")))
-# else
-#   if defined(__GNUC__)   &&  (__GNUC__ - 0 > 3 || (__GNUC__ - 0 == 3 && __GNUC_MINOR__ - 0 >= 5))
-#     define ERIC_DECL_EXPORT __attribute__((visibility("default")))
-#   endif
-# endif
-
-#  ifndef ERIC_DECL_EXPORT
-#    define ERIC_DECL_EXPORT
-#  endif
-#endif
-
-#ifndef ERIC_DECL_IMPORT
-#  if defined(WINDOWS_OS)
-#    define ERIC_DECL_IMPORT __declspec(dllimport)
-# elif defined(_AIX)
-#     define ERIC_DECL_IMPORT __attribute__((visibility("default")))
-#  else
-#   if defined(__GNUC__)   &&  (__GNUC__ - 0 > 3 || (__GNUC__ - 0 == 3 && __GNUC_MINOR__ - 0 >= 5))
-#     define ERIC_DECL_IMPORT __attribute__((visibility("default")))
-#   endif
-#  endif
-
-#  ifndef ERIC_DECL_IMPORT
-#    define ERIC_DECL_IMPORT
-#  endif
-#endif
-
-
 /************************************************/
 
 
@@ -274,7 +281,7 @@ typedef __plattformabhaengige_Implementierung__ uint32_t;
 #  pragma warning( disable : 4786 ) /* Bezeichner wurde auf '255' Zeichen in den Browser-Informationen reduziert                                            */
 #  pragma warning( disable : 4251 ) /* benoetigt eine DLL-Schnittstelle, die von Clients von class 'XYZ' verwendet wird                                     */
 #  pragma warning( disable : 4355 ) /* this wird in initialisierungslisten verwendet                                                                        */
-#  pragma warning( disable : 4275 ) /* class 'xxx' ist keine DLL-Schnittstelle und wurde als Basisklasse für die DLL-Schnittstelle class 'yyy' verwendet    */
+#  pragma warning( disable : 4275 ) /* class 'xxx' ist keine DLL-Schnittstelle und wurde als Basisklasse fÃ¼r die DLL-Schnittstelle class 'yyy' verwendet    */
 #  pragma warning( disable : 4231 ) /* key word extern before template explicit instanciation is not standard but required for class EricSafeInt            */
 #endif
 
@@ -315,4 +322,3 @@ typedef __plattformabhaengige_Implementierung__ uint32_t;
 #endif
 
 #endif /* ERIC_PLATFORM_H */
-

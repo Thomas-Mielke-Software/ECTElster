@@ -28,8 +28,8 @@
 #include "eric_types.h"
 
 // auskommentieren, um echte Daten senden zu können:
-#define TESTVERBINDUNG
-//!!!!!!!!!!!! copyright date hochsetzen!!!
+//#define TESTVERBINDUNG
+//!!!!!!!!!!!! Copyright-Datum hochsetzen!!!
 
 
 // CElsterDlg dialog
@@ -1046,7 +1046,7 @@ _T("<DatenTeil> \
 		}
 		else if (Fehlertext.Find(_T("Datenartversion")) >= 0)
 		{
-			Fehlertext += _T(" Wahrscheinlich ist die Version dieses Plugins zu veraltet. Bitte schauen Sie nach Updates (oben im EC&&T-Menü, das rote Puzzlestück.");
+			Fehlertext += _T(" Wahrscheinlich ist die Version dieses Plugins zu veraltet und enthält nicht die nötige aktuelle Version der Softwarebibliothek der Finanzverwaltung. Bitte schauen Sie nach Updates (oben im EC&&T-Menü, das rote Puzzlestück). Üblicherweise gibt es Ende Januar eine neue Release des Elster-Plugins. Registrierte Nutzer erhalten eine E-Mail-Benachrichtigung, sobald das Update zur Verfügung steht.");
 			if (!bNurValidieren) AfxMessageBox(Fehlertext);
 		}
 		else if (rc == ERIC_GLOBAL_HINWEISE || rc == ERIC_GLOBAL_PRUEF_FEHLER || Fehlertext.Find(_T("Datensatz nicht plausibel.")) >= 0)
@@ -1642,8 +1642,8 @@ CString CElsterDlg::XMLEscape(CString StringZumEscapen)
 
 void CElsterDlg::OnBnClickedFinanzamtNichtInDerListe()
 {
-	if ((DWORD)ShellExecute(m_hWnd, _T("open"), _T("http://gemfa.bfinv.de/gemfai.exe"), NULL, _T("."), SW_SHOWNORMAL) <= 32)
-			AfxMessageBox(_T("Sorry, kann Browser nicht öffnen, um auf die Seite mit der Finanzamtssuche zu gehen. Bitte manuall bei http://gemfa.bfinv.de/gemfai.exe nach dem zuständigen Finanzamt schauen!"));
+	if ((DWORD)ShellExecute(m_hWnd, _T("open"), _T("https://www.bzst.de/DE/Service/Behoerdenwegweiser/Finanzamtsuche/GemFa/finanzamtsuche_node.html"), NULL, _T("."), SW_SHOWNORMAL) <= 32)
+			AfxMessageBox(_T("Sorry, kann den Browser nicht öffnen, um auf die Seite mit der Finanzamtssuche zu gehen. Bitte manuall bei https://www.bzst.de/DE/Service/Behoerdenwegweiser/Finanzamtsuche/GemFa/finanzamtsuche_node.html nach dem zuständigen Finanzamt schauen!"));
 }
 
 void CElsterDlg::OnBnClickedSignaturoptionen()
