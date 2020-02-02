@@ -28,9 +28,16 @@
 #include "eric_types.h"
 
 // auskommentieren, um echte Daten senden zu können:
-//#define TESTVERBINDUNG
-//!!!!!!!!!!!! Copyright-Datum hochsetzen!!!
-
+// #define TESTVERBINDUNG
+//!!!!!!!!!!!! und nicht vergessen: Copyright-Datum hochsetzen!!!
+#if defined(NDEBUG)
+#if defined(TESTVERBINDUNG)
+#pragma message("")
+#pragma message("    ________________________________________________________________")
+#pragma message("    ACHTUNG: TESTVERBINDUNG IST NOCH EINGESCHALTET IN RELEASE-BUILD!")
+#pragma message("    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+#endif
+#endif
 
 // CElsterDlg dialog
 
@@ -766,8 +773,7 @@ _T("<DatenTeil> \
 </Nutzdatenblock> \
 </DatenTeil>");	
 
-
-    // Ein typedef und ein Funktionszeiger fuer notwendige ERiC API-Funktion.
+    // ___ typedef Funktionszeiger fuer notwendige ERiC API-Funktionen ___
 
     typedef int (STDCALL *EricInitialisiereFun)(const char *pluginPfad, const char *logPfad);
     EricInitialisiereFun EricInitialisierePtr;
@@ -854,8 +860,6 @@ _T("<DatenTeil> \
         const char* pin,
         EricRueckgabepufferHandle rueckgabeXmlPuffer);
     EricHoleZertifikatEigenschaftenFun EricHoleZertifikatEigenschaftenPtr;
-
-
 
 	char temp_path[MAX_PATH+1];
 	if (!GetTempPath(sizeof(temp_path), temp_path)) { AfxMessageBox(_T("Konnte keinen Pfad zum Temp-Verzeichnis bekommen. :(")); return; }
@@ -959,7 +963,7 @@ _T("<DatenTeil> \
 	transferheaderPufferHandle = EricRueckgabepufferErzeugen();
 	fehlerPufferHandle = EricRueckgabepufferErzeugen();
 
-/*	rc = EricCheckXML(0, DatenTeil, fehlerPufferHandle);
+/*	rc = EricCheckXML(0, utf8DatenTeil, fehlerPufferHandle);
 	if (rc)
 	{		
 		EricHoleFehlerText(rc, fehlerPufferHandle);
@@ -975,7 +979,11 @@ _T("<DatenTeil> \
 	{
 		CString Datenlieferant;
 		Datenlieferant = m_EinstellungCtrl.HoleEinstellung(_T("vorname")) + _T(" ") + m_EinstellungCtrl.HoleEinstellung(_T("name"));
-		rc = EricCreateTHPtr(DatenTeil, _T("ElsterAnmeldung"), _T("UStVA"), _T("send-Auth"), Testmerker, HerstellerID, Datenlieferant.GetBuffer(0), _T("2.3"), _T(""), transferheaderPufferHandle);
+		CStringA utf8Datenlieferant;
+		Ansi2Utf8(Datenlieferant, utf8Datenlieferant);
+		CStringA utf8DatenTeil;
+		Ansi2Utf8(DatenTeil, utf8DatenTeil);
+		rc = EricCreateTHPtr(utf8DatenTeil.GetBuffer(0), _T("ElsterAnmeldung"), _T("UStVA"), _T("send-Auth"), Testmerker, HerstellerID, utf8Datenlieferant.GetBuffer(0), _T("2.3"), _T(""), transferheaderPufferHandle);
 		if (rc)
 		{		
 //			EricHoleFehlerText(rc, fehlerPufferHandle);
@@ -1450,6 +1458,16 @@ PufferFreigeben:
 
 	AfxGetApp()->EndWaitCursor();	
 	m_Liste.InvalidateRect(NULL, FALSE);
+}
+
+void CElsterDlg::Ansi2Utf8(CString ansiText, CStringA &utf8Text)
+{
+	// UTF-8-Konvertierung (für Konvertierung in UTF-8 erst mal in UTF-16 konvertieren: CP_ACP -> CP_UTF16 -> CP_UTF8)
+	CStringW utf16String('\0', MultiByteToWideChar(CP_ACP, 0, ansiText.GetBuffer(), -1, NULL, 0));
+	MultiByteToWideChar(CP_ACP, 0, ansiText.GetBuffer(), -1, utf16String.GetBuffer(), utf16String.GetLength());
+	CStringA utf8String('\0', WideCharToMultiByte(CP_UTF8, 0, utf16String.GetBuffer(), -1, NULL, 0, NULL, NULL));
+	WideCharToMultiByte(CP_UTF8, 0, utf16String.GetBuffer(), -1, utf8String.GetBuffer(), utf8String.GetLength(), NULL, NULL);
+	utf8Text = utf8String;
 }
 
 int CElsterDlg::RegSearchReplace(CString& string, LPCTSTR sSearchExp, LPCTSTR sReplaceExp, CStringArray& csaReplaceCount)

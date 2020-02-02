@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=Elster-Export Plugin für EasyCash&Tax
-AppVerName=Elster-Export 2.13
+AppVerName=Elster-Export 2.14
 DiskSpanning=no
 AppPublisher=tm
 AppPublisherURL=http://www.easyct.de
@@ -40,24 +40,24 @@ Source: "C:\Program Files (x86)\Elster\ERiC-31.4.2.0\Windows-x86\dll\plugins2\ch
 Source: "C:\Program Files (x86)\Elster\ERiC-31.4.2.0\Windows-x86\dll\plugins2\checkUStVA_2020.dll"; DestDir: {app}\plugins2; Flags: ignoreversion
 Source: "C:\Program Files (x86)\Elster\ERiC-31.4.2.0\Windows-x86\dll\plugins2\commonData.dll"; DestDir: {app}\plugins2; Flags: ignoreversion
 
-Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-1.png; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-2.png; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-01.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-02.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-03.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-04.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-05.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-06.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-07.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-08.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-09.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-10.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-11.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-12.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-q1.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-q2.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-q3.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2019\uva-d-2019-q4.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2020\uva-d-2020-1.png; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2020\uva-d-2020-2.png; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2020\uva-d-2020-01.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2020\uva-d-2020-02.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2020\uva-d-2020-03.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2020\uva-d-2020-04.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2020\uva-d-2020-05.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2020\uva-d-2020-06.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2020\uva-d-2020-07.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2020\uva-d-2020-08.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2020\uva-d-2020-09.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2020\uva-d-2020-10.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2020\uva-d-2020-11.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2020\uva-d-2020-12.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2020\uva-d-2020-q1.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2020\uva-d-2020-q2.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2020\uva-d-2020-q3.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2020\uva-d-2020-q4.ecf; DestDir: {app}\..\..; Flags: ignoreversion
 
 [Registry]
 Root: HKLM; Subkey: Software\Tools; Flags: uninsdeletekeyifempty
