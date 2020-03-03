@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=Elster-Export Plugin für EasyCash&Tax
-AppVerName=Elster-Export 2.14a (Testversion: Passwort wird nicht mehr nach 20 Zeichen abgehackt)
+AppVerName=Elster-Export 2.15
 DiskSpanning=no
 AppPublisher=tm
 AppPublisherURL=http://www.easyct.de

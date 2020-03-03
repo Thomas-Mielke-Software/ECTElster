@@ -28,8 +28,8 @@
 #include "eric_types.h"
 
 // auskommentieren, um echte Daten senden zu können:
-// #define TESTVERBINDUNG
-//!!!!!!!!!!!! und nicht vergessen: Copyright-Datum hochsetzen!!!
+//#define TESTVERBINDUNG
+//!!!!!!!!!!!! und nicht vergessen: bei einem neuen Jahr das Copyright-Datum hochsetzen!!!
 #if defined(NDEBUG)
 #if defined(TESTVERBINDUNG)
 #pragma message("")
@@ -1055,6 +1055,24 @@ _T("<DatenTeil> \
 		{
 			Fehlertext += _T(" Wahrscheinlich ist die Version dieses Plugins zu veraltet und enthält nicht die nötige aktuelle Version der Softwarebibliothek der Finanzverwaltung. Bitte schauen Sie nach Updates (oben im EC&&T-Menü, das rote Puzzlestück). Üblicherweise gibt es Ende Januar eine neue Release des Elster-Plugins. Registrierte Nutzer erhalten eine E-Mail-Benachrichtigung, sobald das Update zur Verfügung steht.");
 			if (!bNurValidieren) AfxMessageBox(Fehlertext);
+		}
+		else if (rc == ERIC_PRINT_UNGUELTIGER_DATEI_PFAD)
+		{
+			long lRetCode = ERROR_SUCCESS;
+			long lType = REG_SZ;
+			long lCb;
+			char data[100];
+			HKEY hklm_codepage;
+			*data = '\0';
+			lCb = sizeof(data);
+			if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, R"(SYSTEM\CurrentControlSet\Control\Nls\CodePage)", 0L, KEY_READ, &hklm_codepage) == ERROR_SUCCESS)
+			{
+				lRetCode = RegQueryValueEx(hklm_codepage, "OEMCP", NULL, (ULONG *)&lType, (LPBYTE)data, (ULONG *)&lCb);
+
+				// nur string datatentyp akzeptieren
+				if (lRetCode == ERROR_SUCCESS && lType == REG_SZ && atoi(data) == 65001)
+					AfxMessageBox("Das Plugin hat eine problematische Windows-Einstellung entdeckt, die zu Problemen mit Pfadangaben führen wird. Es handelt sich um das experimentelle Feature 'UTF-8' bei den Regionseinstellungen von Windows. Zum Beheben klicke bitte aufs Windows-Startmenü und gib 'control panel' ein und drücke die Eingabetaste. Es sollte sich die alte 'Systemsteuerung' von Windows öffnen. Dort dann 'Zeit und Region' -> Region -> 'Gebietsschema ändern' und unten das Häkchen bei 'Beta: Unicode UTF-8 ...' entfernen.");
+			}
 		}
 		else if (rc == ERIC_GLOBAL_HINWEISE || rc == ERIC_GLOBAL_PRUEF_FEHLER || Fehlertext.Find(_T("Datensatz nicht plausibel.")) >= 0)
 		{
