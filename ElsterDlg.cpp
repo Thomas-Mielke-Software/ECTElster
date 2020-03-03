@@ -948,7 +948,6 @@ _T("<DatenTeil> \
 			goto PufferFreigeben; 
 		}
 
-		if (m_Passwort.GetLength() > 20) m_Passwort = m_Passwort.Left(20);
 		verschluesselung.pin              = m_Passwort;
 		verschluesselung.zertifikatHandle = zertifikat;
 		verschluesselung.abrufCode		  = NULL;
