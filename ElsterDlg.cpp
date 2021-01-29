@@ -415,19 +415,18 @@ void CElsterDlg::UpdateListe(BOOL bNurSpaltenbreitenAnpassen)
 		// Formularlayout in Liste übertragen
 		// Spalten: 1. EC&T FeldID Bemessungsgrundlage, 2. EC&T FeldID Steuer, 
 		//          3. tatsächliches KZ Bemessungsgrundlage, 4. tatsächliches KZ Steuer
-		static int Formularlayout[][4] = { 
+		static int Formularlayout[][4] = {
+			81, 1081, 0, 0,
+			86, 1086, 0, 0,
+			35, 36, 0, 0,
+			77, 0, 0, 0,
+			76, 80, 0, 0,
+			0, 0, 0, 0,
 			41, 0, 0, 0,
 			44, 0, 0, 0,
 			49, 0, 0, 0,
 			43, 0, 0, 0,
 			48, 0, 0, 0,
-			0, 0, 0, 0,
-			81, 1081, 0, 0,
-			86, 1086, 0, 0,
-			35, 36, 0, 0,
-			0, 0, 0, 0,
-			77, 0, 0, 0,
-			76, 80, 0, 0,
 			0, 0, 0, 0,
 			91, 0, 0, 0,
 			89, 1189, 0, 0,
@@ -435,17 +434,17 @@ void CElsterDlg::UpdateListe(BOOL bNurSpaltenbreitenAnpassen)
 			95, 98, 0, 0,
 			94, 96, 0, 0,
 			0, 0, 0, 0,
+			46, 47, 0, 0,
+// veraltet	52, 53, 0, 0,	
+			73, 74, 0, 0,
+// veraltet	78, 79, 0, 0,	
+			84, 85, 0, 0,
+			0, 0, 0, 0,
 			42, 0, 0, 0,
-			68, 0, 0, 0,	// veraltet
+// veraltet	68, 0, 0, 0,
 			60, 0, 0, 0,
 			21, 0, 0, 0,
 			45, 0, 0, 0,
-			0, 0, 0, 0,
-			46, 47, 0, 0,			
-			52, 53, 0, 0,	// veraltet
-			73, 74, 0, 0,
-			78, 79, 0, 0,	// veraltet
-			84, 85, 0, 0,
 			0, 0, 0, 0,
 			-IDS_SEPARATOR, 0, 0, 0,
 			-IDS_UMSATZSTEUER, 2003, 0, 0,
@@ -455,8 +454,8 @@ void CElsterDlg::UpdateListe(BOOL bNurSpaltenbreitenAnpassen)
 			0, 62, 0, 0,
 			0, 67, 0, 0,
 			0, 63, 0, 0,
-			0, 64, 0, 0,
 			0, 59, 0, 0,
+			0, 64, 0, 0,
 			-IDS_SEPARATOR, 0, 0, 0,
 			-IDS_VERBLEIBENDER_BETRAG, 2004, 0, 0,
 			0, 0, 0, 0,
@@ -720,16 +719,16 @@ _T("<DatenTeil> \
 + m_EmailAdresse) + "</DatenLieferant> \
 </NutzdatenHeader> \
 <Nutzdaten> \
-<Anmeldungssteuern art=\"UStVA\" version=\"" + Jahr + "01\"> \
+<Anmeldungssteuern " + (atoi(Jahr) < 2021 ? _T("art = \"UStVA\"") : _T("xmlns=\"http://finkonsens.de/elster/elsteranmeldung/ustva/v2021\"")) + _T(" version=\"") + Jahr + (atoi(Jahr) < 2021 ? _T("01") : _T("")) + _T("\"> \
+<Erstellungsdatum>") + Jetzt.Format(_T("%Y%m%d")) + _T("</Erstellungsdatum> \
 <DatenLieferant> \
-<Name>" + XMLEscape(m_EinstellungCtrl.HoleEinstellung(_T("vorname")) + " " + m_EinstellungCtrl.HoleEinstellung(_T("name"))) + _T("</Name> \
+<Name>") + XMLEscape(m_EinstellungCtrl.HoleEinstellung(_T("vorname")) + _T(" ") + m_EinstellungCtrl.HoleEinstellung(_T("name"))) + _T("</Name> \
 <Strasse>") + XMLEscape(m_EinstellungCtrl.HoleEinstellung(_T("strasse"))) + _T("</Strasse> \
 <PLZ>") + XMLEscape(m_EinstellungCtrl.HoleEinstellung(_T("plz"))) + _T("</PLZ> \
 <Ort>") + XMLEscape(m_EinstellungCtrl.HoleEinstellung(_T("ort"))) + _T("</Ort> \
 ") + (CString)(m_Telefon.IsEmpty() ? _T("") : _T("<Telefon>") + XMLEscape(m_Telefon) + _T("</Telefon>")) + _T(" \
 ") + (CString)(m_EmailAdresse.IsEmpty() ? _T("") : _T("<Email>") + XMLEscape(m_EmailAdresse) + _T("</Email>")) + _T(" \
 </DatenLieferant> \
-<Erstellungsdatum>") + Jetzt.Format(_T("%Y%m%d")) + _T("</Erstellungsdatum> \
 <Steuerfall> \
 <Umsatzsteuervoranmeldung> \
 <Jahr>") + Jahr + _T("</Jahr> \
@@ -863,7 +862,7 @@ _T("<DatenTeil> \
 
 	char temp_path[MAX_PATH+1];
 	if (!GetTempPath(sizeof(temp_path), temp_path)) { AfxMessageBox(_T("Konnte keinen Pfad zum Temp-Verzeichnis bekommen. :(")); return; }
-
+	
 	HINSTANCE libEricApi = ::LoadLibrary(_T("ericapi.dll"));
 
     EricInitialisierePtr                          = (EricInitialisiereFun)GetProcAddress(libEricApi, _T("EricInitialisiere"));
