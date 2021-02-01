@@ -57,8 +57,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,17,0,1
- PRODUCTVERSION 2,17,0,1
+ FILEVERSION 2,18,0,1
+ PRODUCTVERSION 2,18,0,1
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -75,12 +75,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Thomas Mielke Softwareentwicklung"
             VALUE "FileDescription", "Elster Export Plugin ActiveX"
-            VALUE "FileVersion", "2.17.0.1"
+            VALUE "FileVersion", "2.18.0.1"
             VALUE "InternalName", "ECTElster.ocx"
             VALUE "LegalCopyright", "copyleft (LGPL v2.1) 1999-2020 Thomas Mielke. "
             VALUE "OriginalFilename", "ECTElster.ocx"
             VALUE "ProductName", "Elster Export Plugin"
-            VALUE "ProductVersion", "2.17.0.1"
+            VALUE "ProductVersion", "2.18.0.1"
         END
     END
     BLOCK "VarFileInfo"
