@@ -737,6 +737,7 @@ _T("<DatenTeil> \
 <Kz09>") + XMLEscape(HerstellerID) + _T("</Kz09> \
 ") + (CString)(m_KorrigierteAnmeldung ? _T("<Kz10>1</Kz10>") : _T("")) + _T(" \
 ") + (CString)(m_BelegeWerdenNachgereicht ? _T("<Kz22>1</Kz22>") : _T("")) + _T(" \
+§§§Kz21Platzhalter§§§\
 ") + (CString)(m_EinzugsermaechtigungWiderrufen ? _T("<Kz26>1</Kz26>") : _T("")) + _T(" \
 ") + (CString)(m_VerrechnungDesErstattungsanspruchs ? _T("<Kz29>1</Kz29>") : _T(""));
 
@@ -766,7 +767,7 @@ _T("<DatenTeil> \
 
 	// Feldwerte in richtige Reihenfolge bringen
 	// Reihenfolge muss dem Schema entsprechen: (Jahr?,Zeitraum?,Steuernummer?,Kz09?,Kz10?,Kz21?,Kz22?,Kz23?,Kz23_Begruendung?,Kz26?,Kz29?,Kz35?,Kz36?,Kz37?,Kz39?,Kz41?,Kz42?,Kz43?,Kz44?,Kz45?,Kz46?,Kz47?,Kz48?,Kz49?,Kz50?,Kz59?,Kz60?,Kz61?,Kz62?,Kz63?,Kz64?,Kz65?,Kz66?,Kz67?,Kz69?,Kz73?,Kz74?,Kz76?,Kz77?,Kz80?,Kz81?,Kz83?,Kz84?,Kz85?,Kz86?,Kz89?,Kz91?,Kz93?,Kz94?,Kz95?,Kz96?,Kz98?)''
-	static int ReihenfolgeKz[] = { 35, 36, 37, 39, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 59, 60, 61 ,62 ,63 ,64, 65, 66, 67, 69, 73, 74 , 76, 77, 80, 81, 83, 84, 85, 86, 89, 91, 93, 94, 95, 96, 98 };
+	static int ReihenfolgeKz[] =																																						{ 21/*!*/, 35, 36, 37, 39, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 59, 60, 61 ,62 ,63 ,64, 65, 66, 67, 69, 73, 74, 76, 77, 80, 81, 83, 84, 85, 86, 89, 91, 93, 94, 95, 96, 98 };
 	static int ReihenfolgeKzAnzahl = sizeof(ReihenfolgeKz) / sizeof(ReihenfolgeKz[0]);
 	int position;
 	for (position = 0; position < ReihenfolgeKzAnzahl; position++)
@@ -782,9 +783,14 @@ _T("<DatenTeil> \
 		{
 			CString XMLKnoten;
 			XMLKnoten.Format(_T("<Kz%d>%s</Kz%d> "), feldID, XMLEscape(Feldwerte[feldID].GetBuffer(0)), feldID);
-			DatenTeil += XMLKnoten;
+
+			if (feldID == 21)
+				DatenTeil.Replace("§§§Kz21Platzhalter§§§", XMLKnoten);  // Extrawurst für Feld 21...
+			else
+				DatenTeil += XMLKnoten;
 		}
 	}
+	DatenTeil.Replace("§§§Kz21Platzhalter§§§", "");  // Kz21-Platzhalter wurde nicht gebraucht? Dann löschen.
 
 	DatenTeil += _T("</Umsatzsteuervoranmeldung> \
 </Steuerfall> \
