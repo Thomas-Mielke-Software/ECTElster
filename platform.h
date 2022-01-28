@@ -18,7 +18,6 @@
 #if defined(__amd64__) || defined(__x86_64__) || defined(__amd64) || defined(__x86_64) || defined(_M_AMD64) || defined(_M_X64)
 #   define ARCH_CPU_X86
 #   define ARCH_BIT_64
-#   define ARCH_ENDIAN_LITTLE
 #   define ARCH_AMD64
 
 /* Intel x86 */
@@ -26,7 +25,6 @@
       defined(_M_IX86) || defined(__X86__)  || defined(_X86_) || defined(__I86__) || defined(__INTEL__) || defined(__THW_INTEL__)
 #   define ARCH_CPU_X86
 #   define ARCH_BIT_32
-#   define ARCH_ENDIAN_LITTLE
 #   ifndef __i386__
 #       define __i386__ 1
 #   endif
@@ -35,26 +33,16 @@
 #elif defined(__aarch64__)
 #   define ARCH_CPU_ARM
 #   define ARCH_BIT_64
-#   define ARCH_ENDIAN_LITTLE
 
 /* ARM 32-Bit */
 #elif defined(__arm__) || defined(_ARM) || defined(_M_ARM) || defined (__arm) || defined(__TARGET_ARCH_ARM)
 #   define ARCH_CPU_ARM
 #   define ARCH_BIT_32
-#   define ARCH_ENDIAN_LITTLE
 
 /* Power 64-Bit */
 #elif defined(_ARCH_PPC64) || defined(__PPC64__) || defined(__powerpc64__)
 #   define ARCH_CPU_POWER
 #   define ARCH_BIT_64
-    /* Endian ermitteln */
-#   if defined(_BIG_ENDIAN) || defined(__BIG_ENDIAN__)
-#       define ARCH_ENDIAN_BIG
-#   elif defined(_LITTLE_ENDIAN) || defined(__LITTLE_ENDIAN__)
-#       define ARCH_ENDIAN_LITTLE
-#   else
-#       error Die Bytereihenfolge (Endian) der Architektur konnte nicht ermittelt werden!
-#   endif
 
 /* Nicht unterstützte Architekturen */
 #else

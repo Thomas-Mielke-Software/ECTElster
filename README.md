@@ -40,7 +40,7 @@ Die eigentliche Musik spielt in ElsterDlg.cpp. Es wird dort im Kern eine ListCtr
 5) Windows-x86\dll\plugins2 Verzeichnis checkUStVA_20XX.dll und commonData.dll mit Vorversion abgleichen (oft sind nur die neuen Jahres-Versionen der DLLs zu ergänzen, manchmal gibt es aber auch neue DLLs, die eingebunden werden müssen oder aber DLLs fallen weg)
 6) Änderungen in ECTElster.iss anpassen und Pfad ändern (replace all "C:\Program Files (x86)\Elster\ERiC-##.#.#.#\", neue checkUStVA_20XX.dll nicht vergessen!)
 7) VC_redist.x86.exe aus dem alten ERiC-Basisverzeichnis ins neue kopieren (da speichere ich es zumindest immer zu Archivzwecken, ansonsten von Microsoft herunterladen)
-8) checken, ob eriapi.dll immer noch die VC2017 runtime version benutzt (steht in common\ERiC-Entwicklerhandbuch.pdf, in ERiC v31 auf Seite 23 im Abschnitt "2.4.4 Mindestanforderungen an benötigte Software")
+8) checken, ob eriapi.dll immer noch die VC2017 runtime version benutzt (steht in common\ERiC-Entwicklerhandbuch.pdf, in ERiC v31 auf Seite 23 im Abschnitt "2.4.5 Mindestanforderungen an benötigte Software"; im Zweifel Suche im PDF nach "Visual C++ Redistributable")
 9) Windows-x86\lib\ericapi.lib nach ECTElster kopieren
 10) Windows-x86\include\\*.h nach ECTElster kopieren
 11) Version in den ECTElster-Ressouces und der .iss hochsetzen, copyright in About-Dialog aktualisieren

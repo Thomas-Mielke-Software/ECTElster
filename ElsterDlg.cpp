@@ -719,7 +719,7 @@ _T("<DatenTeil> \
 + m_EmailAdresse) + "</DatenLieferant> \
 </NutzdatenHeader> \
 <Nutzdaten> \
-<Anmeldungssteuern " + (atoi(Jahr) < 2021 ? _T("art = \"UStVA\"") : _T("xmlns=\"http://finkonsens.de/elster/elsteranmeldung/ustva/v2021\"")) + _T(" version=\"") + Jahr + (atoi(Jahr) < 2021 ? _T("01") : _T("")) + _T("\"> \
+<Anmeldungssteuern " + (atoi(Jahr) < 2021 ? _T("art = \"UStVA\"") : _T("xmlns=\"http://finkonsens.de/elster/elsteranmeldung/ustva/v") + Jahr + _T("\"")) + _T(" version=\"") + Jahr + (atoi(Jahr) < 2021 ? _T("01") : _T("")) + _T("\"> \
 <Erstellungsdatum>") + Jetzt.Format(_T("%Y%m%d")) + _T("</Erstellungsdatum> \
 <DatenLieferant> \
 <Name>") + XMLEscape(m_EinstellungCtrl.HoleEinstellung(_T("vorname")) + _T(" ") + m_EinstellungCtrl.HoleEinstellung(_T("name"))) + _T("</Name> \
