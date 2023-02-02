@@ -98,6 +98,7 @@ private:
 	// Hilfsfunktionen
 	void ERiC(BOOL bNurValidieren);
 	void Ansi2Utf8(CString ansiText, CStringA &utf8Text);
+	void Utf8toAnsi(CStringA utf8Text, CString &ansiText);
 	int RegSearchReplace(CString& string, LPCTSTR sSearchExp, LPCTSTR sReplaceExp, CStringArray& csaReplaceCount);	// Helfer für reguläre Ausdrücke
 	void PrintString(CString Dokumentname, CString Text);
 	CString XMLEscape(CString StringZumEscapen);

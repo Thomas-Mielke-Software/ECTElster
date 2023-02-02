@@ -28,7 +28,7 @@
 #include "eric_types.h"
 
 // auskommentieren, um echte Daten senden zu können:
-#define TESTVERBINDUNG
+//#define TESTVERBINDUNG
 //!!!!!!!!!!!! und nicht vergessen: bei einem neuen Jahr das Copyright-Datum hochsetzen!!!
 #if defined(NDEBUG)
 #if defined(TESTVERBINDUNG)
@@ -418,6 +418,7 @@ void CElsterDlg::UpdateListe(BOOL bNurSpaltenbreitenAnpassen)
 		static int Formularlayout[][4] = {
 			81, 1081, 0, 0,
 			86, 1086, 0, 0,
+			87, 0, 0, 0,
 			35, 36, 0, 0,
 			77, 0, 0, 0,
 			76, 80, 0, 0,
@@ -431,6 +432,7 @@ void CElsterDlg::UpdateListe(BOOL bNurSpaltenbreitenAnpassen)
 			91, 0, 0, 0,
 			89, 1189, 0, 0,
 			93, 1193, 0, 0,
+			90, 0, 0, 0,
 			95, 98, 0, 0,
 			94, 96, 0, 0,
 			0, 0, 0, 0,
@@ -679,7 +681,7 @@ Vielleicht ist das falsche Buchungsjahr geöffnet oder der falsche Zeitraum ausge
 	CString NormaleSteuernummer = m_EinstellungCtrl.HoleEinstellung(_T("fsteuernummer"));
 	if (NormaleSteuernummer.GetLength() != 10 && NormaleSteuernummer.GetLength() != 11)
 	{
-		AfxMessageBox(_T("Die Steuernummer in den EC&&T-Einstellungen ist ungültig. Es wird eine 10- bzw. 11-stellige Steuernummer benötigt."));
+		AfxMessageBox(_T("Die Steuernummer in den EC&T-Einstellungen ist ungültig. Es wird eine 10- bzw. 11-stellige Steuernummer benötigt."));
 		return;
 	}	
 	char Pruefziffer_vor_Steuernummerumstellung[1000];
@@ -968,8 +970,10 @@ _T("<DatenTeil> \
 			EricHoleFehlerText(rc, fehlerPufferHandle);
 			const char* klartextFehler = EricRueckgabepufferInhalt(fehlerPufferHandle); 
 			if(!klartextFehler) klartextFehler = _T("");
+			CString csKlartextFehlerUtf8;
+			Utf8toAnsi(klartextFehler, csKlartextFehlerUtf8);
 			CString Fehlertext;
-			Fehlertext.Format(_T("Das Vorbereiten des Zertifikats schlug fehl (ERiC-Fehler %d). %s"), (int)rc, klartextFehler);
+			Fehlertext.Format(_T("Das Vorbereiten des Zertifikats schlug fehl (ERiC-Fehler %d). %s"), (int)rc, csKlartextFehlerUtf8);
 			AfxMessageBox(Fehlertext);
 			goto PufferFreigeben; 
 		}
@@ -1048,8 +1052,10 @@ _T("<DatenTeil> \
 			if(!klartextFehler) klartextFehler = _T("");
 			if (strcmp(klartextFehler, _T("Verarbeitung fehlerfrei")))
 			{
+				CString csKlartextFehlerUtf8;
+				Utf8toAnsi(klartextFehler, csKlartextFehlerUtf8);
 				CString Fehlertext;
-				Fehlertext.Format(_T("Die Abfrage des PIN-Status schlug fehl (ERiC-Fehler %d). %s"), (int)rc2, klartextFehler);
+				Fehlertext.Format(_T("Die Abfrage des PIN-Status schlug fehl (ERiC-Fehler %d). %s"), (int)rc2, csKlartextFehlerUtf8);
 				AfxMessageBox(Fehlertext);
 				goto PufferFreigeben; 
 			}
@@ -1069,8 +1075,10 @@ _T("<DatenTeil> \
         EricHoleFehlerText(rc, fehlerPufferHandle);
 		const char* klartextFehler = EricRueckgabepufferInhalt(fehlerPufferHandle); 
 		if (!klartextFehler) klartextFehler = _T("");
+		CString csKlartextFehlerUtf8;
+		Utf8toAnsi(klartextFehler, csKlartextFehlerUtf8);
 		CString Fehlertext;
-		Fehlertext.Format(_T("Das Versenden des Datenpakets schlug fehl (ERiC-Fehler %d). %s"), (int)rc, klartextFehler);
+		Fehlertext.Format(_T("Das Versenden des Datenpakets schlug fehl (ERiC-Fehler %d). %s"), (int)rc, csKlartextFehlerUtf8);
 
 		if (Fehlertext.Find(_T("Fehler im Transferheader.")) >= 0)
 		{
@@ -1079,7 +1087,7 @@ _T("<DatenTeil> \
 		}
 		else if (Fehlertext.Find(_T("Datenartversion")) >= 0)
 		{
-			Fehlertext += _T(" Wahrscheinlich ist die Version dieses Plugins zu veraltet und enthält nicht die nötige aktuelle Version der Softwarebibliothek der Finanzverwaltung. Bitte schauen Sie nach Updates (oben im EC&&T-Menü, das rote Puzzlestück). Üblicherweise gibt es Ende Januar eine neue Release des Elster-Plugins. Registrierte Nutzer erhalten eine E-Mail-Benachrichtigung, sobald das Update zur Verfügung steht.");
+			Fehlertext += _T(" Wahrscheinlich ist die Version dieses Plugins zu veraltet und enthält nicht die nötige aktuelle Version der Softwarebibliothek der Finanzverwaltung. Bitte schauen Sie nach Updates (oben im EC&T-Menü, das rote Puzzlestück). Üblicherweise gibt es Ende Januar eine neue Release des Elster-Plugins. Registrierte Nutzer erhalten eine E-Mail-Benachrichtigung, sobald das Update zur Verfügung steht.");
 			if (!bNurValidieren) AfxMessageBox(Fehlertext);
 		}
 		else if (rc == ERIC_PRINT_UNGUELTIGER_DATEI_PFAD)
@@ -1104,7 +1112,9 @@ _T("<DatenTeil> \
 		{
 			// mit Meldung anfangen, dass Fehler oder Hinweise von ERiC zurückgegeben wurden
 			int Zeile = m_Liste.GetItemCount() + 2;  // unter letzte Zeile einfügen (mit einer Leerzeile Abstand)
-			m_ListeInhalt[Zeile++][0] = klartextFehler;
+			CString csKlartextFehlerUtf8;
+			Utf8toAnsi(klartextFehler, csKlartextFehlerUtf8);
+			m_ListeInhalt[Zeile++][0] = csKlartextFehlerUtf8;
 			m_Liste.SetItemCount(Zeile);
 
 			const char *ergebnisPuffer = EricRueckgabepufferInhalt(ergebnisPufferHandle);
@@ -1185,7 +1195,9 @@ _T("<DatenTeil> \
 							int Zeile = m_Liste.GetItemCount() + 1;  // unter letzte Zeile einfügen (mit einer Leerzeile Abstand)
 							csMeldungTyp.ReleaseBuffer();
 							if (csMeldungTyp == _T("FehlerRegelpruefung")) csMeldungTyp = _T("Fehler");
-							m_ListeInhalt[Zeile++][0] = csMeldungTyp + _T(": ") + csText;
+							CString csTextUtf8;
+							Utf8toAnsi(csText, csTextUtf8);
+							m_ListeInhalt[Zeile++][0] = csMeldungTyp + _T(": ") + csTextUtf8;
 							m_Liste.SetItemCount(Zeile);
 							m_Liste.EnsureVisible(Zeile - 1, FALSE);
 						}
@@ -1511,6 +1523,16 @@ void CElsterDlg::Ansi2Utf8(CString ansiText, CStringA &utf8Text)
 	CStringA utf8String('\0', WideCharToMultiByte(CP_UTF8, 0, utf16String.GetBuffer(), -1, NULL, 0, NULL, NULL));
 	WideCharToMultiByte(CP_UTF8, 0, utf16String.GetBuffer(), -1, utf8String.GetBuffer(), utf8String.GetLength(), NULL, NULL);
 	utf8Text = utf8String;
+}
+
+void CElsterDlg::Utf8toAnsi(CStringA utf8Text, CString &ansiText)
+{
+	// UTF-8-Konvertierung (für Konvertierung in ANSI erst mal in UTF-16 konvertieren: CP_UTF8 -> CP_UTF16 -> CP_ACP)
+	CStringW utf16String('\0', MultiByteToWideChar(CP_UTF8, 0, utf8Text.GetBuffer(), -1, NULL, 0));
+	MultiByteToWideChar(CP_UTF8, 0, utf8Text.GetBuffer(), -1, utf16String.GetBuffer(), utf16String.GetLength());
+	CStringA ansiString('\0', WideCharToMultiByte(CP_ACP, 0, utf16String.GetBuffer(), -1, NULL, 0, NULL, NULL));
+	WideCharToMultiByte(CP_ACP, 0, utf16String.GetBuffer(), -1, ansiString.GetBuffer(), ansiString.GetLength(), NULL, NULL);
+	ansiText = ansiString;
 }
 
 int CElsterDlg::RegSearchReplace(CString& string, LPCTSTR sSearchExp, LPCTSTR sReplaceExp, CStringArray& csaReplaceCount)
