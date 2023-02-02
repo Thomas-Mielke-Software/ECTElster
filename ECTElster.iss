@@ -39,24 +39,24 @@ Source: "C:\Program Files (x86)\Elster\ERiC-37.2.6.0\Windows-x86\dll\plugins2\ch
 Source: "C:\Program Files (x86)\Elster\ERiC-37.2.6.0\Windows-x86\dll\plugins2\checkUStVA_2023.dll"; DestDir: {app}\plugins2; Flags: ignoreversion
 Source: "C:\Program Files (x86)\Elster\ERiC-37.2.6.0\Windows-x86\dll\plugins2\commonData.dll"; DestDir: {app}\plugins2; Flags: ignoreversion
 
-Source: D:\Work\EasyCash\UVA\D-2022\uva-d-2022-1.png; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2022\uva-d-2022-2.png; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2022\uva-d-2022-01.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2022\uva-d-2022-02.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2022\uva-d-2022-03.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2022\uva-d-2022-04.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2022\uva-d-2022-05.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2022\uva-d-2022-06.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2022\uva-d-2022-07.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2022\uva-d-2022-08.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2022\uva-d-2022-09.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2022\uva-d-2022-10.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2022\uva-d-2022-11.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2022\uva-d-2022-12.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2022\uva-d-2022-q1.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2022\uva-d-2022-q2.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2022\uva-d-2022-q3.ecf; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2022\uva-d-2022-q4.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2023\uva-d-2023-1.png; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2023\uva-d-2023-2.png; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2023\uva-d-2023-01.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2023\uva-d-2023-02.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2023\uva-d-2023-03.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2023\uva-d-2023-04.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2023\uva-d-2023-05.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2023\uva-d-2023-06.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2023\uva-d-2023-07.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2023\uva-d-2023-08.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2023\uva-d-2023-09.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2023\uva-d-2023-10.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2023\uva-d-2023-11.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2023\uva-d-2023-12.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2023\uva-d-2023-q1.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2023\uva-d-2023-q2.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2023\uva-d-2023-q3.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2023\uva-d-2023-q4.ecf; DestDir: {app}\..\..; Flags: ignoreversion
 
 [Registry]
 Root: HKLM; Subkey: Software\Tools; Flags: uninsdeletekeyifempty
