@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=Elster-Export Plugin für EasyCash&Tax
-AppVerName=Elster-Export 2.21
+AppVerName=Elster-Export 2.22
 DiskSpanning=no
 AppPublisher=tm
 AppPublisherURL=http://www.easyct.de
@@ -40,7 +40,8 @@ Source: "C:\Program Files (x86)\Elster\ERiC-37.2.6.0\Windows-x86\dll\plugins2\ch
 Source: "C:\Program Files (x86)\Elster\ERiC-37.2.6.0\Windows-x86\dll\plugins2\commonData.dll"; DestDir: {app}\plugins2; Flags: ignoreversion
 
 Source: D:\Work\EasyCash\UVA\D-2023\uva-d-2023-1.png; DestDir: {app}\..\..; Flags: ignoreversion
-Source: D:\Work\EasyCash\UVA\D-2023\uva-d-2023-2.png; DestDir: {app}\..\..; Flags: ignoreversion
+Source: D:\Work\EasyCash\UVA\D-2023\uva-d-2023-2.png; DestDir: {app}\..\..; Flags: ignoreversion   
+Source: D:\Work\EasyCash\UVA\D-2023\uva-d-2023-3.png; DestDir: {app}\..\..; Flags: ignoreversion
 Source: D:\Work\EasyCash\UVA\D-2023\uva-d-2023-01.ecf; DestDir: {app}\..\..; Flags: ignoreversion
 Source: D:\Work\EasyCash\UVA\D-2023\uva-d-2023-02.ecf; DestDir: {app}\..\..; Flags: ignoreversion
 Source: D:\Work\EasyCash\UVA\D-2023\uva-d-2023-03.ecf; DestDir: {app}\..\..; Flags: ignoreversion
