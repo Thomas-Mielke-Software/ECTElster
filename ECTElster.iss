@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=Elster-Export Plugin für EasyCash&Tax
-AppVerName=Elster-Export 2.20
+AppVerName=Elster-Export 2.21
 DiskSpanning=no
 AppPublisher=tm
 AppPublisherURL=http://www.easyct.de
@@ -20,23 +20,24 @@ SignTool=winsdk81sha1   ; dual sign the
 SignTool=winsdk81sha256 ; installer
 
 [Files]                                                                                                    
-Source: "C:\Program Files (x86)\Elster\ERiC-35.3.2.0\VC_redist.x86.exe"; DestDir: {tmp}; Flags: dontcopy    
-;Source: "C:\Program Files (x86)\Elster\ERiC-35.3.2.0\msvcp140.dll"; DestDir: {app}; Flags: ignoreversion
-;Source: "C:\Program Files (x86)\Elster\ERiC-35.3.2.0\msvcr140.dll"; DestDir: {app}; Flags: ignoreversion 
+Source: "C:\Program Files (x86)\Elster\ERiC-37.2.6.0\VC_redist.x86.exe"; DestDir: {tmp}; Flags: dontcopy    
+;Source: "C:\Program Files (x86)\Elster\ERiC-37.2.6.0\msvcp140.dll"; DestDir: {app}; Flags: ignoreversion
+;Source: "C:\Program Files (x86)\Elster\ERiC-37.2.6.0\msvcr140.dll"; DestDir: {app}; Flags: ignoreversion 
 
 Source: D:\Work\ECTElster\Release\ECTElster.ocx; DestDir: {app}; Flags: regserver ignoreversion
 Source: D:\Work\ECTElster\Elster.gif; DestDir: {app}; Flags: ignoreversion
 
-Source: "C:\Program Files (x86)\Elster\ERiC-35.3.2.0\Windows-x86\dll\ericapi.dll"; DestDir: {app}; Flags: ignoreversion 
-Source: "C:\Program Files (x86)\Elster\ERiC-35.3.2.0\Windows-x86\dll\ericxerces.dll"; DestDir: {app}; Flags: ignoreversion
-Source: "C:\Program Files (x86)\Elster\ERiC-35.3.2.0\Windows-x86\dll\eSigner.dll"; DestDir: {app}; Flags: ignoreversion
- 
-Source: "C:\Program Files (x86)\Elster\ERiC-35.3.2.0\Windows-x86\dll\plugins2\checkUStVA_2018.dll"; DestDir: {app}\plugins2; Flags: ignoreversion     
-Source: "C:\Program Files (x86)\Elster\ERiC-35.3.2.0\Windows-x86\dll\plugins2\checkUStVA_2019.dll"; DestDir: {app}\plugins2; Flags: ignoreversion     
-Source: "C:\Program Files (x86)\Elster\ERiC-35.3.2.0\Windows-x86\dll\plugins2\checkUStVA_2020.dll"; DestDir: {app}\plugins2; Flags: ignoreversion     
-Source: "C:\Program Files (x86)\Elster\ERiC-35.3.2.0\Windows-x86\dll\plugins2\checkUStVA_2021.dll"; DestDir: {app}\plugins2; Flags: ignoreversion     
-Source: "C:\Program Files (x86)\Elster\ERiC-35.3.2.0\Windows-x86\dll\plugins2\checkUStVA_2022.dll"; DestDir: {app}\plugins2; Flags: ignoreversion
-Source: "C:\Program Files (x86)\Elster\ERiC-35.3.2.0\Windows-x86\dll\plugins2\commonData.dll"; DestDir: {app}\plugins2; Flags: ignoreversion
+Source: "C:\Program Files (x86)\Elster\ERiC-37.2.6.0\Windows-x86\dll\ericapi.dll"; DestDir: {app}; Flags: ignoreversion 
+Source: "C:\Program Files (x86)\Elster\ERiC-37.2.6.0\Windows-x86\dll\ericxerces.dll"; DestDir: {app}; Flags: ignoreversion
+Source: "C:\Program Files (x86)\Elster\ERiC-37.2.6.0\Windows-x86\dll\eSigner.dll"; DestDir: {app}; Flags: ignoreversion
+
+; Zur Sicherheit die aktuellsten fünf checkUStVAs im Installer einbinden:     
+Source: "C:\Program Files (x86)\Elster\ERiC-37.2.6.0\Windows-x86\dll\plugins2\checkUStVA_2019.dll"; DestDir: {app}\plugins2; Flags: ignoreversion     
+Source: "C:\Program Files (x86)\Elster\ERiC-37.2.6.0\Windows-x86\dll\plugins2\checkUStVA_2020.dll"; DestDir: {app}\plugins2; Flags: ignoreversion     
+Source: "C:\Program Files (x86)\Elster\ERiC-37.2.6.0\Windows-x86\dll\plugins2\checkUStVA_2021.dll"; DestDir: {app}\plugins2; Flags: ignoreversion     
+Source: "C:\Program Files (x86)\Elster\ERiC-37.2.6.0\Windows-x86\dll\plugins2\checkUStVA_2022.dll"; DestDir: {app}\plugins2; Flags: ignoreversion       
+Source: "C:\Program Files (x86)\Elster\ERiC-37.2.6.0\Windows-x86\dll\plugins2\checkUStVA_2023.dll"; DestDir: {app}\plugins2; Flags: ignoreversion
+Source: "C:\Program Files (x86)\Elster\ERiC-37.2.6.0\Windows-x86\dll\plugins2\commonData.dll"; DestDir: {app}\plugins2; Flags: ignoreversion
 
 Source: D:\Work\EasyCash\UVA\D-2022\uva-d-2022-1.png; DestDir: {app}\..\..; Flags: ignoreversion
 Source: D:\Work\EasyCash\UVA\D-2022\uva-d-2022-2.png; DestDir: {app}\..\..; Flags: ignoreversion

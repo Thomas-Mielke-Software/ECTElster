@@ -168,7 +168,6 @@ typedef unsigned char byte;
 #include <limits.h>
 #include <stdlib.h>
 #include <sys/types.h>
-#include <sys/stat.h>
 
 #if defined(_STDINT_H_) || defined(_STDINT_H) || defined(_STDINT) || defined(_MSC_STDINT_H_)
 #    define ERIC_STDINT_VORHANDEN 1

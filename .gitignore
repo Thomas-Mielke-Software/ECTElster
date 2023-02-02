@@ -328,3 +328,11 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+
+# --- ab hier projektspezifisch ---
+
+# installer output
+Setup/
+
+# Elster-Bibliotheksdateien (werden manuell in das Projektverzeichnis kopiert)
+eric*
