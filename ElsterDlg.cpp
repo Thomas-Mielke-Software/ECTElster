@@ -102,8 +102,11 @@ BEGIN_MESSAGE_MAP(CElsterDlg, CDialog)
 	ON_BN_CLICKED(IDC_SIGNATUROPTIONEN, &CElsterDlg::OnBnClickedSignaturoptionen)
 	ON_BN_CLICKED(IDC_DURCHSUCHEN, &CElsterDlg::OnBnClickedDurchsuchen)
 	ON_EN_KILLFOCUS(IDC_DATEI, &CElsterDlg::OnEnKillfocusDatei)
-    ON_MESSAGE(WM_QUICKLIST_GETLISTITEMDATA, &CElsterDlg::OnGetListItem) 
+    ON_MESSAGE(WM_QUICKLIST_GETLISTITEMDATA, &CElsterDlg::OnGetListItem)
+	#pragma warning(push)
+	#pragma warning(disable:26454)
 	ON_NOTIFY(NM_CLICK, IDC_LISTE, &CElsterDlg::OnNMClickListe)
+	#pragma warning(pop)
 	ON_BN_CLICKED(IDC_AKTUALISIEREN, &CElsterDlg::OnBnClickedAktualisieren)
 END_MESSAGE_MAP()
 
@@ -190,18 +193,20 @@ BOOL CElsterDlg::OnInitDialog()
 	// Formular/Voranm.zeitr. Combobox aufbauen
 	m_VoranmeldungszeitraumCtrl.ResetContent();
 	int n = m_FormularCtrl.HoleFormularanzahl();
-	for (i = 0; i < n; i++)
-	{
-		CString Formularname = m_FormularCtrl.HoleFormularnamen(i, _T("Umsatzsteuer-Voranmeldung"));
-		if (Formularname.GetLength() && m_FormularCtrl.HoleVoranmeldungszeitraum() != 0 && (Formularname.GetLength() < 21 || Formularname.Left(21) != "Umsatzsteuererklärung"))
+	TCHAR* formulararten[2] = { _T("E/Ü-Rechnung"), _T("Umsatzsteuer-Voranmeldung") };
+	for (int formularart = 0; formularart < sizeof(formulararten) / sizeof(formulararten[0]); formularart++)
+		for (i = 0; i < n; i++)
 		{
-			m_VoranmeldungszeitraumCtrl.AddString(Formularname);
-			m_VoranmeldungszeitraumCtrl.SetItemData(m_VoranmeldungszeitraumCtrl.GetCount()-1, i);	// Index speichern, um darüber bei Verarbeitung den Pfad zu gewinnen
-		}
-	}
-	
+			CString Formularname = m_FormularCtrl.HoleFormularnamen(i, formulararten[formularart]);
+			if (Formularname.GetLength() && m_FormularCtrl.HoleVoranmeldungszeitraum() != 0 &&
+				((Formularname.GetLength() < 21 || Formularname.Left(21) != "Umsatzsteuererklärung")))
+			{
+				m_VoranmeldungszeitraumCtrl.AddString(Formularname);
+				m_VoranmeldungszeitraumCtrl.SetItemData(m_VoranmeldungszeitraumCtrl.GetCount()-1, i);	// Index speichern, um darüber bei Verarbeitung den Pfad zu gewinnen
+			}
+		}	
 
-	// Vorauswahl der Formulars nach heutigem Datum -- unter Einbeziehung der Dauerfristverlängerung
+	// Vorauswahl des Formulars nach heutigem Datum -- unter Einbeziehung der Dauerfristverlängerung
 	int jj = m_DokumentCtrl.GetJahr();
 	int nDauerfristverlaengerungTage = 0;
 	CString Key;
@@ -280,7 +285,10 @@ LRESULT CElsterDlg::OnGetListItem(WPARAM wParam, LPARAM lParam)
 	if (item > sizeof(m_ListeInhalt)/sizeof(m_ListeInhalt[0])) return 0;
 	if (subItem > sizeof(m_ListeInhalt[0])/sizeof(m_ListeInhalt[0][0])) return 0;
 
+	#pragma warning(push)
+	#pragma warning(disable:6385)
 	data->m_text = m_ListeInhalt[item][subItem];	// Zellentext anzeigen
+	#pragma warning(pop)
 	data->m_tooltip = m_ListeInhalt[item][0];		// Tooltip funktioniert im ActiveX leider nicht...
 	if (subItem) // 2. oder höhere Spalte? ggf. farbig markieren
 	{	
@@ -382,6 +390,8 @@ void CElsterDlg::UpdateListe(BOOL bNurSpaltenbreitenAnpassen)
 			GetDlgItem(IDC_FINANZAMT_STATIC)->ShowWindow(SW_SHOW);
 
 		// Spaltenbreiten bestimmen
+		#pragma warning(push)
+		#pragma warning(disable:6001)
 		static _TCHAR *Spaltentitel[] = { _T("Beschreibung"), _T("Feld-Nr."), _T("Bem.Grundl."), _T("Feld-Nr."), _T("Steuer") };
 		static int AnzahlSpalten = sizeof(Spaltentitel) / sizeof(Spaltentitel[0]);
 		int Spaltenbreite[sizeof(Spaltentitel) / sizeof(Spaltentitel[0])];
@@ -392,6 +402,7 @@ void CElsterDlg::UpdateListe(BOOL bNurSpaltenbreitenAnpassen)
 		Spaltenbreite[0] = ListeBreite - Spaltenbreite[1] - Spaltenbreite[2] - Spaltenbreite[3] - Spaltenbreite[4];	// Beschreibungstext bekommt war übrig ist...
 		if (Spaltenbreite[0] < Spaltenbreite[1] + Spaltenbreite[2])	// ... es sei denn, es ist zu wenig
 			Spaltenbreite[0] = Spaltenbreite[1] + Spaltenbreite[2];
+		#pragma warning(pop)
 
 		// Listenheader aufbauen
 		m_Liste.SetExtendedStyle ( m_Liste.GetExtendedStyle() | LVS_EX_FULLROWSELECT );
@@ -784,7 +795,7 @@ _T("<DatenTeil> \
 		if (!Feldwerte[feldID].IsEmpty())
 		{
 			CString XMLKnoten;
-			XMLKnoten.Format(_T("<Kz%d>%s</Kz%d> "), feldID, XMLEscape(Feldwerte[feldID].GetBuffer(0)), feldID);
+			XMLKnoten.Format(_T("<Kz%d>%s</Kz%d> "), feldID, (LPCTSTR)XMLEscape(Feldwerte[feldID].GetBuffer(0)), feldID);
 
 			if (feldID == 21)
 				DatenTeil.Replace("§§§Kz21Platzhalter§§§", XMLKnoten);  // Extrawurst für Feld 21...
@@ -973,7 +984,7 @@ _T("<DatenTeil> \
 			CString csKlartextFehlerUtf8;
 			Utf8toAnsi(klartextFehler, csKlartextFehlerUtf8);
 			CString Fehlertext;
-			Fehlertext.Format(_T("Das Vorbereiten des Zertifikats schlug fehl (ERiC-Fehler %d). %s"), (int)rc, csKlartextFehlerUtf8);
+			Fehlertext.Format(_T("Das Vorbereiten des Zertifikats schlug fehl (ERiC-Fehler %d). %s"), (int)rc, (LPCTSTR)csKlartextFehlerUtf8);
 			AfxMessageBox(Fehlertext);
 			goto PufferFreigeben; 
 		}
@@ -1055,7 +1066,7 @@ _T("<DatenTeil> \
 				CString csKlartextFehlerUtf8;
 				Utf8toAnsi(klartextFehler, csKlartextFehlerUtf8);
 				CString Fehlertext;
-				Fehlertext.Format(_T("Die Abfrage des PIN-Status schlug fehl (ERiC-Fehler %d). %s"), (int)rc2, csKlartextFehlerUtf8);
+				Fehlertext.Format(_T("Die Abfrage des PIN-Status schlug fehl (ERiC-Fehler %d). %s"), (int)rc2, (LPCTSTR)csKlartextFehlerUtf8);
 				AfxMessageBox(Fehlertext);
 				goto PufferFreigeben; 
 			}
@@ -1078,7 +1089,7 @@ _T("<DatenTeil> \
 		CString csKlartextFehlerUtf8;
 		Utf8toAnsi(klartextFehler, csKlartextFehlerUtf8);
 		CString Fehlertext;
-		Fehlertext.Format(_T("Das Versenden des Datenpakets schlug fehl (ERiC-Fehler %d). %s"), (int)rc, csKlartextFehlerUtf8);
+		Fehlertext.Format(_T("Das Versenden des Datenpakets schlug fehl (ERiC-Fehler %d). %s"), (int)rc, (LPCTSTR)csKlartextFehlerUtf8);
 
 		if (Fehlertext.Find(_T("Fehler im Transferheader.")) >= 0)
 		{
