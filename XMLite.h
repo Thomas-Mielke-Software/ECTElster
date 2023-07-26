@@ -100,7 +100,7 @@ typedef struct _tagParseInfo
 	CString		error_string;		// [get] error string
 
 	LPXDoc		doc;
-	_tagParseInfo() { trim_value = false; entity_value = true; force_parse = false; entitys = &entityDefault; xml = NULL; erorr_occur = false; error_pointer = NULL; error_code = PIE_PARSE_WELFORMED; escape_value = '\\'; }
+	_tagParseInfo() { trim_value = false; entity_value = true; force_parse = false; entitys = &entityDefault; xml = NULL; erorr_occur = false; error_pointer = NULL; error_code = PIE_PARSE_WELFORMED; escape_value = '\\'; doc = NULL; }
 }PARSEINFO,*LPPARSEINFO;
 extern PARSEINFO piDefault;
 
@@ -123,7 +123,7 @@ typedef struct _tagXMLAttr
 	CString name;
 	CString	value;
 	
-	_tagXMLNode*	parent;
+	_tagXMLNode*	parent = NULL;
 
 	AFX_EXT_API CString GetXML( LPDISP_OPT opt = &optDefault );
 }XAttr, *LPXAttr;

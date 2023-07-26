@@ -20,6 +20,7 @@
 #include "ECTElster.h"
 #include "FormularCtrl.h"
 #include "EinstellungCtrl.h"
+#include "regexp.h"  // http://www.codeguru.com/Cpp/Cpp/string/regex/article.php/c2791
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -104,7 +105,6 @@ CString & CECTElsterApp::GetVersion(void)
 }
 
 
-
 // DllRegisterServer - Adds entries to the system registry
 
 STDAPI DllRegisterServer(void)
@@ -134,4 +134,128 @@ STDAPI DllUnregisterServer(void)
 		return ResultFromScode(SELFREG_E_CLASS);
 
 	return NOERROR;
+}
+
+
+// globale Hilfsfunktionen
+
+extern CString XMLEscape(CString StringZumEscapen)
+{
+	StringZumEscapen.Replace(_T("&"), _T("&amp;"));
+	StringZumEscapen.Replace(_T("\""), _T("&quot;"));
+	StringZumEscapen.Replace(_T("\'"), _T("&apos;"));
+	StringZumEscapen.Replace(_T("<"), _T("&lt;"));
+	StringZumEscapen.Replace(_T(">"), _T("&gt;"));
+	return StringZumEscapen;
+}
+
+
+extern void Ansi2Utf8(CString ansiText, CStringA& utf8Text)
+{
+	// UTF-8-Konvertierung (für Konvertierung in UTF-8 erst mal in UTF-16 konvertieren: CP_ACP -> CP_UTF16 -> CP_UTF8)
+	CStringW utf16String('\0', MultiByteToWideChar(CP_ACP, 0, ansiText.GetBuffer(), -1, NULL, 0));
+	MultiByteToWideChar(CP_ACP, 0, ansiText.GetBuffer(), -1, utf16String.GetBuffer(), utf16String.GetLength());
+	CStringA utf8String('\0', WideCharToMultiByte(CP_UTF8, 0, utf16String.GetBuffer(), -1, NULL, 0, NULL, NULL));
+	WideCharToMultiByte(CP_UTF8, 0, utf16String.GetBuffer(), -1, utf8String.GetBuffer(), utf8String.GetLength(), NULL, NULL);
+	utf8Text = utf8String;
+}
+
+extern void Utf8toAnsi(CStringA utf8Text, CString& ansiText)
+{
+	// UTF-8-Konvertierung (für Konvertierung in ANSI erst mal in UTF-16 konvertieren: CP_UTF8 -> CP_UTF16 -> CP_ACP)
+	CStringW utf16String('\0', MultiByteToWideChar(CP_UTF8, 0, utf8Text.GetBuffer(), -1, NULL, 0));
+	MultiByteToWideChar(CP_UTF8, 0, utf8Text.GetBuffer(), -1, utf16String.GetBuffer(), utf16String.GetLength());
+	CStringA ansiString('\0', WideCharToMultiByte(CP_ACP, 0, utf16String.GetBuffer(), -1, NULL, 0, NULL, NULL));
+	WideCharToMultiByte(CP_ACP, 0, utf16String.GetBuffer(), -1, ansiString.GetBuffer(), ansiString.GetLength(), NULL, NULL);
+	ansiText = ansiString;
+}
+
+extern int RegSearchReplace(CString& string, LPCTSTR sSearchExp, LPCTSTR sReplaceExp, CStringArray& csaReplaceCount)
+{
+	int nPos = 0;
+	int nReplaced = 0;
+	CRegExp r;
+	LPTSTR str = (LPTSTR)(LPCTSTR)string;
+
+	r.RegComp(sSearchExp);
+	while ((nPos = r.RegFind((LPTSTR)str)) != -1)
+	{
+		nReplaced++;
+		TCHAR* pReplaceStr = r.GetReplaceString(sReplaceExp);
+		csaReplaceCount.Add(pReplaceStr);
+
+		int offset = str - (LPCTSTR)string + nPos;
+		string = string.Left(offset) + pReplaceStr + string.Mid(offset + r.GetFindLen());
+
+		// Replace könnte eine Reallocation verursacht haben
+		str = (LPTSTR)(LPCTSTR)string + offset + _tcslen(pReplaceStr);
+		delete pReplaceStr;
+	}
+
+	return nReplaced;  // Liste aller ersetzen Ausdrücke zurückgeben
+}
+
+extern void PrintString(CString Dokumentname, CString Text)
+{
+	Text.Replace(_T("&"), _T("&&"));	// Konvertierung von '&' vermeiden
+
+	DEVMODE* pdm = NULL;
+
+	CPrintDialog printdlg(FALSE);
+
+	printdlg.m_pd.nFromPage = 1;
+	printdlg.m_pd.nToPage = 1;
+	printdlg.m_pd.nMinPage = 1;
+	printdlg.m_pd.nMaxPage = 1;
+	printdlg.m_pd.Flags &= ~PD_NOPAGENUMS;
+
+	if (printdlg.DoModal() != IDOK) return;
+
+	if (!(pdm = printdlg.GetDevMode())) return;
+
+	// mit device context
+	{
+		CString cs;
+
+		DOCINFO di;
+		di.cbSize = sizeof(di);
+		di.lpszDocName = Dokumentname.GetBuffer(0);
+		di.lpszOutput = NULL;
+		di.lpszDatatype = NULL;
+		di.fwType = 0;
+
+		HDC hdc = printdlg.GetPrinterDC();
+
+		int printer_charwidth = GetDeviceCaps(hdc, HORZRES) / 80;
+		int printer_charheight = GetDeviceCaps(hdc, VERTRES) / 72;
+
+		StartDoc(hdc, &di);
+
+		HFONT hfont = CreateFont(printer_charheight, printer_charwidth,
+			0, 0, 400, FALSE, FALSE, FALSE, ANSI_CHARSET,
+			OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+			DEFAULT_QUALITY, FIXED_PITCH | FF_MODERN,
+			_T("Arial"));
+
+		HFONT holdfont = (HFONT)SelectObject(hdc, (HGDIOBJ)hfont);
+
+		SetMapMode(hdc, MM_TEXT);
+
+		RECT r;
+		r.left = (int)((float)printer_charwidth * (float)7);
+		r.top = (int)((float)printer_charheight * (float)4);
+		r.right = (int)((float)printer_charwidth * (float)78);
+		r.bottom = (int)((float)printer_charheight * (float)68);
+
+		DrawText(hdc, Text.GetBuffer(0), Text.GetLength(), &r, DT_LEFT | DT_WORDBREAK);
+
+		SelectObject(hdc, holdfont);
+		EndPage(hdc);
+		EndDoc(hdc);
+		DeleteDC(hdc);
+	}
+
+	GlobalFree(printdlg.m_pd.hDevMode);
+	GlobalFree(printdlg.m_pd.hDevNames);
+	if (pdm) GlobalUnlock(pdm);
 }

@@ -144,6 +144,7 @@
     <ClCompile Include="ECTElsterPropPage.cpp" />
     <ClCompile Include="EinstellungCtrl.cpp" />
     <ClCompile Include="ElsterDlg.cpp" />
+    <ClCompile Include="EricFormularlogik.cpp" />
     <ClCompile Include="faliste.cpp" />
     <ClCompile Include="FormularCtrl.cpp" />
     <ClCompile Include="QuickEdit.cpp" />
@@ -171,6 +172,7 @@
     <ClInclude Include="ECTElsterPropPage.h" />
     <ClInclude Include="EinstellungCtrl.h" />
     <ClInclude Include="ElsterDlg.h" />
+    <ClInclude Include="EricFormularlogik.h" />
     <ClInclude Include="FormularCtrl.h" />
     <ClInclude Include="QuickEdit.h" />
     <ClInclude Include="QuickList.h" />

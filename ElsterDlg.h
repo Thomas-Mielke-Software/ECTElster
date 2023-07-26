@@ -59,9 +59,9 @@ private:
 
 	// Controls
 	CFormularCtrl m_FormularCtrl;
-	CComboBox m_VoranmeldungszeitraumCtrl;
 	CEinstellung m_EinstellungCtrl;
 	CDokumentCtrl m_DokumentCtrl;
+	CComboBox m_VoranmeldungszeitraumCtrl;
 	CComboBox m_FinanzamtCtrl;
 	CQuickList m_Liste;			// Ersatz für CListCtrl, siehe https://www.codeproject.com/Articles/8112/CQuickList
 	CEdit m_ErgebnisCtrl;		// teilt sich Platz im Dialog mit m_Liste
@@ -71,6 +71,9 @@ private:
 	CString m_ListeInhalt[500][5];						// ist owner-drawn
 	CMap<int, int, CString, CString> m_ListeHinweise;	// nach Validierung werden Einträge des ListCtrl 
 	CMap<int, int, CString, CString> m_ListeFehler;		// ggf. farbig hervorgehoben und Hinweise/Fehler gezeigt
+
+	// Member-Funktionen
+	void ERiC(BOOL bNurValidieren);
 	LRESULT OnGetListItem(WPARAM wParam, LPARAM lParam);
 	void UpdateListe(BOOL bNurSpaltenbreitenAnpassen = FALSE);
 
@@ -94,12 +97,4 @@ private:
 	afx_msg void OnEnKillfocusDatei();
 	afx_msg void OnNMClickListe(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnBnClickedAktualisieren();
-
-	// Hilfsfunktionen
-	void ERiC(BOOL bNurValidieren);
-	void Ansi2Utf8(CString ansiText, CStringA &utf8Text);
-	void Utf8toAnsi(CStringA utf8Text, CString &ansiText);
-	int RegSearchReplace(CString& string, LPCTSTR sSearchExp, LPCTSTR sReplaceExp, CStringArray& csaReplaceCount);	// Helfer für reguläre Ausdrücke
-	void PrintString(CString Dokumentname, CString Text);
-	CString XMLEscape(CString StringZumEscapen);
 };

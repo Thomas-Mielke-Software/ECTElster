@@ -39,3 +39,22 @@ extern const GUID CDECL _tlid;
 extern const WORD _wVerMajor;
 extern const WORD _wVerMinor;
 
+// auskommentieren, um echte Daten senden zu können:
+#define TESTVERBINDUNG
+//!!!!!!!!!!!! und nicht vergessen: bei einem neuen Jahr das Copyright-Datum hochsetzen!!!
+#if defined(NDEBUG)
+#if defined(TESTVERBINDUNG)
+#pragma message("")
+#pragma message("    ________________________________________________________________")
+#pragma message("    ACHTUNG: TESTVERBINDUNG IST NOCH EINGESCHALTET IN RELEASE-BUILD!")
+#pragma message("    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+#endif
+#endif
+
+// globale Hilfsfunktionen
+extern CString XMLEscape(CString StringZumEscapen);
+extern void ERiC(BOOL bNurValidieren);
+extern void Ansi2Utf8(CString ansiText, CStringA& utf8Text);
+extern void Utf8toAnsi(CStringA utf8Text, CString& ansiText);
+extern int RegSearchReplace(CString& string, LPCTSTR sSearchExp, LPCTSTR sReplaceExp, CStringArray& csaReplaceCount);	// Helfer für reguläre Ausdrücke
+extern void PrintString(CString Dokumentname, CString Text);

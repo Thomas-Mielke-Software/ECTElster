@@ -1,0 +1,79 @@
+// EricFormularlogik.h : Declaration of the CElsterDlg property page class.
+// CEricFormularlogik : See EricFormularlogik.cpp for implementation.
+//
+// Copyright (C) 2023  Thomas Mielke
+// 
+// Diese Bibliothek ist freie Software; Sie dürfen sie unter den Bedingungen
+// der GNU Lesser General Public License, wie von der Free Software Foundation 
+// veröffentlicht, weiterverteilen und/oder modifizieren; entweder gemäß 
+// Version 2.1 der Lizenz oder (nach Ihrer Option) jeder späteren Version.
+//
+// Diese Bibliothek wird in der Hoffnung weiterverbreitet, daß sie nützlich 
+// sein wird, jedoch OHNE IRGENDEINE GARANTIE, auch ohne die implizierte 
+// Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK.
+// Mehr Details finden Sie in der GNU Lesser General Public License.
+//
+// Sie sollten eine Kopie der GNU Lesser General Public License zusammen mit 
+// dieser Bibliothek erhalten haben; falls nicht, schreiben Sie an die Free 
+// Software Foundation, Inc., 51 Franklin St, 5th Floor, Boston, MA 02110, USA. 
+
+#pragma once
+
+#include "ElsterDlg.h"
+
+// CEricFormularlogik benutzt die ERiC-Bibliothek um entweder die Hinweis- bzw. 
+// Fehlerliste zu befüllen oder aber Daten an Elster zu versenden
+class CEricFormularlogik : public CObject
+{
+	// Dialogfeld-Variablen
+	CString m_Datei;  // Dateipfad zur Elster-Signaturdatei	
+	CString m_Passwort;  // Passwort für Elster-Signaturdatei
+	CString m_EmailAdresse;
+	CString m_Telefon;
+	BOOL m_KorrigierteAnmeldung;
+	BOOL m_BelegeWerdenNachgereicht;
+	BOOL m_VerrechnungDesErstattungsanspruchs;
+	BOOL m_EinzugsermaechtigungWiderrufen;
+
+	// Pointer auf Dialog-Controls
+	CFormularCtrl *m_pFormularCtrl;
+	CEinstellung *m_pEinstellungCtrl;
+	CDokumentCtrl *m_pDokumentCtrl;
+	CQuickList *m_pListe;			// Ersatz für CListCtrl, siehe https://www.codeproject.com/Articles/8112/CQuickList
+
+	// Variablen für die Steuerung von m_Liste 
+	CString m_ListeInhalt[500][5];						// ist owner-drawn
+	CMap<int, int, CString, CString> *m_pListeHinweise;	// nach Validierung werden Einträge des ListCtrl 
+	CMap<int, int, CString, CString> *m_pListeFehler;		// ggf. farbig hervorgehoben und Hinweise/Fehler gezeigt
+	
+#define RENDER_NEUTRAL 0
+#define RENDER_LOG_ZEIGEN1 1
+#define RENDER_LOG_ZEIGEN2 2
+
+public:
+
+	CString m_PinStatus;
+
+	CEricFormularlogik(CString Datei,
+						CString Passwort,
+						CString EmailAdresse,
+						CString Telefon);
+	CString Render(HWND m_hWnd,
+				CFormularCtrl* pFormularCtrl,
+				CEinstellung* pEinstellungCtrl,
+				CDokumentCtrl* pDokumentCtrl,
+				CQuickList* pListe,
+				CMap<int, int, CString, CString> *pListeHinweise,
+				CMap<int, int, CString, CString> *pListeFehler,
+				BOOL bKorrigierteAnmeldung,
+				BOOL bBelegeWerdenNachgereicht,
+				BOOL bVerrechnungDesErstattungsanspruchs,
+				BOOL bEinzugsermaechtigungWiderrufen,
+				CTime &Jetzt,
+				CString &Jahr,
+				CString &Zeitraum,
+				CString &Bundesfinanzamtsnummer,
+				CString &EmpfaengerFinanzamt,
+				CString &MomentanerFormularAnzeigename,
+				BOOL bNurValidieren);
+};

@@ -16,7 +16,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// German (Germany) resources
+// Deutsch (Deutschland) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
 LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
@@ -165,7 +165,7 @@ BEGIN
     PUSHBUTTON      "Zurück",IDCANCEL,496,301,50,14
     LTEXT           "&Datei",IDC_DATEI_STATIC,14,54,72,8
     EDITTEXT        IDC_DATEI,94,52,371,12,ES_AUTOHSCROLL
-    LTEXT           "Voranmeldungs&zeitraum",IDC_STATIC,7,9,91,8
+    LTEXT           "Formular bzw. &Zeitraum",IDC_STATIC,7,9,91,8
     COMBOBOX        IDC_VORANMELDUNGSZEITRAUM,99,7,175,269,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     LTEXT           "senden an &Finanzamt",IDC_FINANZAMT_STATIC,283,9,91,8
     COMBOBOX        IDC_FINANZAMT,376,7,170,269,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
@@ -332,7 +332,7 @@ BEGIN
     IDS_ECTELSTER_PPG_CAPTION "General"
 END
 
-#endif    // German (Germany) resources
+#endif    // Deutsch (Deutschland) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
