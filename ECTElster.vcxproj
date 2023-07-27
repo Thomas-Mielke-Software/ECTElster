@@ -145,6 +145,8 @@
     <ClCompile Include="EinstellungCtrl.cpp" />
     <ClCompile Include="ElsterDlg.cpp" />
     <ClCompile Include="EricFormularlogik.cpp" />
+    <ClCompile Include="EricFormularlogikEUeR.cpp" />
+    <ClCompile Include="EricFormularlogikUStVA.cpp" />
     <ClCompile Include="faliste.cpp" />
     <ClCompile Include="FormularCtrl.cpp" />
     <ClCompile Include="QuickEdit.cpp" />
@@ -173,6 +175,8 @@
     <ClInclude Include="EinstellungCtrl.h" />
     <ClInclude Include="ElsterDlg.h" />
     <ClInclude Include="EricFormularlogik.h" />
+    <ClInclude Include="EricFormularlogikEUeR.h" />
+    <ClInclude Include="EricFormularlogikUStVA.h" />
     <ClInclude Include="FormularCtrl.h" />
     <ClInclude Include="QuickEdit.h" />
     <ClInclude Include="QuickList.h" />

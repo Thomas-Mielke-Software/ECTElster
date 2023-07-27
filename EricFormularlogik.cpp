@@ -29,17 +29,12 @@
 #include "eric_fehlercodes.h"
 #include "eric_types.h"
 
-CEricFormularlogik::CEricFormularlogik(
-	CString Datei,
-	CString Passwort,
-	CString EmailAdresse,
-	CString Telefon)
+#pragma warning(push)
+#pragma warning(disable:26495)  // "lazy" initialisierung in Render()
+CEricFormularlogik::CEricFormularlogik()
 {
-	m_Datei = Datei;
-	m_Passwort = Passwort;
-	m_EmailAdresse = EmailAdresse;
-	m_Telefon = Telefon;
 }
+#pragma warning(pop)
 
 CString CEricFormularlogik::Render(
 								HWND m_hWnd, 
@@ -47,8 +42,12 @@ CString CEricFormularlogik::Render(
 								CEinstellung *pEinstellungCtrl,
 								CDokumentCtrl *pDokumentCtrl,
 								CQuickList* pListe,
-								CMap<int, int, CString, CString>* pListeHinweise,
-								CMap<int, int, CString, CString>* pListeFehler,
+								CMap<int, int, CString, CString> *pListeHinweise,
+								CMap<int, int, CString, CString> *pListeFehler,
+								CString &Datei,
+								CString &Passwort,
+								CString &EmailAdresse,
+								CString &Telefon,
 								BOOL bKorrigierteAnmeldung,
 								BOOL bBelegeWerdenNachgereicht,
 								BOOL bVerrechnungDesErstattungsanspruchs,
@@ -78,6 +77,10 @@ CString CEricFormularlogik::Render(
 	m_pDokumentCtrl	   = pDokumentCtrl;
 
 	// vorverdaute Dialog-Werte
+	m_pDatei = &Datei;
+	m_pPasswort = &Passwort;
+	m_pEmailAdresse = &EmailAdresse;
+	m_pTelefon = &Telefon;
 	m_KorrigierteAnmeldung = bKorrigierteAnmeldung;
 	m_BelegeWerdenNachgereicht = bBelegeWerdenNachgereicht;
 	m_VerrechnungDesErstattungsanspruchs = bVerrechnungDesErstattungsanspruchs;
@@ -99,7 +102,7 @@ CString CEricFormularlogik::Render(
 <ProduktVersion>") + XMLEscape(theApp.GetVersion()) + _T("</ProduktVersion> \
 </Hersteller> \
 <DatenLieferant>") + XMLEscape(m_pEinstellungCtrl->HoleEinstellung(_T("vorname")) + _T(" ") + m_pEinstellungCtrl->HoleEinstellung(_T("name")) + _T("; ")
-	+ m_EmailAdresse) + "</DatenLieferant> \
+	+ EmailAdresse) + "</DatenLieferant> \
 </NutzdatenHeader> \
 <Nutzdaten> \
 <Anmeldungssteuern " + (atoi(Jahr) < 2021 ? _T("art = \"UStVA\"") : _T("xmlns=\"http://finkonsens.de/elster/elsteranmeldung/ustva/v") + Jahr + _T("\"")) + _T(" version=\"") + Jahr + (atoi(Jahr) < 2021 ? _T("01") : _T("")) + _T("\"> \
@@ -109,8 +112,8 @@ CString CEricFormularlogik::Render(
 <Strasse>") + XMLEscape(m_pEinstellungCtrl->HoleEinstellung(_T("strasse"))) + _T("</Strasse> \
 <PLZ>") + XMLEscape(m_pEinstellungCtrl->HoleEinstellung(_T("plz"))) + _T("</PLZ> \
 <Ort>") + XMLEscape(m_pEinstellungCtrl->HoleEinstellung(_T("ort"))) + _T("</Ort> \
-") + (CString)(m_Telefon.IsEmpty() ? _T("") : _T("<Telefon>") + XMLEscape(m_Telefon) + _T("</Telefon>")) + _T(" \
-") + (CString)(m_EmailAdresse.IsEmpty() ? _T("") : _T("<Email>") + XMLEscape(m_EmailAdresse) + _T("</Email>")) + _T(" \
+") + (CString)(Telefon.IsEmpty() ? _T("") : _T("<Telefon>") + XMLEscape(Telefon) + _T("</Telefon>")) + _T(" \
+") + (CString)(EmailAdresse.IsEmpty() ? _T("") : _T("<Email>") + XMLEscape(EmailAdresse) + _T("</Email>")) + _T(" \
 </DatenLieferant> \
 <Steuerfall> \
 <Umsatzsteuervoranmeldung> \
@@ -344,7 +347,7 @@ CString CEricFormularlogik::Render(
 	if (!bNurValidieren)
 	{
 		uint32_t pinErforderlich = 1;
-		rc = EricGetHandleToCertificatePtr(&zertifikat, &pinErforderlich, (LPCTSTR)m_Datei);
+		rc = EricGetHandleToCertificatePtr(&zertifikat, &pinErforderlich, (LPCTSTR)Datei);
 
 		if (rc)
 		{
@@ -359,7 +362,7 @@ CString CEricFormularlogik::Render(
 			goto PufferFreigeben;
 		}
 
-		verschluesselung.pin = m_Passwort;
+		verschluesselung.pin = Passwort;
 		verschluesselung.zertifikatHandle = zertifikat;
 		verschluesselung.abrufCode = NULL;
 		verschluesselung.version = 2;
@@ -520,12 +523,6 @@ CString CEricFormularlogik::Render(
 						CString csText = text->GetText();
 
 						int nErsteZiffer;
-						/*for (nErsteZiffer = csFeldidentifikator.GetLength() - 1; nErsteZiffer >= 0; nErsteZiffer--)
-							if (!isdigit(csFeldidentifikator[nErsteZiffer]))
-							{
-								nErsteZiffer++;
-								break;
-							}*/
 						nErsteZiffer = csFeldidentifikator.Find(_T("Kz"));
 						if (nErsteZiffer >= 0 && nErsteZiffer < csFeldidentifikator.GetLength() - 2)
 						{
@@ -602,7 +599,7 @@ CString CEricFormularlogik::Render(
 						if (AfxMessageBox(Fehlertext, MB_YESNO) == IDYES)
 						{
 							CString DatensatzXMLDatei = m_pEinstellungCtrl->HoleEinstellung(_T("[ElsterExport]ProtokollPfad"));
-							if (DatensatzXMLDatei == _T("")) DatensatzXMLDatei = m_Datei;
+							if (DatensatzXMLDatei == _T("")) DatensatzXMLDatei = Datei;
 							int nPos = DatensatzXMLDatei.ReverseFind(_T('\\'));
 							if (nPos >= 0)
 							{	// neuen Dateinamen an alten Pfad anhängen
@@ -835,7 +832,7 @@ Menü->Ansicht->Einstellungen->pers.Daten und den entsprechenden Wert ändern.");
 		csReturn = Haupttext + LogZeile + Infotext;
 
 		CString PDFDateiNeu = m_pEinstellungCtrl->HoleEinstellung(_T("[ElsterExport]ProtokollPfad"));
-		if (PDFDateiNeu == _T("")) PDFDateiNeu = m_Datei;
+		if (PDFDateiNeu == _T("")) PDFDateiNeu = Datei;
 		int nPos = PDFDateiNeu.ReverseFind(_T('\\'));
 		if (nPos >= 0)
 		{	// neuen Dateinamen an alten Pfad anhängen

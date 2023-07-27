@@ -26,10 +26,10 @@
 class CEricFormularlogik : public CObject
 {
 	// Dialogfeld-Variablen
-	CString m_Datei;  // Dateipfad zur Elster-Signaturdatei	
-	CString m_Passwort;  // Passwort für Elster-Signaturdatei
-	CString m_EmailAdresse;
-	CString m_Telefon;
+	CString *m_pDatei;  // Dateipfad zur Elster-Signaturdatei	
+	CString *m_pPasswort;  // Passwort für Elster-Signaturdatei
+	CString *m_pEmailAdresse;
+	CString *m_pTelefon;
 	BOOL m_KorrigierteAnmeldung;
 	BOOL m_BelegeWerdenNachgereicht;
 	BOOL m_VerrechnungDesErstattungsanspruchs;
@@ -54,10 +54,7 @@ public:
 
 	CString m_PinStatus;
 
-	CEricFormularlogik(CString Datei,
-						CString Passwort,
-						CString EmailAdresse,
-						CString Telefon);
+	CEricFormularlogik();
 	CString Render(HWND m_hWnd,
 				CFormularCtrl* pFormularCtrl,
 				CEinstellung* pEinstellungCtrl,
@@ -65,6 +62,10 @@ public:
 				CQuickList* pListe,
 				CMap<int, int, CString, CString> *pListeHinweise,
 				CMap<int, int, CString, CString> *pListeFehler,
+				CString &Datei,
+				CString &Passwort,
+				CString &EmailAdresse,
+				CString &Telefon,
 				BOOL bKorrigierteAnmeldung,
 				BOOL bBelegeWerdenNachgereicht,
 				BOOL bVerrechnungDesErstattungsanspruchs,

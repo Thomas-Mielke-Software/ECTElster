@@ -24,6 +24,7 @@
 #include "einstellungctrl.h"
 #include "dokumentctrl.h"
 #include "afxcmn.h"
+#include "resource.h"
 #include "AboutDlg.h"
 #include "QuickList.h"  // https://www.codeproject.com/Articles/8112/CQuickList
 

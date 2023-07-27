@@ -20,6 +20,8 @@
 #include "ECTElster.h"
 #include "ElsterDlg.h"
 #include "EricFormularlogik.h"
+#include "EricFormularlogikUStVA.h"
+#include "EricFormularlogikEUeR.h"
 #include "tmfanr.h"
 #include "XMLite.h"  // https://www.codeproject.com/Articles/3426/XMLite-simple-XML-parser
 
@@ -697,15 +699,15 @@ Vielleicht ist das falsche Buchungsjahr geöffnet oder der falsche Zeitraum ausge
 	}
 	CString EmpfaengerFinanzamt = Bundesfinanzamtsnummer.Left(4);
 
+	CEricFormularlogik* pEric;
 	CString MomentanerFormularAnzeigename;
 	m_VoranmeldungszeitraumCtrl.GetLBText(m_VoranmeldungszeitraumCtrl.GetCurSel(), MomentanerFormularAnzeigename);
+	if (MomentanerFormularAnzeigename.Left(12) == "E/Ü-Rechnung")  // eine Art dependency injection
+		pEric = new CEricFormularlogikEUeR();
+	else
+		pEric = new CEricFormularlogikUStVA();
 
-	CEricFormularlogik eric(
-		m_Datei,
-		m_Passwort,
-		m_EmailAdresse,
-		m_Telefon);
-	CString csErgebnis = eric.Render(
+	CString csErgebnis = pEric->Render(
 		m_hWnd,
 		&m_FormularCtrl,
 		&m_EinstellungCtrl,
@@ -713,6 +715,10 @@ Vielleicht ist das falsche Buchungsjahr geöffnet oder der falsche Zeitraum ausge
 		&m_Liste,
 		&m_ListeHinweise,
 		&m_ListeFehler,
+		m_Datei,
+		m_Passwort,
+		m_EmailAdresse,
+		m_Telefon,
 		m_KorrigierteAnmeldung,
 		m_BelegeWerdenNachgereicht,
 		m_VerrechnungDesErstattungsanspruchs,
@@ -725,6 +731,7 @@ Vielleicht ist das falsche Buchungsjahr geöffnet oder der falsche Zeitraum ausge
 		MomentanerFormularAnzeigename,
 		bNurValidieren);
 
+	delete pEric;
 
 	if (!csErgebnis.IsEmpty())
 	{

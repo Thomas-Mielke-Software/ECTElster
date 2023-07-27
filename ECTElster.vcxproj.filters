@@ -66,6 +66,12 @@
     <ClCompile Include="EricFormularlogik.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="EricFormularlogikUStVA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EricFormularlogikEUeR.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="ECTElster.def">
@@ -128,6 +134,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EricFormularlogik.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EricFormularlogikUStVA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EricFormularlogikEUeR.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
