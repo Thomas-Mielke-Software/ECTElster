@@ -22,5 +22,11 @@
 class CEricFormularlogikEUeR :
     public CEricFormularlogik
 {
+    virtual CString GetDatenteil();
+    virtual CString GetLoginfo();
+    virtual void UebertragungAbschliessen();
+
+private:
+    CString m_GewinnMerken;
 };
 

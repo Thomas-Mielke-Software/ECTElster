@@ -17,4 +17,21 @@
 // Software Foundation, Inc., 51 Franklin St, 5th Floor, Boston, MA 02110, USA. 
 
 #include "stdafx.h"
+#include "ECTElster.h"
 #include "EricFormularlogikEUeR.h"
+
+CString CEricFormularlogikEUeR::GetDatenteil()
+{
+	CString DatenTeil = "";
+	return DatenTeil;
+}
+
+CString CEricFormularlogikEUeR::GetLoginfo()
+{
+	return _T(" / EÜR-Gewinn: ") + m_GewinnMerken + _T(" / Jahr: ") + m_Jahr;
+}
+
+void CEricFormularlogikEUeR::UebertragungAbschliessen()
+{
+
+}

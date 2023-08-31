@@ -25,6 +25,7 @@
 // Fehlerliste zu befüllen oder aber Daten an Elster zu versenden
 class CEricFormularlogik : public CObject
 {
+public:
 	// Dialogfeld-Variablen
 	CString *m_pDatei;  // Dateipfad zur Elster-Signaturdatei	
 	CString *m_pPasswort;  // Passwort für Elster-Signaturdatei
@@ -45,6 +46,18 @@ class CEricFormularlogik : public CObject
 	CString m_ListeInhalt[500][5];						// ist owner-drawn
 	CMap<int, int, CString, CString> *m_pListeHinweise;	// nach Validierung werden Einträge des ListCtrl 
 	CMap<int, int, CString, CString> *m_pListeFehler;		// ggf. farbig hervorgehoben und Hinweise/Fehler gezeigt
+
+	// sonstige
+	CTime m_Jetzt;
+	CString m_EmpfaengerFinanzamt;
+	CString m_EmailAdresse;
+	CString m_Telefon;
+	CString m_Jahr;
+	CString m_Zeitraum;
+	CString m_Bundesfinanzamtsnummer;
+	CString m_HerstellerID;
+	CString m_MomentanerFormularAnzeigename;
+	CString m_AppVersion;
 	
 #define RENDER_NEUTRAL 0
 #define RENDER_LOG_ZEIGEN1 1
@@ -77,4 +90,9 @@ public:
 				CString &EmpfaengerFinanzamt,
 				CString &MomentanerFormularAnzeigename,
 				BOOL bNurValidieren);
+
+	// virtuelle Funktionen zur Beschickung der unterschiedlichen Formulare
+	virtual CString GetDatenteil() { return (CString)""; };
+	virtual CString GetLoginfo() { return (CString)""; };
+	virtual void UebertragungAbschliessen() {};
 };
