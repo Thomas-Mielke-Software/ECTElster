@@ -95,4 +95,6 @@ public:
 	virtual CString GetDatenteil() { return (CString)""; };
 	virtual CString GetLoginfo() { return (CString)""; };
 	virtual void UebertragungAbschliessen() {};
+	virtual CString GetVerfahren() { return (CString)""; };
+	virtual CString GetDatenart() { return (CString)""; };
 };

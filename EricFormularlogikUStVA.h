@@ -25,6 +25,8 @@ class CEricFormularlogikUStVA :
     virtual CString GetDatenteil();
     virtual CString GetLoginfo();
     virtual void UebertragungAbschliessen();
+    virtual CString GetVerfahren() { return (CString)_T("ElsterAnmeldung"); };
+    virtual CString GetDatenart() { return (CString)_T("UStVA"); };
 
 private:
     CString m_FeldWert83Merken;

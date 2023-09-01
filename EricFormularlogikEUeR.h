@@ -25,6 +25,8 @@ class CEricFormularlogikEUeR :
     virtual CString GetDatenteil();
     virtual CString GetLoginfo();
     virtual void UebertragungAbschliessen();
+    virtual CString GetVerfahren() { return (CString)_T("ElsterErklaerung"); };
+    virtual CString GetDatenart() { return (CString)_T("EUER"); };
 
 private:
     CString m_GewinnMerken;

@@ -317,7 +317,7 @@ CString CEricFormularlogik::Render(
 		Ansi2Utf8(Datenlieferant, utf8Datenlieferant);
 		CStringA utf8DatenTeil;
 		Ansi2Utf8(DatenTeil, utf8DatenTeil);
-		rc = EricCreateTHPtr(utf8DatenTeil.GetBuffer(0), _T("ElsterAnmeldung"), _T("UStVA"), _T("send-Auth"), Testmerker, HerstellerID, utf8Datenlieferant.GetBuffer(0), _T("2.3"), _T(""), transferheaderPufferHandle);
+		rc = EricCreateTHPtr(utf8DatenTeil.GetBuffer(0), GetVerfahren(), GetDatenart(), _T("send-Auth"), Testmerker, HerstellerID, utf8Datenlieferant.GetBuffer(0), _T("2.3"), _T(""), transferheaderPufferHandle);
 		if (rc)
 		{
 			//			EricHoleFehlerText(rc, fehlerPufferHandle);
