@@ -39,6 +39,7 @@ CEricFormularlogik::CEricFormularlogik()
 CString CEricFormularlogik::Render(
 								HWND m_hWnd, 
 								CFormularCtrl *pFormularCtrl,
+								CString &FormularDateipfad,
 								CEinstellung *pEinstellungCtrl,
 								CDokumentCtrl *pDokumentCtrl,
 								CQuickList* pListe,
@@ -73,6 +74,7 @@ CString CEricFormularlogik::Render(
 
 	// EC&T-ActiveX-Controls
 	m_pFormularCtrl	   = pFormularCtrl;
+	m_FormularDateipfad = FormularDateipfad;
 	m_pEinstellungCtrl = pEinstellungCtrl;
 	m_pDokumentCtrl	   = pDokumentCtrl;
 

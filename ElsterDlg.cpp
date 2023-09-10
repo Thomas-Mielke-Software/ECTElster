@@ -402,16 +402,15 @@ void CElsterDlg::UpdateListe(BOOL bNurSpaltenbreitenAnpassen)
 		if (bNurSpaltenbreitenAnpassen) return;	// --> hier schon raus, wenn sich der Inhalt nicht geändert hat
 		
 		// Formular-Dateipfad holen
-		CString FormularDateipfad;
-		FormularDateipfad = m_FormularCtrl.HoleFormularpfad(m_VoranmeldungszeitraumCtrl.GetItemData(m_VoranmeldungszeitraumCtrl.GetCurSel()));
-		if (!FormularDateipfad.GetLength())
+		m_FormularDateipfad = m_FormularCtrl.HoleFormularpfad(m_VoranmeldungszeitraumCtrl.GetItemData(m_VoranmeldungszeitraumCtrl.GetCurSel()));
+		if (!m_FormularDateipfad.GetLength())
 		{
 			AfxMessageBox(_T("Ich kann den Dateipfad des Formulars nicht ermitteln. Bitte überprüfen, ob die entsprechenden UStVA-Formulare für das aktuelle Jahr installiert sind. Die sind üblicherweise in der aktuellen Version des EC&T-Hauptprogramms enthalten oder sind zum Entpacken ins Programmverzeichnis in Form eines Zip-Archivs auf www.easyct.de unter Downloads -> Formular-Archiv verfügbar. Die Formulare für das neue Jahr werden üblicher Weise im Laufe des Januars über ein Hauptprogramm-Update verfügbar."));
 			return;
 		}
 
 		// Formular vorbereiten
-		m_FormularCtrl.WaehleFormular(FormularDateipfad);
+		m_FormularCtrl.WaehleFormular(m_FormularDateipfad);
 
 		// Formularlayout in Liste übertragen
 		// Spalten: 1. EC&T FeldID Bemessungsgrundlage, 2. EC&T FeldID Steuer, 
@@ -710,6 +709,7 @@ Vielleicht ist das falsche Buchungsjahr geöffnet oder der falsche Zeitraum ausge
 	CString csErgebnis = pEric->Render(
 		m_hWnd,
 		&m_FormularCtrl,
+		m_FormularDateipfad,
 		&m_EinstellungCtrl,
 		&m_DokumentCtrl,
 		&m_Liste,

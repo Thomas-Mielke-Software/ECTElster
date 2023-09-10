@@ -38,6 +38,7 @@ public:
 
 	// Pointer auf Dialog-Controls
 	CFormularCtrl *m_pFormularCtrl;
+	CString m_FormularDateipfad;    // ... des aktuell im Dialog ausgewählten Formulars
 	CEinstellung *m_pEinstellungCtrl;
 	CDokumentCtrl *m_pDokumentCtrl;
 	CQuickList *m_pListe;			// Ersatz für CListCtrl, siehe https://www.codeproject.com/Articles/8112/CQuickList
@@ -70,6 +71,7 @@ public:
 	CEricFormularlogik();
 	CString Render(HWND m_hWnd,
 				CFormularCtrl* pFormularCtrl,
+				CString &FormularDateipfad,
 				CEinstellung* pEinstellungCtrl,
 				CDokumentCtrl* pDokumentCtrl,
 				CQuickList* pListe,

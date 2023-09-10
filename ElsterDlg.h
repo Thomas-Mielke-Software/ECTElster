@@ -60,6 +60,7 @@ private:
 
 	// Controls
 	CFormularCtrl m_FormularCtrl;
+	CString m_FormularDateipfad;    // ... des aktuell ausgewählten Formulars
 	CEinstellung m_EinstellungCtrl;
 	CDokumentCtrl m_DokumentCtrl;
 	CComboBox m_VoranmeldungszeitraumCtrl;

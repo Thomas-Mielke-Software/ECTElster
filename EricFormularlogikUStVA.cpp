@@ -33,10 +33,10 @@ CString CEricFormularlogikUStVA::GetDatenteil()
 <ProduktVersion>") + XMLEscape(m_AppVersion) + _T("</ProduktVersion> \
 </Hersteller> \
 <DatenLieferant>") + XMLEscape(m_pEinstellungCtrl->HoleEinstellung(_T("vorname")) + _T(" ") + m_pEinstellungCtrl->HoleEinstellung(_T("name")) + _T("; ")
-	+ m_EmailAdresse) + _T("</DatenLieferant> \
+	+ m_EmailAdresse) + "</DatenLieferant> \
 </NutzdatenHeader> \
 <Nutzdaten> \
-<Anmeldungssteuern ") + (atoi(m_Jahr) < 2021 ? _T("art = \"UStVA\"") : _T("xmlns=\"http://finkonsens.de/elster/elsteranmeldung/ustva/v") + m_Jahr + _T("\"")) + _T(" version=\"") + m_Jahr + (atoi(m_Jahr) < 2021 ? _T("01") : _T("")) + _T("\"> \
+<Anmeldungssteuern " + (atoi(m_Jahr) < 2021 ? _T("art = \"UStVA\"") : _T("xmlns=\"http://finkonsens.de/elster/elsteranmeldung/ustva/v") + m_Jahr + _T("\"")) + _T(" version=\"") + m_Jahr + (atoi(m_Jahr) < 2021 ? _T("01") : _T("")) + _T("\"> \
 <Erstellungsdatum>") + m_Jetzt.Format(_T("%Y%m%d")) + _T("</Erstellungsdatum> \
 <DatenLieferant> \
 <Name>") + XMLEscape(m_pEinstellungCtrl->HoleEinstellung(_T("vorname")) + _T(" ") + m_pEinstellungCtrl->HoleEinstellung(_T("name"))) + _T("</Name> \

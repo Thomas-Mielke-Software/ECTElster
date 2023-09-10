@@ -19,6 +19,7 @@
 #include "stdafx.h"
 #include "ECTElster.h"
 #include "EricFormularlogikEUeR.h"
+#include "XMLite.h"  // https://www.codeproject.com/Articles/3426/XMLite-simple-XML-parser
 
 // TODO: E6000602 Rechtsform in <Allg> als Enumeration!!
 // TODO: E6000603 Einkunftsart: Land- und Forstwirtschaft = 1, Gewerbebetrieb = 2, Selbständige Arbeit = 3
@@ -52,15 +53,10 @@ CString CEricFormularlogikEUeR::GetDatenteil()
         <E6000603>3</E6000603> \r\n\
         <E6000604>1</E6000604> \r\n\
         <E6000019>2</E6000019> \r\n\
-    </Allg>\r\n\
-	<BEin>\r\n\
-		<USt_StFrei>\r\n\
-			<Sum>\r\n\
-			<E6000501>1000,00</E6000501>\r\n\
-			</Sum>\r\n\
-		</USt_StFrei>\r\n\
-	</BEin>\r\n\
-	<BAus>\r\n\
+    </Allg>\r\n"
++ Summe("BEin") +
+// + Summe("BAus")
+"	<BAus>\r\n\
         <Ware_Rohstoff_Hilfsstoff>\r\n\
             <Sum>\r\n\
             <E6001601>500,00</E6001601>\r\n\
@@ -96,4 +92,87 @@ CString CEricFormularlogikEUeR::GetLoginfo()
 void CEricFormularlogikEUeR::UebertragungAbschliessen()
 {
 
+}
+
+CString CEricFormularlogikEUeR::Summe(CString BEinBAus)
+{
+    CString Xml = "\
+	<" + BEinBAus + ">\r\n";
+
+    // Formulardefinitionsdatei in xmldoc laden
+    XDoc xmldoc;
+    xmldoc.LoadFile(m_FormularDateipfad);
+
+    LPXNode xml = xmldoc.GetRoot();
+    if (xml)
+    {
+        LPXNode felder = NULL;
+        felder = xml->Find("felder");
+        if (felder)
+        {
+            int i;
+            for (i = 0; i < felder->GetChildCount(); i++)
+            {
+                int nID = 0;
+                CString csElsterFeldname;
+                CString csTyp;
+                LPXNode feld;
+                CString csFeldname;
+                feld = felder->GetChild(i);
+                csFeldname = feld->GetChildValue(_T("name"));
+                nID = atoi(feld->GetAttrValue("id"));
+                csTyp = feld->GetAttrValue("typ");
+                csElsterFeldname = feld->GetAttrValue("elsterfeldname");
+                int nTokenPos = 0;
+                CString csElsterTyp = csElsterFeldname.Tokenize(_T("/"), nTokenPos);
+                CString csElsterKurzbezeichnung = nTokenPos == -1 ? "" : csElsterFeldname.Tokenize(_T("/"), nTokenPos);
+                CString csElsterSumEinz = nTokenPos == -1 ? "" : csElsterFeldname.Tokenize(_T("/"), nTokenPos);    // "Sum" oder "Einz" -- dieses Plugin verarbeitet nur Summen, keine Einzelbeträge
+                CString csElsterName = nTokenPos == -1 ? "" : csElsterFeldname.Tokenize(_T("/"), nTokenPos);
+                if ((csTyp == "Einnahmen" && csElsterTyp != "BEin") || (csTyp == "Ausgaben" && csElsterTyp != "BAus"))
+                {
+                    AfxMessageBox(csTyp + _T("-Feld '") + csFeldname + _T("' hat in der .ecf-Datei keinen passenden Elster-Feldnamen. Bitte wenden Sie sich an den Softwarehersteller."));  // TODO: Fehlermeldung in Liste schreiben
+                    continue;
+                }
+                if (csTyp == "Einnahmen" || csTyp == "Ausgaben")
+                {
+                    if (csElsterKurzbezeichnung.IsEmpty())
+                    {
+                        AfxMessageBox(csTyp + _T("-Feld '") + csFeldname + _T("' hat in der .ecf-Datei keine Kurzbezeichnung. Bitte wenden Sie sich an den Softwarehersteller."));  // TODO: Fehlermeldung in Liste schreiben
+                        continue;
+                    }
+                    if (csElsterSumEinz.IsEmpty())
+                    {
+                        AfxMessageBox(csTyp + _T("-Feld '") + csFeldname + _T("' hat in der .ecf-Datei keine Summen/Einzelbetrags-Unterscheidung ('Sum'|'Einz). Bitte wenden Sie sich an den Softwarehersteller."));  // TODO: Fehlermeldung in Liste schreiben
+                        continue;
+                    }
+                    if (csElsterSumEinz != "Sum")
+                    {
+                        AfxMessageBox(csTyp + _T("-Feld '") + csFeldname + _T("' hat in der .ecf-Datei eine falsche Summen/Einzelbetrags-Unterscheidung (") + csElsterSumEinz + _T(" statt 'Sum'). Bitte wenden Sie sich an den Softwarehersteller."));  // TODO: Fehlermeldung in Liste schreiben
+                        continue;
+                    }
+                    if (csElsterFeldname.IsEmpty())
+                    {
+                        AfxMessageBox(csTyp + _T("-Feld '") + csFeldname + _T("' hat in der .ecf-Datei keinen Elster-Feldnamen (z.B. 'E6000801'). Bitte wenden Sie sich an den Softwarehersteller."));  // TODO: Fehlermeldung in Liste schreiben
+                        continue;
+                    }
+                }
+                if (csTyp == "Einnahmen")
+                {
+
+
+                    Xml += _T("\
+        <") + csElsterKurzbezeichnung + _T(">\r\n\
+			<") + csElsterSumEinz  + _T(">\r\n\
+			<") + csElsterFeldname + _T(">") + m_pFormularCtrl->HoleFeldwertUeberID(nID) + _T("</") + csElsterFeldname + _T(">\r\n\
+			</") + csElsterSumEinz + _T(">\r\n\
+		</") + csElsterKurzbezeichnung + _T(">\r\n");
+                }
+            }
+        }
+    }
+
+    Xml += "\
+    </" + BEinBAus + ">\r\n";
+
+    return Xml;
 }
