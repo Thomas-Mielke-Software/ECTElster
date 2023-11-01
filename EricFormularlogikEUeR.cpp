@@ -54,9 +54,9 @@ CString CEricFormularlogikEUeR::GetDatenteil()
         <E6000604>1</E6000604> \r\n\
         <E6000019>2</E6000019> \r\n\
     </Allg>\r\n"
-+ Summe("BEin") +
-// + Summe("BAus")
-"	<BAus>\r\n\
++ Summe()
+ +
+    /*"	<BAus>\r\n\
         <Ware_Rohstoff_Hilfsstoff>\r\n\
             <Sum>\r\n\
             <E6001601>500,00</E6001601>\r\n\
@@ -76,8 +76,8 @@ CString CEricFormularlogikEUeR::GetDatenteil()
             <E6007202>500,00</E6007202>\r\n\
         </Stpfl_GuV>\r\n\
     </Ermittlung_Gewinn>\r\n\
-</EUER>\r\n\
-</E77>\r\n\
+</EUER>\r\n\*/
+"</E77>\r\n\
 </Nutzdaten>\r\n\
 </Nutzdatenblock>\r\n\
 </DatenTeil>");
@@ -94,85 +94,66 @@ void CEricFormularlogikEUeR::UebertragungAbschliessen()
 
 }
 
-CString CEricFormularlogikEUeR::Summe(CString BEinBAus)
+CString CEricFormularlogikEUeR::Summe()
 {
-    CString Xml = "\
-	<" + BEinBAus + ">\r\n";
-
     // Formulardefinitionsdatei in xmldoc laden
     XDoc xmldoc;
     xmldoc.LoadFile(m_FormularDateipfad);
 
-    LPXNode xml = xmldoc.GetRoot();
-    if (xml)
+    LPXNode xmlIn = xmldoc.GetRoot();  // XML-Input von der .eca-Datei
+    XNode xmlOut;  // xml-Ausgabe für ERiC (root node)
+
+    if (xmlIn)
     {
         LPXNode felder = NULL;
-        felder = xml->Find("felder");
+        felder = xmlIn->Find("felder");
         if (felder)
         {
-            int i;
-            for (i = 0; i < felder->GetChildCount(); i++)
+            for (const auto& feld : felder->GetChilds())
             {
                 int nID = 0;
                 CString csElsterFeldname;
                 CString csTyp;
-                LPXNode feld;
                 CString csFeldname;
-                feld = felder->GetChild(i);
-                csFeldname = feld->GetChildValue(_T("name"));
+                CString csFeldwert;
                 nID = atoi(feld->GetAttrValue("id"));
+                csFeldwert = m_pFormularCtrl->HoleFeldwertUeberID(nID);
+                if (csFeldwert.IsEmpty()) continue;  // keine XML-Elemente für leere Feldwerte bauen
+                csFeldname = feld->GetChildValue(_T("name"));
                 csTyp = feld->GetAttrValue("typ");
                 csElsterFeldname = feld->GetAttrValue("elsterfeldname");
+
+                // Elster-Feldnamen auseinanderpflücken und in vector packen
                 int nTokenPos = 0;
-                CString csElsterTyp = csElsterFeldname.Tokenize(_T("/"), nTokenPos);
-                CString csElsterKurzbezeichnung = nTokenPos == -1 ? "" : csElsterFeldname.Tokenize(_T("/"), nTokenPos);
-                CString csElsterSumEinz = nTokenPos == -1 ? "" : csElsterFeldname.Tokenize(_T("/"), nTokenPos);    // "Sum" oder "Einz" -- dieses Plugin verarbeitet nur Summen, keine Einzelbeträge
-                CString csElsterName = nTokenPos == -1 ? "" : csElsterFeldname.Tokenize(_T("/"), nTokenPos);
-                if ((csTyp == "Einnahmen" && csElsterTyp != "BEin") || (csTyp == "Ausgaben" && csElsterTyp != "BAus"))
-                {
-                    AfxMessageBox(csTyp + _T("-Feld '") + csFeldname + _T("' hat in der .ecf-Datei keinen passenden Elster-Feldnamen. Bitte wenden Sie sich an den Softwarehersteller."));  // TODO: Fehlermeldung in Liste schreiben
-                    continue;
-                }
-                if (csTyp == "Einnahmen" || csTyp == "Ausgaben")
-                {
-                    if (csElsterKurzbezeichnung.IsEmpty())
-                    {
-                        AfxMessageBox(csTyp + _T("-Feld '") + csFeldname + _T("' hat in der .ecf-Datei keine Kurzbezeichnung. Bitte wenden Sie sich an den Softwarehersteller."));  // TODO: Fehlermeldung in Liste schreiben
-                        continue;
-                    }
-                    if (csElsterSumEinz.IsEmpty())
-                    {
-                        AfxMessageBox(csTyp + _T("-Feld '") + csFeldname + _T("' hat in der .ecf-Datei keine Summen/Einzelbetrags-Unterscheidung ('Sum'|'Einz). Bitte wenden Sie sich an den Softwarehersteller."));  // TODO: Fehlermeldung in Liste schreiben
-                        continue;
-                    }
-                    if (csElsterSumEinz != "Sum")
-                    {
-                        AfxMessageBox(csTyp + _T("-Feld '") + csFeldname + _T("' hat in der .ecf-Datei eine falsche Summen/Einzelbetrags-Unterscheidung (") + csElsterSumEinz + _T(" statt 'Sum'). Bitte wenden Sie sich an den Softwarehersteller."));  // TODO: Fehlermeldung in Liste schreiben
-                        continue;
-                    }
-                    if (csElsterFeldname.IsEmpty())
-                    {
-                        AfxMessageBox(csTyp + _T("-Feld '") + csFeldname + _T("' hat in der .ecf-Datei keinen Elster-Feldnamen (z.B. 'E6000801'). Bitte wenden Sie sich an den Softwarehersteller."));  // TODO: Fehlermeldung in Liste schreiben
-                        continue;
-                    }
-                }
-                if (csTyp == "Einnahmen")
-                {
+                std::vector<CString> ElsterFeldnamenselemente;
+                CString csElem;  // jeweiliges Element im durch '/' getrennten 'Pfad'
+                while ((csElem = csElsterFeldname.Tokenize(_T("/"), nTokenPos)) != "")
+                    ElsterFeldnamenselemente.push_back(csElem);
 
+                // gemäß Elster-Feldnamen in XML-Baumstruktur herabsteigen und ggf neu einsortieren (absteigend)
+                LPXNode node = &xmlOut;
+                for (const auto& csEbene : ElsterFeldnamenselemente)
+                {
+                    LPXNode foundNode = node->Find(csEbene);
+                    if (foundNode)          // existiert Pfadebene bereits im Baum?
+                        node = foundNode;   // dann einfach herabsteigen
+                    else
+                    {                       // ansonsten auf dieser Ebene einsortieren
+                        // XNodes nodes = node->GetChilds();
+                        // node->insert
+                        // (
+                        //     std::upper_bound(nodes.begin(), nodes.end(), ),
+                        //     item
+                        // );
 
-                    Xml += _T("\
-        <") + csElsterKurzbezeichnung + _T(">\r\n\
-			<") + csElsterSumEinz  + _T(">\r\n\
-			<") + csElsterFeldname + _T(">") + m_pFormularCtrl->HoleFeldwertUeberID(nID) + _T("</") + csElsterFeldname + _T(">\r\n\
-			</") + csElsterSumEinz + _T(">\r\n\
-		</") + csElsterKurzbezeichnung + _T(">\r\n");
+                        node = node->AppendChild(csEbene);  // in neu angehängte Ebene herabsteigen
+                    }
                 }
+
+                if (node != &xmlOut)  // wenn Reise durch den Baum erfolgreich, dann Wert eintragen
+                    node->value = csFeldwert;
             }
         }
     }
-
-    Xml += "\
-    </" + BEinBAus + ">\r\n";
-
-    return Xml;
+    return xmlOut.GetXML();
 }

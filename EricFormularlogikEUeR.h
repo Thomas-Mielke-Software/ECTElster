@@ -32,6 +32,6 @@ private:
     CString m_GewinnMerken;
 
     // interne Hilfsfunktion
-    CString Summe(CString BEinBAus);  // "BEin" bei Betriebseinnahmen, "BAus" bei Betriebsausgaben
+    CString Summe();
 };
 
