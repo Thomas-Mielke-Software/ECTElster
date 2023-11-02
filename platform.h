@@ -101,9 +101,7 @@
 #   define LINUX_OS
 
 #   ifndef PLATFORM_NAME
-#       if defined(ARCH_CPU_X86) && defined(ARCH_BIT_32)
-#           define PLATFORM_NAME "Linux/x86"
-#       elif defined(ARCH_CPU_X86) && defined(ARCH_BIT_64)
+#       if defined(ARCH_CPU_X86) && defined(ARCH_BIT_64)
 #           define PLATFORM_NAME "Linux/x86-64"
 #       elif defined(ARCH_CPU_POWER)
 #           define PLATFORM_NAME "Linux/PPC"

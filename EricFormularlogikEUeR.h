@@ -18,7 +18,9 @@
 // Software Foundation, Inc., 51 Franklin St, 5th Floor, Boston, MA 02110, USA. 
 
 #pragma once
+#include "XMLite.h"  // https://www.codeproject.com/Articles/3426/XMLite-simple-XML-parser
 #include "EricFormularlogik.h"
+
 class CEricFormularlogikEUeR :
     public CEricFormularlogik
 {
@@ -32,6 +34,6 @@ private:
     CString m_GewinnMerken;
 
     // interne Hilfsfunktion
-    CString Summe();
+    void WerteAusEcaFormularGenerieren(LPXNode pXmlOut);
+    LPXNode ZuXmlBaumHinzufuegen(LPXNode pEricXml, const CString &csElsterFeldname, const CString &csFeldwert);
 };
-

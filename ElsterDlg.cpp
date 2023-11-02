@@ -644,20 +644,6 @@ void CElsterDlg::ERiC(BOOL bNurValidieren = FALSE)
 	Zeitraum.Format(_T("%-02.2d"), nZeitraum);
 	CString Jahr;
 	Jahr.Format(_T("%-0.0d"), (int)m_DokumentCtrl.GetJahr());
-	// timecheck
-	CTime Jetzt = CTime::GetCurrentTime();
-	if (Jetzt - CTime(m_DokumentCtrl.GetJahr(), nZeitraum <= 12 ? nZeitraum : (nZeitraum - 41) * 3 + 1, 1, 0, 0, 0)
-	> CTimeSpan(180, 0, 0, 0))
-	{
-		int n;
-		if (!bNurValidieren && (n = AfxMessageBox(_T("Die Frist für die Abgabe der UST-Voranmeldung für den ausgewählten Zeitraum ist schon seit einiger Zeit verstrichen. \
-Vielleicht ist das falsche Buchungsjahr geöffnet oder der falsche Zeitraum ausgewählt? Soll die Voranmeldung trotzdem verschickt werden?"), MB_YESNO)) != IDYES)
-		{
-			m_VoranmeldungszeitraumCtrl.SetFocus();
-			return;
-		}
-	}
-	//CString Steuernummer;
 	int nBundesfinanzamtsnummer = m_FinanzamtCtrl.GetItemData(m_FinanzamtCtrl.GetCurSel());	// Index speichern, um darüber bei Verarbeitung den Pfad zu gewinnen
 	if (nBundesfinanzamtsnummer <= 0 || nBundesfinanzamtsnummer >= 10000)
 	{
@@ -700,11 +686,32 @@ Vielleicht ist das falsche Buchungsjahr geöffnet oder der falsche Zeitraum ausge
 
 	CEricFormularlogik* pEric;
 	CString MomentanerFormularAnzeigename;
+	CTime Jetzt = CTime::GetCurrentTime();
 	m_VoranmeldungszeitraumCtrl.GetLBText(m_VoranmeldungszeitraumCtrl.GetCurSel(), MomentanerFormularAnzeigename);
 	if (MomentanerFormularAnzeigename.Left(12) == "E/Ü-Rechnung")  // eine Art dependency injection
+	{
+		if (!bNurValidieren && MomentanerFormularAnzeigename.Right(4) != Jahr)
+		{
+			AfxMessageBox("Das ausgewählte Formular '" + MomentanerFormularAnzeigename + "' passt nicht zum Buchungsjahr " + Jahr + " des geöffneten Dokuments. Fals das Buchungsjahr falsch gesetzt wurde, kann es in den Einstellungen -> Allgemein (rechts bei den Dokumenteigenschaften) korrigiert werden.");
+			return;
+		}
 		pEric = new CEricFormularlogikEUeR();
+	}
 	else
+	{
+		if (Jetzt - CTime(m_DokumentCtrl.GetJahr(), nZeitraum <= 12 ?  // check nach möglicherweise falschem Voranmeldungszeitraum
+			nZeitraum : (nZeitraum - 41) * 3 + 1, 1, 0, 0, 0) > CTimeSpan(180, 0, 0, 0))
+		{
+			int n;
+			if (!bNurValidieren && (n = AfxMessageBox(_T("Die Frist für die Abgabe der UST-Voranmeldung für den ausgewählten Zeitraum ist schon seit einiger Zeit verstrichen. \
+Vielleicht ist das falsche Buchungsjahr geöffnet oder der falsche Zeitraum ausgewählt? Soll die Voranmeldung trotzdem verschickt werden?"), MB_YESNO)) != IDYES)
+			{
+				m_VoranmeldungszeitraumCtrl.SetFocus();
+				return;
+			}
+		}
 		pEric = new CEricFormularlogikUStVA();
+	}
 
 	CString csErgebnis = pEric->Render(
 		m_hWnd,

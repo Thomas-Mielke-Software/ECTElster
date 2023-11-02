@@ -338,7 +338,7 @@ CString CEricFormularlogik::Render(
 	// Daten verschicken
 	rc = EricBearbeiteVorgangPtr(
 		EricRueckgabepufferInhalt(transferheaderPufferHandle),
-		(LPCTSTR)((CString)_T("UStVA_") + Jahr),
+		(LPCTSTR)(GetDatenart() + _T("_") + Jahr),
 		bNurValidieren ? ERIC_VALIDIERE | ERIC_PRUEFE_HINWEISE : ERIC_VALIDIERE | ERIC_SENDE | ERIC_DRUCKE,
 		&druckEinstellungen,
 		bNurValidieren ? NULL : &verschluesselung,
@@ -512,7 +512,10 @@ CString CEricFormularlogik::Render(
 
 			if (!bNurValidieren)
 			{
-				Fehlertext += _T(" Bitte überprüfen Sie die rot unterlegten Beträge bzw. Meldungen im Einzelnen noch einmal. Insbesondere bei Buchungen mit dem Leistungsempfänger als Steuerschuldner und innergem. Erwerben kann es zu Unstimmigkeiten kommen. Die Such-Funktion auf www.easyct.de kann hier hilfreich sein. Außerdem stellen Sie bitte sicher, dass in den Einstellungen unter pers. Angaben ein korrekter Name eingetragen ist in der Form Vorname - Leerzeichen - Nachname.\r\n\r\nDetails anzeigen?");
+				Fehlertext += _T(" Bitte überprüfen Sie die rot unterlegten Beträge bzw. Meldungen im Einzelnen noch einmal.");
+				if (GetDatenart() == "UStVA")
+					Fehlertext += _T(" Insbesondere bei Buchungen mit dem Leistungsempfänger als Steuerschuldner und innergem. Erwerben kann es zu Unstimmigkeiten kommen.");
+				Fehlertext += _T(" Die Such - Funktion auf www.easyct.de kann hier hilfreich sein.Außerdem stellen Sie bitte sicher, dass in den Einstellungen unter pers.Angaben ein korrekter Name eingetragen ist in der Form Vorname - Leerzeichen - Nachname.\r\n\r\nDetails anzeigen ? ");
 				if (AfxMessageBox(Fehlertext, MB_YESNO) == IDYES)
 				{
 					if (ergebnisPuffer)
