@@ -19,12 +19,15 @@
 
 #pragma once
 #include "EricFormularlogik.h"
+
 class CEricFormularlogikUStVA :
     public CEricFormularlogik
 {
+    DECLARE_DYNAMIC(CEricFormularlogikUStVA)
     virtual CString GetDatenteil();
     virtual CString GetLoginfo();
     virtual void UebertragungAbschliessen();
+    virtual void UpdateListe(CString& csFormularDateipfad, BOOL bNurSpaltenbreitenAnpassen = FALSE);
     virtual CString GetVerfahren() { return (CString)_T("ElsterAnmeldung"); };
     virtual CString GetDatenart() { return (CString)_T("UStVA"); };
 

@@ -19,12 +19,16 @@
 
 #pragma once
 
-#include "ElsterDlg.h"
+#include "FormularCtrl.h"
+#include "einstellungctrl.h"
+#include "dokumentctrl.h"
+#include "QuickList.h"  // https://www.codeproject.com/Articles/8112/CQuickList
 
 // CEricFormularlogik benutzt die ERiC-Bibliothek um entweder die Hinweis- bzw. 
 // Fehlerliste zu befüllen oder aber Daten an Elster zu versenden
 class CEricFormularlogik : public CObject
 {
+	DECLARE_DYNAMIC(CEricFormularlogik)
 public:
 	// Dialogfeld-Variablen
 	CString *m_pDatei;  // Dateipfad zur Elster-Signaturdatei	
@@ -94,6 +98,7 @@ public:
 				BOOL bNurValidieren);
 
 	// virtuelle Funktionen zur Beschickung der unterschiedlichen Formulare
+	virtual void UpdateListe(CString& csFormularDateipfad, BOOL bNurSpaltenbreitenAnpassen = FALSE) { return; };
 	virtual CString GetDatenteil() { return (CString)""; };
 	virtual CString GetLoginfo() { return (CString)""; };
 	virtual void UebertragungAbschliessen() {};

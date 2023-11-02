@@ -21,6 +21,7 @@
 
 #include "stdafx.h"
 #include "ECTElster.h"
+#include "ElsterDlg.h"
 #include "EricFormularlogik.h"
 #include "XMLite.h"  // https://www.codeproject.com/Articles/3426/XMLite-simple-XML-parser
 
@@ -28,6 +29,8 @@
 #include "EricApi.h"
 #include "eric_fehlercodes.h"
 #include "eric_types.h"
+
+IMPLEMENT_DYNAMIC(CEricFormularlogik, CObject)
 
 #pragma warning(push)
 #pragma warning(disable:26495)  // "lazy" initialisierung in Render()
@@ -79,7 +82,7 @@ CString CEricFormularlogik::Render(
 	m_pDokumentCtrl	   = pDokumentCtrl;
 
 	// vorverdaute Dialog-Werte
-	m_pDatei = &Datei;
+	m_pDatei = &Datei;  // Zertifikatsdatei
 	m_pPasswort = &Passwort;
 	m_pEmailAdresse = &EmailAdresse;
 	m_pTelefon = &Telefon;

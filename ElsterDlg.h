@@ -27,6 +27,7 @@
 #include "resource.h"
 #include "AboutDlg.h"
 #include "QuickList.h"  // https://www.codeproject.com/Articles/8112/CQuickList
+#include "EricFormularlogik.h"
 
 // CElsterDlg dialog
 
@@ -70,6 +71,7 @@ private:
 	CButton m_Zeige;
 
 	// Variablen für die Steuerung von m_Liste 
+	CEricFormularlogik* m_pEric;							// abhängig vom Formular unterschiedliche Logik (EÜR/UStVA)
 	CString m_ListeInhalt[500][5];						// ist owner-drawn
 	CMap<int, int, CString, CString> m_ListeHinweise;	// nach Validierung werden Einträge des ListCtrl 
 	CMap<int, int, CString, CString> m_ListeFehler;		// ggf. farbig hervorgehoben und Hinweise/Fehler gezeigt
@@ -77,7 +79,6 @@ private:
 	// Member-Funktionen
 	void ERiC(BOOL bNurValidieren);
 	LRESULT OnGetListItem(WPARAM wParam, LPARAM lParam);
-	void UpdateListe(BOOL bNurSpaltenbreitenAnpassen = FALSE);
 
 	// Message-Handler
 	DECLARE_MESSAGE_MAP()

@@ -24,9 +24,11 @@
 class CEricFormularlogikEUeR :
     public CEricFormularlogik
 {
+    DECLARE_DYNAMIC(CEricFormularlogikEUeR)
     virtual CString GetDatenteil();
     virtual CString GetLoginfo();
     virtual void UebertragungAbschliessen();
+    virtual void UpdateListe(CString& csFormularDateipfad, BOOL bNurSpaltenbreitenAnpassen = FALSE);
     virtual CString GetVerfahren() { return (CString)_T("ElsterErklaerung"); };
     virtual CString GetDatenart() { return (CString)_T("EUER"); };
 

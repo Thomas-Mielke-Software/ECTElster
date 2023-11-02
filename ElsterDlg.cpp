@@ -44,6 +44,7 @@ CElsterDlg::CElsterDlg(CWnd* pParent /*=NULL*/)
 	, m_EinzugsermaechtigungWiderrufen(FALSE)
 	, m_Datei(_T(""))
 	, m_Passwort(_T(""))
+	, m_pEric(NULL)
 //	, m_Signaturoption(0)
 {
 
@@ -51,6 +52,7 @@ CElsterDlg::CElsterDlg(CWnd* pParent /*=NULL*/)
 
 CElsterDlg::~CElsterDlg()
 {
+	if (m_pEric) delete m_pEric;
 }
 
 void CElsterDlg::DoDataExchange(CDataExchange* pDX)
@@ -245,8 +247,15 @@ BOOL CElsterDlg::OnInitDialog()
 	Jahr.Format(_T("%-0.04d"), jj);
 	if (LB_ERR != m_VoranmeldungszeitraumCtrl.SetCurSel(m_VoranmeldungszeitraumCtrl.FindString(0, _T("Umsatzsteuer-Voranmeldung ") + Jahr + _T(" ") + Zeitraum)))
 	{
-		UpdateData(FALSE);
-		UpdateListe();
+		// Liste mit Feldern initialisieren
+		if (m_Liste && m_FormularCtrl/* && m_Liste.GetItemCount()*/)
+		{
+			UpdateData(FALSE);
+			m_FormularDateipfad = m_FormularCtrl.HoleFormularpfad(m_VoranmeldungszeitraumCtrl.GetItemData(m_VoranmeldungszeitraumCtrl.GetCurSel()));
+			if (m_pEric) m_pEric->UpdateListe(m_FormularDateipfad);
+			UpdateData(FALSE);  // UpdateListe() ändert z.B. evtl. die "korrigierte Anmeldung" Checkbox
+			SetTimer(2, 1, NULL);
+		}
 	}
 	else
 		UpdateData(FALSE);
@@ -356,254 +365,16 @@ void CElsterDlg::OnTimer(UINT_PTR nIDEvent)
 	CDialog::OnTimer(nIDEvent);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
-//	LISTE AUFBAUEN
-//
-void CElsterDlg::UpdateListe(BOOL bNurSpaltenbreitenAnpassen)
-{
-	// Liste mit Feldern initialisieren
-	if (m_Liste && m_FormularCtrl/* && m_Liste.GetItemCount()*/)
-	{
-		UpdateData();
-
-		// ggf. alte Liste löschen
-		while ( m_Liste.DeleteColumn ( 0 ) );
-
-		// wieviel Platz haben wir?
-		RECT r;
-		m_Liste.GetWindowRect(&r);
-		int ListeBreite = r.right - r.left - 21;
-
-		if (ListeBreite < 770) 
-			GetDlgItem(IDC_FINANZAMT_STATIC)->ShowWindow(SW_HIDE);
-		else
-			GetDlgItem(IDC_FINANZAMT_STATIC)->ShowWindow(SW_SHOW);
-
-		// Spaltenbreiten bestimmen
-		#pragma warning(push)
-		#pragma warning(disable:6001)
-		static _TCHAR *Spaltentitel[] = { _T("Beschreibung"), _T("Feld-Nr."), _T("Bem.Grundl."), _T("Feld-Nr."), _T("Steuer") };
-		static int AnzahlSpalten = sizeof(Spaltentitel) / sizeof(Spaltentitel[0]);
-		int Spaltenbreite[sizeof(Spaltentitel) / sizeof(Spaltentitel[0])];
-		int Spaltenzaehler;
-		for (Spaltenzaehler = 0; Spaltenzaehler < AnzahlSpalten; Spaltenzaehler++)
-			Spaltenbreite[Spaltenzaehler] = m_Liste.GetStringWidth(Spaltentitel[Spaltenzaehler]) * 4 / 3;
-		Spaltenbreite[2] = Spaltenbreite[4] = max(Spaltenbreite[2], Spaltenbreite[4]); // Spalte 2 und 4 sollen gleich breit sein
-		Spaltenbreite[0] = ListeBreite - Spaltenbreite[1] - Spaltenbreite[2] - Spaltenbreite[3] - Spaltenbreite[4];	// Beschreibungstext bekommt war übrig ist...
-		if (Spaltenbreite[0] < Spaltenbreite[1] + Spaltenbreite[2])	// ... es sei denn, es ist zu wenig
-			Spaltenbreite[0] = Spaltenbreite[1] + Spaltenbreite[2];
-		#pragma warning(pop)
-
-		// Listenheader aufbauen
-		m_Liste.SetExtendedStyle ( m_Liste.GetExtendedStyle() | LVS_EX_FULLROWSELECT );
-		for (Spaltenzaehler = 0; Spaltenzaehler < AnzahlSpalten; Spaltenzaehler++)
-			m_Liste.InsertColumn(Spaltenzaehler, Spaltentitel[Spaltenzaehler], LVCFMT_LEFT, Spaltenbreite[Spaltenzaehler], -1);
-
-		if (bNurSpaltenbreitenAnpassen) return;	// --> hier schon raus, wenn sich der Inhalt nicht geändert hat
-		
-		// Formular-Dateipfad holen
-		m_FormularDateipfad = m_FormularCtrl.HoleFormularpfad(m_VoranmeldungszeitraumCtrl.GetItemData(m_VoranmeldungszeitraumCtrl.GetCurSel()));
-		if (!m_FormularDateipfad.GetLength())
-		{
-			AfxMessageBox(_T("Ich kann den Dateipfad des Formulars nicht ermitteln. Bitte überprüfen, ob die entsprechenden UStVA-Formulare für das aktuelle Jahr installiert sind. Die sind üblicherweise in der aktuellen Version des EC&T-Hauptprogramms enthalten oder sind zum Entpacken ins Programmverzeichnis in Form eines Zip-Archivs auf www.easyct.de unter Downloads -> Formular-Archiv verfügbar. Die Formulare für das neue Jahr werden üblicher Weise im Laufe des Januars über ein Hauptprogramm-Update verfügbar."));
-			return;
-		}
-
-		// Formular vorbereiten
-		m_FormularCtrl.WaehleFormular(m_FormularDateipfad);
-
-		// Formularlayout in Liste übertragen
-		// Spalten: 1. EC&T FeldID Bemessungsgrundlage, 2. EC&T FeldID Steuer, 
-		//          3. tatsächliches KZ Bemessungsgrundlage, 4. tatsächliches KZ Steuer
-		static int Formularlayout[][4] = {
-			81, 1081, 0, 0,
-			86, 1086, 0, 0,
-			87, 0, 0, 0,
-			35, 36, 0, 0,
-			77, 0, 0, 0,
-			76, 80, 0, 0,
-			0, 0, 0, 0,
-			41, 0, 0, 0,
-			44, 0, 0, 0,
-			49, 0, 0, 0,
-			43, 0, 0, 0,
-			48, 0, 0, 0,
-			0, 0, 0, 0,
-			91, 0, 0, 0,
-			89, 1189, 0, 0,
-			93, 1193, 0, 0,
-			90, 0, 0, 0,
-			95, 98, 0, 0,
-			94, 96, 0, 0,
-			0, 0, 0, 0,
-			46, 47, 0, 0,
-// veraltet	52, 53, 0, 0,	
-			73, 74, 0, 0,
-// veraltet	78, 79, 0, 0,	
-			84, 85, 0, 0,
-			0, 0, 0, 0,
-			42, 0, 0, 0,
-// veraltet	68, 0, 0, 0,
-			60, 0, 0, 0,
-			21, 0, 0, 0,
-			45, 0, 0, 0,
-			0, 0, 0, 0,
-			-IDS_SEPARATOR, 0, 0, 0,
-			-IDS_UMSATZSTEUER, 2003, 0, 0,
-			0, 0, 0, 0,
-			0, 1466, 0, 66,
-			0, 61, 0, 0,
-			0, 62, 0, 0,
-			0, 67, 0, 0,
-			0, 63, 0, 0,
-			0, 59, 0, 0,
-			0, 64, 0, 0,
-			-IDS_SEPARATOR, 0, 0, 0,
-			-IDS_VERBLEIBENDER_BETRAG, 2004, 0, 0,
-			0, 0, 0, 0,
-			0, 65, 0, 0,
-			0, 69, 0, 0,
-			-IDS_SEPARATOR, 0, 0, 0,
-			0, 39, 0, 0,
-			0, 0, 0, 0,
-			-IDS_SEPARATOR, 0, 0, 0,
-			0, 83, 0, 0
-		};
-		static int AnzahlFormularlayoutZeilen = sizeof(Formularlayout) / sizeof(Formularlayout[0]);
-
-		// Hinweis: Dies ist kein Beispiel für durchdachten Code... aber er funktioniert!
-
-		int Zeile, Spalte;
-		CString FeldWert83Merken;
-		BOOL bSternchenHinweisAnzeigen = FALSE;
-		for (Zeile = 0; Zeile < sizeof(m_ListeInhalt)/sizeof(m_ListeInhalt[0]); Zeile++)	// Listenspeicher initialisieren
-			for (Spalte = 0; Spalte < sizeof(m_ListeInhalt[0])/sizeof(m_ListeInhalt[0][0]); Spalte++)
-				m_ListeInhalt[Zeile][Spalte] = _T("");
-		for (Zeile = 0; Zeile < AnzahlFormularlayoutZeilen; Zeile++)
-		{
-			extern CECTElsterApp theApp;
-			CString ResourceString;
-
-			int LayoutWert = Formularlayout[Zeile][0];
-			int LayoutWert2 = Formularlayout[Zeile][1];
-			if (LayoutWert < 0)			// negative Werte sind Ressource Strings
-			{
-				LoadString(theApp.m_hInstance, -LayoutWert, ResourceString.GetBuffer(10000), 10000);
-				m_ListeInhalt[Zeile][LayoutWert != -IDS_SEPARATOR ? 0 : 4] = ResourceString;  // Separator nur in der Summenspalte anzeigen, alle anderen IDS_STRINGs in der ersten Spalte anzeigen
-
-				if (LayoutWert2 > 0)
-				{
-					CString Feldwert2 = m_FormularCtrl.HoleFeldwertUeberID(LayoutWert2);
-					if (Formularlayout[Zeile][3]) LayoutWert2 = Formularlayout[Zeile][3]; // tatsächliches KZ, nicht EC&T FeldID anzeigen
-					if (LayoutWert2 < 100 )
-					{
-						CString Feldwert2AlsString;
-						Feldwert2AlsString.Format(_T("%d"), LayoutWert2);
-						m_ListeInhalt[Zeile][3] = Feldwert2AlsString;	// Feld ID (KZ) in 4. Spalte eintragen
-					}
-					m_ListeInhalt[Zeile][4] = Feldwert2;				// den Feldwert zu der ID in 5. Spalte eintragen
-				}
-			}
-			else if (LayoutWert > 0 || LayoutWert2 > 0)	// positive Werte sind FeldIDs
-			{
-				CString Feldbeschreibung = m_FormularCtrl.HoleFeldbeschreibungUeberID(max(LayoutWert, LayoutWert2));
-				m_ListeInhalt[Zeile][0] = Feldbeschreibung;						
-				//m_Liste.InsertItem (Zeile, Feldbeschreibung);		
-
-				if (LayoutWert > 0)
-				{
-					CString Feldwert = m_FormularCtrl.HoleFeldwertUeberID(LayoutWert);
-					if (Formularlayout[Zeile][3]) LayoutWert = Formularlayout[Zeile][2]; // tatsächliches KZ, nicht EC&T FeldID anzeigen
-					if (LayoutWert < 100)
-					{
-						CString FeldwertAlsString;
-						FeldwertAlsString.Format(_T("%d"), LayoutWert);
-						if ((LayoutWert != 68 && LayoutWert != 52 && LayoutWert != 78) || Feldwert != _T(""))  // veraltete Felder nur anzeigen, wenn sie Werte enthalten (Validierung springt dann an!)
-							m_ListeInhalt[Zeile][1] = FeldwertAlsString;	// Feld ID (KZ) in 2. Spalte eintragen
-					}
-					m_ListeInhalt[Zeile][2] = Feldwert;					// den Feldwert zu der ID in 3. Spalte eintragen
-				}
-
-				if (LayoutWert2 > 0)
-				{
-					CString Feldwert2 = m_FormularCtrl.HoleFeldwertUeberID(LayoutWert2);
-					if (Formularlayout[Zeile][3]) LayoutWert2 = Formularlayout[Zeile][3]; // tatsächliches KZ, nicht EC&T FeldID anzeigen
-					if (LayoutWert2 == 83) 
-						FeldWert83Merken = Feldwert2;
-					if (LayoutWert2 < 100)
-					{
-						CString Feldwert2AlsString;
-						Feldwert2AlsString.Format(_T("%d"), LayoutWert2);
-						if ((LayoutWert2 != 53 && LayoutWert2 != 79) || Feldwert2 != _T(""))  // veraltete Felder nur anzeigen, wenn sie Werte enthalten (Validierung springt dann an!)
-							m_ListeInhalt[Zeile][3] = Feldwert2AlsString;	// Feld ID (KZ) in 4. Spalte eintragen
-					}
-					if (LayoutWert2 > 100 && (LayoutWert2 - 1000 == LayoutWert || LayoutWert2 - 1100 == LayoutWert) && Feldwert2 != _T(""))
-					{
-						Feldwert2 += _T("*");
-						bSternchenHinweisAnzeigen = TRUE;
-					}
-					m_ListeInhalt[Zeile][4] = Feldwert2;			// den Feldwert zu der ID in 5. Spalte eintragen
-				}
-#ifdef TESTVERBINDUNG
-				else
-					m_ListeInhalt[Zeile][3] = _T("TEST!");
-#endif
-			}
-		}
-
-		// Hinweis auf bereits übertragene Voranmeldungen für den Zeitraum
-		int nZeitraum = m_FormularCtrl.HoleVoranmeldungszeitraum();
-		if (nZeitraum > 12) nZeitraum += 28;	// 1-12 Monat; 1. Quartal == 41, 4. Q. == 44
-		CString Zeitraum; 
-		Zeitraum.Format(_T("%d"), nZeitraum);
-		CString Jahr;
-		Jahr.Format(_T("%-0.0d"), (int)m_DokumentCtrl.GetJahr());
-		CString FeldWert83VonLetzterUebertragung = m_DokumentCtrl.HoleBenutzerdefWert(_T("Elster"), _T("UST-Zahlbetrag-") + Jahr + _T("-") + Zeitraum);
-		if (FeldWert83VonLetzterUebertragung.GetLength())
-		{
-			if (FeldWert83VonLetzterUebertragung == FeldWert83Merken)
-			{
-				m_ListeInhalt[++Zeile][0] = _T("Der Umsatzsteuerbetrag entspricht dem bei der letzten Übertragung übermittelten.");
-				m_ListeInhalt[++Zeile][0] = _T("Es ist wahrscheinlich keine weitere Datenübertragung nötig.");
-			}
-			else
-			{
-				m_ListeInhalt[++Zeile][0] = _T("ACHTUNG: Der Umsatzsteuerbetrag entspricht nicht dem bei der letzten Übertragung übermittelten. (") + FeldWert83VonLetzterUebertragung + _T(")");
-				m_ListeInhalt[++Zeile][0] = _T("Es ist deshalb wohl eine berichtigte Anmeldung für diesen Voranmeldungszeitraum nötig.");
-			}
-			m_KorrigierteAnmeldung = TRUE;
-			UpdateData(FALSE);
-		}
-		else
-		{
-			m_KorrigierteAnmeldung = FALSE;
-			UpdateData(FALSE);
-		}
-#ifdef TESTVERBINDUNG
-		++Zeile;
-		m_ListeInhalt[++Zeile][0] = _T("ACHTUNG: Das installierte OCX ist nur eine Testversion und baut nur eine Testverbindung auf.");
-		m_ListeInhalt[++Zeile][0] = _T("               Es werden keine Daten als reale Vorgänge behandelt.");
-#endif
-		if (bSternchenHinweisAnzeigen)
-		{
-			++Zeile;
-			m_ListeInhalt[++Zeile][0] = _T("Hinweis: Mit '*' gekennzeichnete Steuer sind nur aus der Bemessungsgrundlage errechnete Zwischenwerte und werden nicht gesondert an das Finanzamt übertragen.");
-		}
-
-		m_Liste.SetItemCount(Zeile);
-		m_Liste.RedrawItems(0, Zeile-1);
-		m_Liste.InvalidateRect(NULL, FALSE);
-		SetTimer(2, 1, NULL);
-	}
-}
 
 #define ID_VIEW_JOURNAL_SWITCH          32788
 extern "C" short Pruefe_Steuernummer(const char *ELSTERSteuernummer, char *Pruefziffer_vor_Steuernummerumstellung, char *Pruefziffer_nach_Steuernummerumstellung);
+
 
 void CElsterDlg::OnBnClickedOk()
 {
 	ERiC(FALSE);
 }
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // VERSENDEN bzw. VALIDIEREN
@@ -684,7 +455,6 @@ void CElsterDlg::ERiC(BOOL bNurValidieren = FALSE)
 	}
 	CString EmpfaengerFinanzamt = Bundesfinanzamtsnummer.Left(4);
 
-	CEricFormularlogik* pEric;
 	CString MomentanerFormularAnzeigename;
 	CTime Jetzt = CTime::GetCurrentTime();
 	m_VoranmeldungszeitraumCtrl.GetLBText(m_VoranmeldungszeitraumCtrl.GetCurSel(), MomentanerFormularAnzeigename);
@@ -695,7 +465,14 @@ void CElsterDlg::ERiC(BOOL bNurValidieren = FALSE)
 			AfxMessageBox("Das ausgewählte Formular '" + MomentanerFormularAnzeigename + "' passt nicht zum Buchungsjahr " + Jahr + " des geöffneten Dokuments. Fals das Buchungsjahr falsch gesetzt wurde, kann es in den Einstellungen -> Allgemein (rechts bei den Dokumenteigenschaften) korrigiert werden.");
 			return;
 		}
-		pEric = new CEricFormularlogikEUeR();
+		if (m_pEric)
+			if (!m_pEric->IsKindOf(RUNTIME_CLASS(CEricFormularlogikEUeR)))
+			{	// nur wenn nötig, die Formularlogik auf EÜR wechseln
+				delete m_pEric;
+				m_pEric = NULL;
+			}
+		if (!m_pEric)
+		m_pEric = new CEricFormularlogikEUeR();
 	}
 	else
 	{
@@ -710,10 +487,17 @@ Vielleicht ist das falsche Buchungsjahr geöffnet oder der falsche Zeitraum ausge
 				return;
 			}
 		}
-		pEric = new CEricFormularlogikUStVA();
+		if (m_pEric)
+			if (!m_pEric->IsKindOf(RUNTIME_CLASS(CEricFormularlogikUStVA)))
+			{	// nur wenn nötig, die Formularlogik auf UStVA wechseln
+				delete m_pEric;
+				m_pEric = NULL;
+			}
+		if (!m_pEric)
+			m_pEric = new CEricFormularlogikUStVA();
 	}
 
-	CString csErgebnis = pEric->Render(
+	CString csErgebnis = m_pEric->Render(
 		m_hWnd,
 		&m_FormularCtrl,
 		m_FormularDateipfad,
@@ -737,8 +521,6 @@ Vielleicht ist das falsche Buchungsjahr geöffnet oder der falsche Zeitraum ausge
 		EmpfaengerFinanzamt,
 		MomentanerFormularAnzeigename,
 		bNurValidieren);
-
-	delete pEric;
 
 	if (!csErgebnis.IsEmpty())
 	{
@@ -799,7 +581,11 @@ void CElsterDlg::OnBnClickedCancel()
 
 void CElsterDlg::OnCbnSelchangeVoranmeldungszeitraum()
 {
-	UpdateListe();
+	UpdateData(FALSE);
+	m_FormularDateipfad = m_FormularCtrl.HoleFormularpfad(m_VoranmeldungszeitraumCtrl.GetItemData(m_VoranmeldungszeitraumCtrl.GetCurSel()));
+	if (m_pEric) m_pEric->UpdateListe(m_FormularDateipfad);
+	UpdateData(FALSE);
+	SetTimer(2, 1, NULL);
 }
 
 
@@ -831,7 +617,23 @@ void CElsterDlg::OnSize(UINT nType, int cx, int cy)
 {
 	CDialog::OnSize(nType, cx, cy);
 
-	UpdateListe(TRUE);
+	if (m_pEric)
+	{
+		UpdateData();
+		m_FormularDateipfad = m_FormularCtrl.HoleFormularpfad(m_VoranmeldungszeitraumCtrl.GetItemData(m_VoranmeldungszeitraumCtrl.GetCurSel()));
+		m_pEric->UpdateListe(m_FormularDateipfad, TRUE);
+		UpdateData(FALSE);
+		SetTimer(2, 1, NULL);
+
+		// "senden an Finanzamt" ausblenden, wenn Fenster zu schmal
+		RECT r;
+		m_Liste.GetWindowRect(&r);
+		int ListeBreite = r.right - r.left - 21;
+		if (ListeBreite < 770)
+			GetDlgItem(IDC_FINANZAMT_STATIC)->ShowWindow(SW_HIDE);
+		else
+			GetDlgItem(IDC_FINANZAMT_STATIC)->ShowWindow(SW_SHOW);
+	}
 }
 
 BOOL CElsterDlg::OnEraseBkgnd(CDC* pDC)
@@ -921,7 +723,11 @@ void CElsterDlg::OnEnKillfocusDatei()
 
 void CElsterDlg::OnBnClickedAktualisieren()
 {
-	UpdateListe();
+	UpdateData(FALSE);
+	m_FormularDateipfad = m_FormularCtrl.HoleFormularpfad(m_VoranmeldungszeitraumCtrl.GetItemData(m_VoranmeldungszeitraumCtrl.GetCurSel()));
+	if (m_pEric) m_pEric->UpdateListe(m_FormularDateipfad);
+	UpdateData(FALSE);
+	SetTimer(2, 1, NULL);
 
 	// falls Übertragunslog angezeigt wird und die Liste überlagert:
 	m_Zeige.SetWindowText(_T("&Zeige Log"));

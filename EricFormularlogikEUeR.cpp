@@ -20,6 +20,8 @@
 #include "ECTElster.h"
 #include "EricFormularlogikEUeR.h"
 
+IMPLEMENT_DYNAMIC(CEricFormularlogikEUeR, CEricFormularlogik)
+
 // TODO: E6000602 Rechtsform in <Allg> als Enumeration!!
 // TODO: E6000603 Einkunftsart: Land- und Forstwirtschaft = 1, Gewerbebetrieb = 2, Selbständige Arbeit = 3
 // TODO: E6000604 Enumeration - 1 [Steuerpflichtige Person/Ehemann/Person A (Ehegatte A/Lebenspartner[in] A)/Gesellschaft/Körperschaft] 2[Ehefrau / Person B(Ehegatte B / Lebenspartner[in] B)] - 3[Beide Ehegatten / Lebenspartner[innen]]
@@ -144,4 +146,11 @@ LPXNode CEricFormularlogikEUeR::ZuXmlBaumHinzufuegen(LPXNode pEricXml, const CSt
         node->value = csFeldwert;
 
     return node;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+//	LISTE AUFBAUEN
+//
+void CEricFormularlogikEUeR::UpdateListe(CString& csFormularDateipfad, BOOL bNurSpaltenbreitenAnpassen)
+{
 }
