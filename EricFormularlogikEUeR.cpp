@@ -151,6 +151,6 @@ LPXNode CEricFormularlogikEUeR::ZuXmlBaumHinzufuegen(LPXNode pEricXml, const CSt
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //	LISTE AUFBAUEN
 //
-void CEricFormularlogikEUeR::UpdateListe(CString& csFormularDateipfad, BOOL bNurSpaltenbreitenAnpassen)
+void CEricFormularlogikEUeR::UpdateListe(CString& csFormularDateipfad, CString (&m_pListeInhalt)[500][5], BOOL bNurSpaltenbreitenAnpassen)
 {
 }

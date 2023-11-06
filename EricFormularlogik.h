@@ -47,10 +47,9 @@ public:
 	CDokumentCtrl *m_pDokumentCtrl;
 	CQuickList *m_pListe;			// Ersatz für CListCtrl, siehe https://www.codeproject.com/Articles/8112/CQuickList
 
-	// Variablen für die Steuerung von m_Liste 
-	CString m_ListeInhalt[500][5];						// ist owner-drawn
-	CMap<int, int, CString, CString> *m_pListeHinweise;	// nach Validierung werden Einträge des ListCtrl 
-	CMap<int, int, CString, CString> *m_pListeFehler;		// ggf. farbig hervorgehoben und Hinweise/Fehler gezeigt
+	// Variablen für die Steuerung von m_Liste in ElsterDlg
+	CMap<int, int, CString, CString>* m_pListeHinweise;	// nach Validierung werden Einträge des ListCtrl 
+	CMap<int, int, CString, CString>* m_pListeFehler;		// ggf. farbig hervorgehoben und Hinweise/Fehler gezeigt
 
 	// sonstige
 	CTime m_Jetzt;
@@ -73,32 +72,34 @@ public:
 	CString m_PinStatus;
 
 	CEricFormularlogik();
+	void Init(
+		CFormularCtrl* pFormularCtrl,
+		CEinstellung* pEinstellungCtrl,
+		CDokumentCtrl* pDokumentCtrl);
 	CString Render(HWND m_hWnd,
-				CFormularCtrl* pFormularCtrl,
-				CString &FormularDateipfad,
-				CEinstellung* pEinstellungCtrl,
-				CDokumentCtrl* pDokumentCtrl,
-				CQuickList* pListe,
-				CMap<int, int, CString, CString> *pListeHinweise,
-				CMap<int, int, CString, CString> *pListeFehler,
-				CString &Datei,
-				CString &Passwort,
-				CString &EmailAdresse,
-				CString &Telefon,
-				BOOL bKorrigierteAnmeldung,
-				BOOL bBelegeWerdenNachgereicht,
-				BOOL bVerrechnungDesErstattungsanspruchs,
-				BOOL bEinzugsermaechtigungWiderrufen,
-				CTime &Jetzt,
-				CString &Jahr,
-				CString &Zeitraum,
-				CString &Bundesfinanzamtsnummer,
-				CString &EmpfaengerFinanzamt,
-				CString &MomentanerFormularAnzeigename,
-				BOOL bNurValidieren);
+		CString &FormularDateipfad,
+		CQuickList* pListe,
+		CString(&m_pListeInhalt)[500][5],
+		CMap<int, int, CString, CString> *pListeHinweise,
+		CMap<int, int, CString, CString> *pListeFehler,
+		CString &Datei,
+		CString &Passwort,
+		CString &EmailAdresse,
+		CString &Telefon,
+		BOOL bKorrigierteAnmeldung,
+		BOOL bBelegeWerdenNachgereicht,
+		BOOL bVerrechnungDesErstattungsanspruchs,
+		BOOL bEinzugsermaechtigungWiderrufen,
+		CTime &Jetzt,
+		CString &Jahr,
+		CString &Zeitraum,
+		CString &Bundesfinanzamtsnummer,
+		CString &EmpfaengerFinanzamt,
+		CString &MomentanerFormularAnzeigename,
+		BOOL bNurValidieren);
 
 	// virtuelle Funktionen zur Beschickung der unterschiedlichen Formulare
-	virtual void UpdateListe(CString& csFormularDateipfad, BOOL bNurSpaltenbreitenAnpassen = FALSE) { return; };
+	virtual void UpdateListe(CString& csFormularDateipfad, CString (&m_pListeInhalt)[500][5], CQuickList* pListe, BOOL bNurSpaltenbreitenAnpassen = FALSE) { return; };
 	virtual CString GetDatenteil() { return (CString)""; };
 	virtual CString GetLoginfo() { return (CString)""; };
 	virtual void UebertragungAbschliessen() {};

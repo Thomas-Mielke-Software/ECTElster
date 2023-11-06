@@ -120,37 +120,6 @@ BOOL CElsterDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-//	EnableDynamicLayout(TRUE);
-/*	AddAnchor(IDC_FINANZAMT_STATIC, TOP_RIGHT);
-	AddAnchor(IDC_FINANZAMT, TOP_RIGHT);
-	AddAnchor(IDC_FINANZAMT_NICHT_IN_DER_LISTE, TOP_RIGHT);	
-
-	AddAnchor(IDC_SIGNATUROPTIONENRAHMEN, TOP_LEFT, TOP_RIGHT);
-	AddAnchor(IDC_DATEI_STATIC, TOP_LEFT, TOP_LEFT);
-	AddAnchor(IDC_DATEI, TOP_LEFT, TOP_RIGHT);
-	AddAnchor(IDC_DURCHSUCHEN, TOP_RIGHT, TOP_RIGHT);
-	AddAnchor(IDC_PASSWORT_STATIC, TOP_LEFT, TOP_LEFT);
-	AddAnchor(IDC_PASSWORT, TOP_LEFT, TOP_LEFT);
-	AddAnchor(IDC_PASSWORT_STATUS, TOP_LEFT, TOP_RIGHT);
-	AddAnchor(IDC_SIGNATURANMERKUNG_STATIC, TOP_LEFT, TOP_RIGHT);
-	AddAnchor(IDC_LISTE, TOP_LEFT, BOTTOM_RIGHT);
-	AddAnchor(IDC_ERGEBNIS, TOP_LEFT, BOTTOM_RIGHT);
-	AddAnchor(IDC_AKTUALISIEREN, BOTTOM_RIGHT);
-
-	AddAnchor(IDC_KORRIGIERTE_ANMELDUNG, BOTTOM_LEFT); 
-	AddAnchor(IDC_BELEGE_WERDEN_NACHGEREICHT, BOTTOM_LEFT); 
-	AddAnchor(IDC_VERRECHNUNG_DES_ERSTATTUNGSANSPRUCHS, BOTTOM_LEFT); 
-	AddAnchor(IDC_EINZUGSERMAECHTIGUNG_WIDERRUFEN, BOTTOM_LEFT); 
-	AddAnchor(IDC_EMAIL_ADRESSE_STATIC, BOTTOM_CENTER); 
-	AddAnchor(IDC_EMAIL_ADRESSE, BOTTOM_CENTER); 
-	AddAnchor(IDC_TELEFON_STATIC, BOTTOM_CENTER); 
-	AddAnchor(IDC_TELEFON, BOTTOM_CENTER); 
-	AddAnchor(IDC_SIGNATUROPTIONEN, BOTTOM_RIGHT);
-	AddAnchor(IDC_INFO, BOTTOM_RIGHT);
-	AddAnchor(IDC_ZEIGE, BOTTOM_RIGHT);
-	AddAnchor(IDOK, BOTTOM_RIGHT);
-	AddAnchor(IDCANCEL, BOTTOM_RIGHT);	
-*/	
 	EnableToolTips();			// Tooltip funktioniert im ActiveX leider nicht...
 
 	AfxGetApp()->BeginWaitCursor();
@@ -250,10 +219,6 @@ BOOL CElsterDlg::OnInitDialog()
 		// Liste mit Feldern initialisieren
 		if (m_Liste && m_FormularCtrl/* && m_Liste.GetItemCount()*/)
 		{
-			UpdateData(FALSE);
-			m_FormularDateipfad = m_FormularCtrl.HoleFormularpfad(m_VoranmeldungszeitraumCtrl.GetItemData(m_VoranmeldungszeitraumCtrl.GetCurSel()));
-			if (m_pEric) m_pEric->UpdateListe(m_FormularDateipfad);
-			UpdateData(FALSE);  // UpdateListe() ändert z.B. evtl. die "korrigierte Anmeldung" Checkbox
 			SetTimer(2, 1, NULL);
 		}
 	}
@@ -358,6 +323,18 @@ void CElsterDlg::OnTimer(UINT_PTR nIDEvent)
 	if (nIDEvent == 2)	// ERiC-Validierung mit Zeitverzögerung
 	{
 		KillTimer(2);
+		UpdateData();
+		CString MomentanerFormularAnzeigename;
+		CTime Jetzt;
+		CString Zeitraum = "";
+
+		int jj = m_DokumentCtrl.GetJahr();
+		CString Jahr;
+		Jahr.Format(_T("%-0.04d"), jj);
+		EricKontext(true, Jetzt, MomentanerFormularAnzeigename, Jahr, Zeitraum, &m_Liste);
+		m_FormularDateipfad = m_FormularCtrl.HoleFormularpfad(m_VoranmeldungszeitraumCtrl.GetItemData(m_VoranmeldungszeitraumCtrl.GetCurSel()));
+		if (m_pEric) m_pEric->UpdateListe(m_FormularDateipfad, m_ListeInhalt, &m_Liste);
+		UpdateData(FALSE);  // UpdateListe() ändert z.B. evtl. die "korrigierte Anmeldung" Checkbox
 		ERiC(TRUE);
 		m_Liste.InvalidateRect(NULL, FALSE);
 	}
@@ -381,6 +358,61 @@ void CElsterDlg::OnBnClickedOk()
 //
 // benutzt die ERiC-Bibliothek um entweder die Hinweis- bzw. Fehlerliste zu befüllen oder aber Daten an Elster zu versenden
 // für eine bessere Trennung von GUI und Logik ist es in CEricFormularlogik ausgelagert
+
+void CElsterDlg::EricKontext(BOOL bNurValidieren, CTime& Jetzt, CString& MomentanerFormularAnzeigename, CString &Jahr, CString &Zeitraum, CQuickList* pListe)
+{
+	int nZeitraum = m_FormularCtrl.HoleVoranmeldungszeitraum();
+	if (nZeitraum > 12) nZeitraum += 28;	// 1-12 Monat; 1. Quartal == 41, 4. Q. == 44
+	if (nZeitraum > 44 || nZeitraum < 1) nZeitraum = 1;	// Flickschusterei
+	Zeitraum.Format(_T("%-02.2d"), nZeitraum);
+
+	Jetzt = CTime::GetCurrentTime();
+	m_VoranmeldungszeitraumCtrl.GetLBText(m_VoranmeldungszeitraumCtrl.GetCurSel(), MomentanerFormularAnzeigename);
+	if (MomentanerFormularAnzeigename.Left(12) == "E/Ü-Rechnung")  // eine Art dependency injection
+	{
+		if (!bNurValidieren && MomentanerFormularAnzeigename.Right(4) != Jahr)
+		{
+			AfxMessageBox("Das ausgewählte Formular '" + MomentanerFormularAnzeigename + "' passt nicht zum Buchungsjahr " + Jahr + " des geöffneten Dokuments. Fals das Buchungsjahr falsch gesetzt wurde, kann es in den Einstellungen -> Allgemein (rechts bei den Dokumenteigenschaften) korrigiert werden.");
+			return;
+		}
+		if (m_pEric)
+			if (!m_pEric->IsKindOf(RUNTIME_CLASS(CEricFormularlogikEUeR)))
+			{	// nur wenn nötig, die Formularlogik auf EÜR wechseln
+				delete m_pEric;
+				m_pEric = NULL;
+			}
+		if (!m_pEric)
+		{
+			m_pEric = new CEricFormularlogikEUeR();
+			m_pEric->Init(&m_FormularCtrl, &m_EinstellungCtrl, &m_DokumentCtrl);
+		}
+	}
+	else
+	{
+		if (Jetzt - CTime(m_DokumentCtrl.GetJahr(), nZeitraum <= 12 ?  // check nach möglicherweise falschem Voranmeldungszeitraum
+			nZeitraum : (nZeitraum - 41) * 3 + 1, 1, 0, 0, 0) > CTimeSpan(180, 0, 0, 0))
+		{
+			int n;
+			if (!bNurValidieren && (n = AfxMessageBox(_T("Die Frist für die Abgabe der UST-Voranmeldung für den ausgewählten Zeitraum ist schon seit einiger Zeit verstrichen. \
+Vielleicht ist das falsche Buchungsjahr geöffnet oder der falsche Zeitraum ausgewählt? Soll die Voranmeldung trotzdem verschickt werden?"), MB_YESNO)) != IDYES)
+			{
+				m_VoranmeldungszeitraumCtrl.SetFocus();
+				return;
+			}
+		}
+		if (m_pEric)
+			if (!m_pEric->IsKindOf(RUNTIME_CLASS(CEricFormularlogikUStVA)))
+			{	// nur wenn nötig, die Formularlogik auf UStVA wechseln
+				delete m_pEric;
+				m_pEric = NULL;
+			}
+		if (!m_pEric)
+		{
+			m_pEric = new CEricFormularlogikUStVA();
+			m_pEric->Init(&m_FormularCtrl, &m_EinstellungCtrl, &m_DokumentCtrl);
+		}
+	}
+}
 
 void CElsterDlg::ERiC(BOOL bNurValidieren = FALSE)
 {
@@ -408,11 +440,6 @@ void CElsterDlg::ERiC(BOOL bNurValidieren = FALSE)
 		}
 	}
 
-	int nZeitraum = m_FormularCtrl.HoleVoranmeldungszeitraum();
-	if (nZeitraum > 12) nZeitraum += 28;	// 1-12 Monat; 1. Quartal == 41, 4. Q. == 44
-	if (nZeitraum > 44 || nZeitraum < 1) nZeitraum = 1;	// Flickschusterei
-	CString Zeitraum;
-	Zeitraum.Format(_T("%-02.2d"), nZeitraum);
 	CString Jahr;
 	Jahr.Format(_T("%-0.0d"), (int)m_DokumentCtrl.GetJahr());
 	int nBundesfinanzamtsnummer = m_FinanzamtCtrl.GetItemData(m_FinanzamtCtrl.GetCurSel());	// Index speichern, um darüber bei Verarbeitung den Pfad zu gewinnen
@@ -456,54 +483,14 @@ void CElsterDlg::ERiC(BOOL bNurValidieren = FALSE)
 	CString EmpfaengerFinanzamt = Bundesfinanzamtsnummer.Left(4);
 
 	CString MomentanerFormularAnzeigename;
-	CTime Jetzt = CTime::GetCurrentTime();
-	m_VoranmeldungszeitraumCtrl.GetLBText(m_VoranmeldungszeitraumCtrl.GetCurSel(), MomentanerFormularAnzeigename);
-	if (MomentanerFormularAnzeigename.Left(12) == "E/Ü-Rechnung")  // eine Art dependency injection
-	{
-		if (!bNurValidieren && MomentanerFormularAnzeigename.Right(4) != Jahr)
-		{
-			AfxMessageBox("Das ausgewählte Formular '" + MomentanerFormularAnzeigename + "' passt nicht zum Buchungsjahr " + Jahr + " des geöffneten Dokuments. Fals das Buchungsjahr falsch gesetzt wurde, kann es in den Einstellungen -> Allgemein (rechts bei den Dokumenteigenschaften) korrigiert werden.");
-			return;
-		}
-		if (m_pEric)
-			if (!m_pEric->IsKindOf(RUNTIME_CLASS(CEricFormularlogikEUeR)))
-			{	// nur wenn nötig, die Formularlogik auf EÜR wechseln
-				delete m_pEric;
-				m_pEric = NULL;
-			}
-		if (!m_pEric)
-		m_pEric = new CEricFormularlogikEUeR();
-	}
-	else
-	{
-		if (Jetzt - CTime(m_DokumentCtrl.GetJahr(), nZeitraum <= 12 ?  // check nach möglicherweise falschem Voranmeldungszeitraum
-			nZeitraum : (nZeitraum - 41) * 3 + 1, 1, 0, 0, 0) > CTimeSpan(180, 0, 0, 0))
-		{
-			int n;
-			if (!bNurValidieren && (n = AfxMessageBox(_T("Die Frist für die Abgabe der UST-Voranmeldung für den ausgewählten Zeitraum ist schon seit einiger Zeit verstrichen. \
-Vielleicht ist das falsche Buchungsjahr geöffnet oder der falsche Zeitraum ausgewählt? Soll die Voranmeldung trotzdem verschickt werden?"), MB_YESNO)) != IDYES)
-			{
-				m_VoranmeldungszeitraumCtrl.SetFocus();
-				return;
-			}
-		}
-		if (m_pEric)
-			if (!m_pEric->IsKindOf(RUNTIME_CLASS(CEricFormularlogikUStVA)))
-			{	// nur wenn nötig, die Formularlogik auf UStVA wechseln
-				delete m_pEric;
-				m_pEric = NULL;
-			}
-		if (!m_pEric)
-			m_pEric = new CEricFormularlogikUStVA();
-	}
-
+	CTime Jetzt;
+	CString Zeitraum;
+	EricKontext(bNurValidieren, Jetzt, MomentanerFormularAnzeigename, Jahr, Zeitraum, &m_Liste);
 	CString csErgebnis = m_pEric->Render(
 		m_hWnd,
-		&m_FormularCtrl,
 		m_FormularDateipfad,
-		&m_EinstellungCtrl,
-		&m_DokumentCtrl,
 		&m_Liste,
+		m_ListeInhalt,
 		&m_ListeHinweise,
 		&m_ListeFehler,
 		m_Datei,
@@ -581,9 +568,9 @@ void CElsterDlg::OnBnClickedCancel()
 
 void CElsterDlg::OnCbnSelchangeVoranmeldungszeitraum()
 {
-	UpdateData(FALSE);
+	UpdateData();
 	m_FormularDateipfad = m_FormularCtrl.HoleFormularpfad(m_VoranmeldungszeitraumCtrl.GetItemData(m_VoranmeldungszeitraumCtrl.GetCurSel()));
-	if (m_pEric) m_pEric->UpdateListe(m_FormularDateipfad);
+	if (m_pEric) m_pEric->UpdateListe(m_FormularDateipfad, m_ListeInhalt, &m_Liste);
 	UpdateData(FALSE);
 	SetTimer(2, 1, NULL);
 }
@@ -621,7 +608,7 @@ void CElsterDlg::OnSize(UINT nType, int cx, int cy)
 	{
 		UpdateData();
 		m_FormularDateipfad = m_FormularCtrl.HoleFormularpfad(m_VoranmeldungszeitraumCtrl.GetItemData(m_VoranmeldungszeitraumCtrl.GetCurSel()));
-		m_pEric->UpdateListe(m_FormularDateipfad, TRUE);
+		m_pEric->UpdateListe(m_FormularDateipfad, m_ListeInhalt, &m_Liste, TRUE);
 		UpdateData(FALSE);
 		SetTimer(2, 1, NULL);
 
@@ -723,9 +710,9 @@ void CElsterDlg::OnEnKillfocusDatei()
 
 void CElsterDlg::OnBnClickedAktualisieren()
 {
-	UpdateData(FALSE);
+	UpdateData();
 	m_FormularDateipfad = m_FormularCtrl.HoleFormularpfad(m_VoranmeldungszeitraumCtrl.GetItemData(m_VoranmeldungszeitraumCtrl.GetCurSel()));
-	if (m_pEric) m_pEric->UpdateListe(m_FormularDateipfad);
+	if (m_pEric) m_pEric->UpdateListe(m_FormularDateipfad, m_ListeInhalt, &m_Liste);
 	UpdateData(FALSE);
 	SetTimer(2, 1, NULL);
 

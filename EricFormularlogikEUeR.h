@@ -28,7 +28,7 @@ class CEricFormularlogikEUeR :
     virtual CString GetDatenteil();
     virtual CString GetLoginfo();
     virtual void UebertragungAbschliessen();
-    virtual void UpdateListe(CString& csFormularDateipfad, BOOL bNurSpaltenbreitenAnpassen = FALSE);
+    virtual void UpdateListe(CString& csFormularDateipfad, CString (&m_pListeInhalt)[500][5], BOOL bNurSpaltenbreitenAnpassen = FALSE);
     virtual CString GetVerfahren() { return (CString)_T("ElsterErklaerung"); };
     virtual CString GetDatenart() { return (CString)_T("EUER"); };
 

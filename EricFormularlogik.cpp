@@ -39,30 +39,38 @@ CEricFormularlogik::CEricFormularlogik()
 }
 #pragma warning(pop)
 
+void CEricFormularlogik::Init(
+	CFormularCtrl* pFormularCtrl,
+	CEinstellung* pEinstellungCtrl,
+	CDokumentCtrl* pDokumentCtrl)
+{
+	m_pFormularCtrl = pFormularCtrl;
+	m_pEinstellungCtrl = pEinstellungCtrl;
+	m_pDokumentCtrl = pDokumentCtrl;
+}
+
 CString CEricFormularlogik::Render(
-								HWND m_hWnd, 
-								CFormularCtrl *pFormularCtrl,
-								CString &FormularDateipfad,
-								CEinstellung *pEinstellungCtrl,
-								CDokumentCtrl *pDokumentCtrl,
-								CQuickList* pListe,
-								CMap<int, int, CString, CString> *pListeHinweise,
-								CMap<int, int, CString, CString> *pListeFehler,
-								CString &Datei,
-								CString &Passwort,
-								CString &EmailAdresse,
-								CString &Telefon,
-								BOOL bKorrigierteAnmeldung,
-								BOOL bBelegeWerdenNachgereicht,
-								BOOL bVerrechnungDesErstattungsanspruchs,
-								BOOL bEinzugsermaechtigungWiderrufen,
-								CTime &Jetzt,
-								CString &Jahr,
-								CString &Zeitraum,
-								CString &Bundesfinanzamtsnummer,
-								CString &EmpfaengerFinanzamt,
-								CString &MomentanerFormularAnzeigename,
-								BOOL bNurValidieren = FALSE)
+	HWND m_hWnd,
+	CString &FormularDateipfad,
+	CQuickList* pListe,
+	CString (&ListeInhalt)[500][5],
+	CMap<int, int, CString, CString> *pListeHinweise,
+	CMap<int, int, CString, CString> *pListeFehler,
+	CString &Datei,
+	CString &Passwort,
+	CString &EmailAdresse,
+	CString &Telefon,
+	BOOL bKorrigierteAnmeldung,
+	BOOL bBelegeWerdenNachgereicht,
+	BOOL bVerrechnungDesErstattungsanspruchs,
+	BOOL bEinzugsermaechtigungWiderrufen,
+	CTime &Jetzt,
+	CString &Jahr,
+	CString &Zeitraum,
+	CString &Bundesfinanzamtsnummer,
+	CString &EmpfaengerFinanzamt,
+	CString &MomentanerFormularAnzeigename,
+	BOOL bNurValidieren = FALSE)
 {
 	extern CECTElsterApp theApp;
 	CString csReturn = "";
@@ -76,10 +84,7 @@ CString CEricFormularlogik::Render(
 #endif
 
 	// EC&T-ActiveX-Controls
-	m_pFormularCtrl	   = pFormularCtrl;
 	m_FormularDateipfad = FormularDateipfad;
-	m_pEinstellungCtrl = pEinstellungCtrl;
-	m_pDokumentCtrl	   = pDokumentCtrl;
 
 	// vorverdaute Dialog-Werte
 	m_pDatei = &Datei;  // Zertifikatsdatei
@@ -424,7 +429,7 @@ CString CEricFormularlogik::Render(
 			int Zeile = m_pListe->GetItemCount() + 2;  // unter letzte Zeile einfügen (mit einer Leerzeile Abstand)
 			CString csKlartextFehlerUtf8;
 			Utf8toAnsi(klartextFehler, csKlartextFehlerUtf8);
-			m_ListeInhalt[Zeile++][0] = csKlartextFehlerUtf8;
+			ListeInhalt[Zeile++][0] = csKlartextFehlerUtf8;
 			m_pListe->SetItemCount(Zeile);
 
 			const char* ergebnisPuffer = EricRueckgabepufferInhalt(ergebnisPufferHandle);
@@ -505,7 +510,7 @@ CString CEricFormularlogik::Render(
 							if (csMeldungTyp == _T("FehlerRegelpruefung")) csMeldungTyp = _T("Fehler");
 							CString csTextUtf8;
 							Utf8toAnsi(csText, csTextUtf8);
-							m_ListeInhalt[Zeile++][0] = csMeldungTyp + _T(": ") + csTextUtf8;
+							ListeInhalt[Zeile++][0] = csMeldungTyp + _T(": ") + csTextUtf8;
 							m_pListe->SetItemCount(Zeile);
 							m_pListe->EnsureVisible(Zeile - 1, FALSE);
 						}
