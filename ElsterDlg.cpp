@@ -214,7 +214,12 @@ BOOL CElsterDlg::OnInitDialog()
 	}
 	CString Jahr;
 	Jahr.Format(_T("%-0.04d"), jj);
+#ifdef _DEBUG
+	if (LB_ERR != m_VoranmeldungszeitraumCtrl.SetCurSel(0))  // Debugging EÜR !  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+#else
 	if (LB_ERR != m_VoranmeldungszeitraumCtrl.SetCurSel(m_VoranmeldungszeitraumCtrl.FindString(0, _T("Umsatzsteuer-Voranmeldung ") + Jahr + _T(" ") + Zeitraum)))
+#endif
+
 	{
 		// Liste mit Feldern initialisieren
 		if (m_Liste && m_FormularCtrl/* && m_Liste.GetItemCount()*/)
@@ -262,7 +267,7 @@ LRESULT CElsterDlg::OnGetListItem(WPARAM wParam, LPARAM lParam)
 		{
 			if (m_ListeFehler[nFeldkennzeichen] != _T(""))			// Fehler rot
 			{
-				data->m_colors.m_backColor = RGB(255,64,64);
+				data->m_colors.m_backColor = RGB(255,96,96);
 				data->m_tooltip = m_ListeFehler[nFeldkennzeichen];
 			}
 			else if (m_ListeHinweise[nFeldkennzeichen] != _T(""))	// Hinweise gelb
@@ -273,9 +278,17 @@ LRESULT CElsterDlg::OnGetListItem(WPARAM wParam, LPARAM lParam)
 		}
 	}
 	else if (m_ListeInhalt[item][0].Left(6) == _T("Fehler"))
-				data->m_colors.m_backColor = RGB(255,64,64);
+	{
+		data->m_textStyle.m_italic = true;
+		data->m_colors.m_backColor = RGB(255, 96, 96);
+	}
 	else if (m_ListeInhalt[item][0].Left(9) == _T("Hinweis: "))
-				data->m_colors.m_backColor = RGB(255,255,32);
+	{
+		data->m_textStyle.m_italic = true;
+		data->m_colors.m_backColor = RGB(255, 255, 32);
+	}
+	else if (data->m_text.Left(4) != "    " && m_ListeInhalt[item][1].IsEmpty() && m_ListeInhalt[item][3].IsEmpty())
+		data->m_textStyle.m_bold = true;  // Abschnittsüberschriften hervorheben
 
     return 0;
 }
@@ -568,10 +581,6 @@ void CElsterDlg::OnBnClickedCancel()
 
 void CElsterDlg::OnCbnSelchangeVoranmeldungszeitraum()
 {
-	UpdateData();
-	m_FormularDateipfad = m_FormularCtrl.HoleFormularpfad(m_VoranmeldungszeitraumCtrl.GetItemData(m_VoranmeldungszeitraumCtrl.GetCurSel()));
-	if (m_pEric) m_pEric->UpdateListe(m_FormularDateipfad, m_ListeInhalt, &m_Liste);
-	UpdateData(FALSE);
 	SetTimer(2, 1, NULL);
 }
 
@@ -606,10 +615,6 @@ void CElsterDlg::OnSize(UINT nType, int cx, int cy)
 
 	if (m_pEric)
 	{
-		UpdateData();
-		m_FormularDateipfad = m_FormularCtrl.HoleFormularpfad(m_VoranmeldungszeitraumCtrl.GetItemData(m_VoranmeldungszeitraumCtrl.GetCurSel()));
-		m_pEric->UpdateListe(m_FormularDateipfad, m_ListeInhalt, &m_Liste, TRUE);
-		UpdateData(FALSE);
 		SetTimer(2, 1, NULL);
 
 		// "senden an Finanzamt" ausblenden, wenn Fenster zu schmal
@@ -710,10 +715,6 @@ void CElsterDlg::OnEnKillfocusDatei()
 
 void CElsterDlg::OnBnClickedAktualisieren()
 {
-	UpdateData();
-	m_FormularDateipfad = m_FormularCtrl.HoleFormularpfad(m_VoranmeldungszeitraumCtrl.GetItemData(m_VoranmeldungszeitraumCtrl.GetCurSel()));
-	if (m_pEric) m_pEric->UpdateListe(m_FormularDateipfad, m_ListeInhalt, &m_Liste);
-	UpdateData(FALSE);
 	SetTimer(2, 1, NULL);
 
 	// falls Übertragunslog angezeigt wird und die Liste überlagert:

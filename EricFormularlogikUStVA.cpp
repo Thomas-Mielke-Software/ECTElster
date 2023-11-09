@@ -133,7 +133,7 @@ void CEricFormularlogikUStVA::UebertragungAbschliessen()
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //	LISTE AUFBAUEN
 //
-void CEricFormularlogikUStVA::UpdateListe(CString &csFormularDateipfad, CString (&m_ListeInhalt)[500][5], CQuickList* pListe, BOOL bNurSpaltenbreitenAnpassen)
+void CEricFormularlogikUStVA::UpdateListe(CString &csFormularDateipfad, CString (&ListeInhalt)[500][5], CQuickList* pListe, BOOL bNurSpaltenbreitenAnpassen)
 {
 	m_pListe = pListe;
 	m_FormularDateipfad = csFormularDateipfad;
@@ -204,36 +204,36 @@ void CEricFormularlogikUStVA::UpdateListe(CString &csFormularDateipfad, CString 
 		0, 0, 0, 0,
 		46, 47, 0, 0,
 		// veraltet	52, 53, 0, 0,	
-					73, 74, 0, 0,
-					// veraltet	78, 79, 0, 0,	
-								84, 85, 0, 0,
-								0, 0, 0, 0,
-								42, 0, 0, 0,
-								// veraltet	68, 0, 0, 0,
-											60, 0, 0, 0,
-											21, 0, 0, 0,
-											45, 0, 0, 0,
-											0, 0, 0, 0,
-											-IDS_SEPARATOR, 0, 0, 0,
-											-IDS_UMSATZSTEUER, 2003, 0, 0,
-											0, 0, 0, 0,
-											0, 1466, 0, 66,
-											0, 61, 0, 0,
-											0, 62, 0, 0,
-											0, 67, 0, 0,
-											0, 63, 0, 0,
-											0, 59, 0, 0,
-											0, 64, 0, 0,
-											-IDS_SEPARATOR, 0, 0, 0,
-											-IDS_VERBLEIBENDER_BETRAG, 2004, 0, 0,
-											0, 0, 0, 0,
-											0, 65, 0, 0,
-											0, 69, 0, 0,
-											-IDS_SEPARATOR, 0, 0, 0,
-											0, 39, 0, 0,
-											0, 0, 0, 0,
-											-IDS_SEPARATOR, 0, 0, 0,
-											0, 83, 0, 0
+		73, 74, 0, 0,
+		// veraltet	78, 79, 0, 0,	
+		84, 85, 0, 0,
+		0, 0, 0, 0,
+		42, 0, 0, 0,
+		// veraltet	68, 0, 0, 0,
+		60, 0, 0, 0,
+		21, 0, 0, 0,
+		45, 0, 0, 0,
+		0, 0, 0, 0,
+		-IDS_SEPARATOR, 0, 0, 0,
+		-IDS_UMSATZSTEUER, 2003, 0, 0,
+		0, 0, 0, 0,
+		0, 1466, 0, 66,
+		0, 61, 0, 0,
+		0, 62, 0, 0,
+		0, 67, 0, 0,
+		0, 63, 0, 0,
+		0, 59, 0, 0,
+		0, 64, 0, 0,
+		-IDS_SEPARATOR, 0, 0, 0,
+		-IDS_VERBLEIBENDER_BETRAG, 2004, 0, 0,
+		0, 0, 0, 0,
+		0, 65, 0, 0,
+		0, 69, 0, 0,
+		-IDS_SEPARATOR, 0, 0, 0,
+		0, 39, 0, 0,
+		0, 0, 0, 0,
+		-IDS_SEPARATOR, 0, 0, 0,
+		0, 83, 0, 0
 	};
 	static int AnzahlFormularlayoutZeilen = sizeof(Formularlayout) / sizeof(Formularlayout[0]);
 
@@ -242,9 +242,9 @@ void CEricFormularlogikUStVA::UpdateListe(CString &csFormularDateipfad, CString 
 	int Zeile, Spalte;
 	CString FeldWert83Merken;
 	BOOL bSternchenHinweisAnzeigen = FALSE;
-	for (Zeile = 0; Zeile < sizeof(m_ListeInhalt) / sizeof(m_ListeInhalt[0]); Zeile++)	// Listenspeicher initialisieren
-		for (Spalte = 0; Spalte < sizeof(m_ListeInhalt[0]) / sizeof(m_ListeInhalt[0][0]); Spalte++)
-			m_ListeInhalt[Zeile][Spalte] = _T("");
+	for (Zeile = 0; Zeile < sizeof(ListeInhalt) / sizeof(ListeInhalt[0]); Zeile++)	// Listenspeicher initialisieren
+		for (Spalte = 0; Spalte < sizeof(ListeInhalt[0]) / sizeof(ListeInhalt[0][0]); Spalte++)
+			ListeInhalt[Zeile][Spalte] = _T("");
 	for (Zeile = 0; Zeile < AnzahlFormularlayoutZeilen; Zeile++)
 	{
 		extern CECTElsterApp theApp;
@@ -255,7 +255,7 @@ void CEricFormularlogikUStVA::UpdateListe(CString &csFormularDateipfad, CString 
 		if (LayoutWert < 0)			// negative Werte sind Ressource Strings
 		{
 			LoadString(theApp.m_hInstance, -LayoutWert, ResourceString.GetBuffer(10000), 10000);
-			m_ListeInhalt[Zeile][LayoutWert != -IDS_SEPARATOR ? 0 : 4] = ResourceString;  // Separator nur in der Summenspalte anzeigen, alle anderen IDS_STRINGs in der ersten Spalte anzeigen
+			ListeInhalt[Zeile][LayoutWert != -IDS_SEPARATOR ? 0 : 4] = ResourceString;  // Separator nur in der Summenspalte anzeigen, alle anderen IDS_STRINGs in der ersten Spalte anzeigen
 
 			if (LayoutWert2 > 0)
 			{
@@ -265,15 +265,15 @@ void CEricFormularlogikUStVA::UpdateListe(CString &csFormularDateipfad, CString 
 				{
 					CString Feldwert2AlsString;
 					Feldwert2AlsString.Format(_T("%d"), LayoutWert2);
-					m_ListeInhalt[Zeile][3] = Feldwert2AlsString;	// Feld ID (KZ) in 4. Spalte eintragen
+					ListeInhalt[Zeile][3] = Feldwert2AlsString;	// Feld ID (KZ) in 4. Spalte eintragen
 				}
-				m_ListeInhalt[Zeile][4] = Feldwert2;				// den Feldwert zu der ID in 5. Spalte eintragen
+				ListeInhalt[Zeile][4] = Feldwert2;				// den Feldwert zu der ID in 5. Spalte eintragen
 			}
 		}
 		else if (LayoutWert > 0 || LayoutWert2 > 0)	// positive Werte sind FeldIDs
 		{
 			CString Feldbeschreibung = m_pFormularCtrl->HoleFeldbeschreibungUeberID(max(LayoutWert, LayoutWert2));
-			m_ListeInhalt[Zeile][0] = Feldbeschreibung;
+			ListeInhalt[Zeile][0] = Feldbeschreibung;
 			//m_pListe->InsertItem (Zeile, Feldbeschreibung);		
 
 			if (LayoutWert > 0)
@@ -285,9 +285,9 @@ void CEricFormularlogikUStVA::UpdateListe(CString &csFormularDateipfad, CString 
 					CString FeldwertAlsString;
 					FeldwertAlsString.Format(_T("%d"), LayoutWert);
 					if ((LayoutWert != 68 && LayoutWert != 52 && LayoutWert != 78) || Feldwert != _T(""))  // veraltete Felder nur anzeigen, wenn sie Werte enthalten (Validierung springt dann an!)
-						m_ListeInhalt[Zeile][1] = FeldwertAlsString;	// Feld ID (KZ) in 2. Spalte eintragen
+						ListeInhalt[Zeile][1] = FeldwertAlsString;	// Feld ID (KZ) in 2. Spalte eintragen
 				}
-				m_ListeInhalt[Zeile][2] = Feldwert;					// den Feldwert zu der ID in 3. Spalte eintragen
+				ListeInhalt[Zeile][2] = Feldwert;					// den Feldwert zu der ID in 3. Spalte eintragen
 			}
 
 			if (LayoutWert2 > 0)
@@ -301,18 +301,18 @@ void CEricFormularlogikUStVA::UpdateListe(CString &csFormularDateipfad, CString 
 					CString Feldwert2AlsString;
 					Feldwert2AlsString.Format(_T("%d"), LayoutWert2);
 					if ((LayoutWert2 != 53 && LayoutWert2 != 79) || Feldwert2 != _T(""))  // veraltete Felder nur anzeigen, wenn sie Werte enthalten (Validierung springt dann an!)
-						m_ListeInhalt[Zeile][3] = Feldwert2AlsString;	// Feld ID (KZ) in 4. Spalte eintragen
+						ListeInhalt[Zeile][3] = Feldwert2AlsString;	// Feld ID (KZ) in 4. Spalte eintragen
 				}
 				if (LayoutWert2 > 100 && (LayoutWert2 - 1000 == LayoutWert || LayoutWert2 - 1100 == LayoutWert) && Feldwert2 != _T(""))
 				{
 					Feldwert2 += _T("*");
 					bSternchenHinweisAnzeigen = TRUE;
 				}
-				m_ListeInhalt[Zeile][4] = Feldwert2;			// den Feldwert zu der ID in 5. Spalte eintragen
+				ListeInhalt[Zeile][4] = Feldwert2;			// den Feldwert zu der ID in 5. Spalte eintragen
 			}
 #ifdef TESTVERBINDUNG
 			else
-				m_ListeInhalt[Zeile][3] = _T("TEST!");
+				ListeInhalt[Zeile][3] = _T("TEST!");
 #endif
 		}
 	}
@@ -329,13 +329,13 @@ void CEricFormularlogikUStVA::UpdateListe(CString &csFormularDateipfad, CString 
 	{
 		if (FeldWert83VonLetzterUebertragung == FeldWert83Merken)
 		{
-			m_ListeInhalt[++Zeile][0] = _T("Der Umsatzsteuerbetrag entspricht dem bei der letzten Übertragung übermittelten.");
-			m_ListeInhalt[++Zeile][0] = _T("Es ist wahrscheinlich keine weitere Datenübertragung nötig.");
+			ListeInhalt[++Zeile][0] = _T("Der Umsatzsteuerbetrag entspricht dem bei der letzten Übertragung übermittelten.");
+			ListeInhalt[++Zeile][0] = _T("Es ist wahrscheinlich keine weitere Datenübertragung nötig.");
 		}
 		else
 		{
-			m_ListeInhalt[++Zeile][0] = _T("ACHTUNG: Der Umsatzsteuerbetrag entspricht nicht dem bei der letzten Übertragung übermittelten. (") + FeldWert83VonLetzterUebertragung + _T(")");
-			m_ListeInhalt[++Zeile][0] = _T("Es ist deshalb wohl eine berichtigte Anmeldung für diesen Voranmeldungszeitraum nötig.");
+			ListeInhalt[++Zeile][0] = _T("ACHTUNG: Der Umsatzsteuerbetrag entspricht nicht dem bei der letzten Übertragung übermittelten. (") + FeldWert83VonLetzterUebertragung + _T(")");
+			ListeInhalt[++Zeile][0] = _T("Es ist deshalb wohl eine berichtigte Anmeldung für diesen Voranmeldungszeitraum nötig.");
 		}
 		m_KorrigierteAnmeldung = TRUE;
 	}
@@ -345,13 +345,13 @@ void CEricFormularlogikUStVA::UpdateListe(CString &csFormularDateipfad, CString 
 	}
 #ifdef TESTVERBINDUNG
 	++Zeile;
-	m_ListeInhalt[++Zeile][0] = _T("ACHTUNG: Das installierte OCX ist nur eine Testversion und baut nur eine Testverbindung auf.");
-	m_ListeInhalt[++Zeile][0] = _T("               Es werden keine Daten als reale Vorgänge behandelt.");
+	ListeInhalt[++Zeile][0] = _T("ACHTUNG: Das installierte OCX ist nur eine Testversion und baut nur eine Testverbindung auf.");
+	ListeInhalt[++Zeile][0] = _T("               Es werden keine Daten als reale Vorgänge behandelt.");
 #endif
 	if (bSternchenHinweisAnzeigen)
 	{
 		++Zeile;
-		m_ListeInhalt[++Zeile][0] = _T("Hinweis: Mit '*' gekennzeichnete Steuer sind nur aus der Bemessungsgrundlage errechnete Zwischenwerte und werden nicht gesondert an das Finanzamt übertragen.");
+		ListeInhalt[++Zeile][0] = _T("Hinweis: Mit '*' gekennzeichnete Steuer sind nur aus der Bemessungsgrundlage errechnete Zwischenwerte und werden nicht gesondert an das Finanzamt übertragen.");
 	}
 
 	m_pListe->SetItemCount(Zeile);

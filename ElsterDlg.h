@@ -72,7 +72,7 @@ private:
 
 	// Variablen für die Steuerung von m_Liste 
 	CEricFormularlogik* m_pEric;						// abhängig vom Formular unterschiedliche Logik (EÜR/UStVA)
-	CString m_ListeInhalt[500][5];						// ist owner-drawn
+	CString m_ListeInhalt[500][5];						// ist owner-drawn, Spalten: Feldbeschreibung, KZ, Feldwert, 
 	CMap<int, int, CString, CString> m_ListeHinweise;	// nach Validierung werden Einträge des ListCtrl 
 	CMap<int, int, CString, CString> m_ListeFehler;		// ggf. farbig hervorgehoben und Hinweise/Fehler gezeigt
 
