@@ -53,9 +53,9 @@ CString CEricFormularlogik::Render(
 	HWND m_hWnd,
 	CString &FormularDateipfad,
 	CQuickList* pListe,
-	CString (&ListeInhalt)[500][5],
-	CMap<int, int, CString, CString> *pListeHinweise,
-	CMap<int, int, CString, CString> *pListeFehler,
+	CString (&ListeInhalt)[500][6],
+	CMap<CString, CString&, CString, CString&> *pListeHinweise,
+	CMap<CString, CString&, CString, CString&> *pListeFehler,
 	CString &Datei,
 	CString &Passwort,
 	CString &EmailAdresse,
@@ -451,7 +451,8 @@ CString CEricFormularlogik::Render(
 					if (feldidentifikator && text)
 					{
 						CString csFeldidentifikator = feldidentifikator->GetText();
-						CString csText = text->GetText();
+						CString csText;
+						Utf8toAnsi(text->GetText(), csText);
 
 						int nErsteZiffer;
 						nErsteZiffer = csFeldidentifikator.Find(_T("Kz"));
@@ -471,11 +472,11 @@ CString CEricFormularlogik::Render(
 							for (i = 0; i < csaErsetzteAusdruecke.GetSize() && i < nAnzahlErsetzteAusdruecke; i++)
 							{
 								// zu CMap hinzufügen:
-								int nTatsaechlicheFeldnummer = atoi(csaErsetzteAusdruecke[i]);
+								CString csTatsaechlicheFeldnummer = csaErsetzteAusdruecke[i];
 								if (csMeldungTyp == _T("Hinweis"))
-									m_pListeHinweise->SetAt(nTatsaechlicheFeldnummer, csText);
+									m_pListeHinweise->SetAt(csTatsaechlicheFeldnummer, csText);
 								else
-									m_pListeFehler->SetAt(nTatsaechlicheFeldnummer, csText);
+									m_pListeFehler->SetAt(csTatsaechlicheFeldnummer, csText);
 							}
 
 							/*
@@ -499,6 +500,19 @@ CString CEricFormularlogik::Render(
 							int nTatsaechlicheFeldnummer = atoi(csTatsaechlicheFeldnummer);
 							m_pListeHinweise->SetAt(nTatsaechlicheFeldnummer, csText);
 							*/
+						}
+						else // nicht-numerischer Feldidentifikator in Form des Elster-Feldnamen-Pfades
+						{
+							CStringArray csaErsetzteAusdruecke;
+							int nAnzahlErsetzteAusdruecke = RegSearchReplace(csFeldidentifikator, _T("(\\[[0-9]+\\])"), _T(""), csaErsetzteAusdruecke);
+							if (nAnzahlErsetzteAusdruecke > 0 && csFeldidentifikator[0] == _T('/'))
+							{
+								// zu CMap hinzufügen:
+								if (csMeldungTyp == _T("Hinweis"))
+									m_pListeHinweise->SetAt(csFeldidentifikator, csText);
+								else
+									m_pListeFehler->SetAt(csFeldidentifikator, csText);
+							}
 						}
 
 						// allgemeiner Fehler- oder Hinweistext ohne Zuordnung zu einem Feldkennzeichen

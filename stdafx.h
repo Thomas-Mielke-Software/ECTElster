@@ -23,3 +23,22 @@
 
 #include <afxwin.h>
 #include <afxdisp.h>
+
+template<class ARG_KEY>
+AFX_INLINE UINT AFXAPI HashKey(CString& key)
+{
+	int ll = key.GetLength();
+
+	if (ll == 0) return 0;
+	UINT ui = key[0];
+
+	if (ll > 1)
+	{
+		for (int ii = 1; ii < ll; ii++)
+		{
+			ui ^= (key[ii] << ((ii + key[ii - 1]) % 24));
+		} // for
+	} // if
+
+	return ui;
+}

@@ -193,7 +193,7 @@ void CEricFormularlogikEUeR::WerteAusEcaFormularGenerieren(LPXNode pXmlOut, std:
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //	LISTE AUFBAUEN
 //
-void CEricFormularlogikEUeR::UpdateListe(CString& csFormularDateipfad, CString(&ListeInhalt)[500][5], CQuickList* pListe, BOOL bNurSpaltenbreitenAnpassen)
+void CEricFormularlogikEUeR::UpdateListe(CString& csFormularDateipfad, CString(&ListeInhalt)[500][6], CQuickList* pListe, BOOL bNurSpaltenbreitenAnpassen)
 {
 	m_pListe = pListe;
 	m_FormularDateipfad = csFormularDateipfad;
@@ -278,7 +278,7 @@ void CEricFormularlogikEUeR::UpdateListe(CString& csFormularDateipfad, CString(&
 			if (feld.horizontal > 700) nAbziehbarOffset = 2;
 			ListeInhalt[Zeile][1 + nAbziehbarOffset] = FeldIdAlsString;	// Feld ID (KZ) in 2. Spalte eintragen
 			ListeInhalt[Zeile][2 + nAbziehbarOffset] = m_pFormularCtrl->HoleFeldwertUeberID(feld.id);
-
+			ListeInhalt[Zeile][5] = feld.elsterFeldname;
 			Zeile++;
 		}
 	}

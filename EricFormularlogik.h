@@ -48,8 +48,8 @@ public:
 	CQuickList *m_pListe;			// Ersatz für CListCtrl, siehe https://www.codeproject.com/Articles/8112/CQuickList
 
 	// Variablen für die Steuerung von m_Liste in ElsterDlg
-	CMap<int, int, CString, CString>* m_pListeHinweise;	// nach Validierung werden Einträge des ListCtrl 
-	CMap<int, int, CString, CString>* m_pListeFehler;		// ggf. farbig hervorgehoben und Hinweise/Fehler gezeigt
+	CMap<CString, CString&, CString, CString&>* m_pListeHinweise;	// nach Validierung werden Einträge des ListCtrl 
+	CMap<CString, CString&, CString, CString&>* m_pListeFehler;		// ggf. farbig hervorgehoben und Hinweise/Fehler gezeigt
 
 	// sonstige
 	CTime m_Jetzt;
@@ -79,9 +79,9 @@ public:
 	CString Render(HWND m_hWnd,
 		CString &FormularDateipfad,
 		CQuickList* pListe,
-		CString(&m_pListeInhalt)[500][5],
-		CMap<int, int, CString, CString> *pListeHinweise,
-		CMap<int, int, CString, CString> *pListeFehler,
+		CString(&m_pListeInhalt)[500][6],
+		CMap<CString, CString&, CString, CString&> *pListeHinweise,
+		CMap<CString, CString&, CString, CString&> *pListeFehler,
 		CString &Datei,
 		CString &Passwort,
 		CString &EmailAdresse,
@@ -99,7 +99,7 @@ public:
 		BOOL bNurValidieren);
 
 	// virtuelle Funktionen zur Beschickung der unterschiedlichen Formulare
-	virtual void UpdateListe(CString& csFormularDateipfad, CString (&m_pListeInhalt)[500][5], CQuickList* pListe, BOOL bNurSpaltenbreitenAnpassen = FALSE) { pListe->SetItemCount(0); return; };
+	virtual void UpdateListe(CString& csFormularDateipfad, CString (&m_pListeInhalt)[500][6], CQuickList* pListe, BOOL bNurSpaltenbreitenAnpassen = FALSE) { pListe->SetItemCount(0); return; };
 	virtual CString GetDatenteil() { return (CString)""; };
 	virtual CString GetLoginfo() { return (CString)""; };
 	virtual void UebertragungAbschliessen() {};

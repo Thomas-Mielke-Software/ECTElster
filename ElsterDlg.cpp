@@ -262,20 +262,35 @@ LRESULT CElsterDlg::OnGetListItem(WPARAM wParam, LPARAM lParam)
 	if (subItem) // 2. oder höhere Spalte? ggf. farbig markieren
 	{	
 		int subItemDesFeldkennzeichens = subItem & 0x1 ? subItem : subItem - 1; // entweder 2. oder 4. Spalte ermitteln, wo das jeweils zugehörige Kennzeichen drin steht
-		int nFeldkennzeichen = atoi(m_ListeInhalt[item][subItemDesFeldkennzeichens]);
-		if (nFeldkennzeichen)
+		CString csFeldkennzeichen = m_ListeInhalt[item][subItemDesFeldkennzeichens];
+		if (!csFeldkennzeichen.IsEmpty())  // numerisches Feldkennzeichen wie im Papierformular
 		{
-			if (m_ListeFehler[nFeldkennzeichen] != _T(""))			// Fehler rot
+			if (m_ListeFehler[csFeldkennzeichen] != _T(""))			// Fehler rot
 			{
 				data->m_colors.m_backColor = RGB(255,96,96);
-				data->m_tooltip = m_ListeFehler[nFeldkennzeichen];
+				data->m_tooltip = m_ListeFehler[csFeldkennzeichen];
 			}
-			else if (m_ListeHinweise[nFeldkennzeichen] != _T(""))	// Hinweise gelb
+			else if (m_ListeHinweise[csFeldkennzeichen] != _T(""))	// Hinweise gelb
 			{
 				data->m_colors.m_backColor = RGB(255,255,32);
-				data->m_tooltip = m_ListeHinweise[nFeldkennzeichen];
+				data->m_tooltip = m_ListeHinweise[csFeldkennzeichen];
 			}
 		}
+		csFeldkennzeichen = _T("/") + m_ListeInhalt[item][5];
+		if (!csFeldkennzeichen.IsEmpty())  // Elster-Feldname in Form eines Pfades "/EUER/..."
+		{
+			if (m_ListeFehler[csFeldkennzeichen] != _T(""))			// Fehler rot
+			{
+				data->m_colors.m_backColor = RGB(255, 96, 96);
+				data->m_tooltip = m_ListeFehler[csFeldkennzeichen];
+			}
+			else if (m_ListeHinweise[csFeldkennzeichen] != _T(""))	// Hinweise gelb
+			{
+				data->m_colors.m_backColor = RGB(255, 255, 32);
+				data->m_tooltip = m_ListeHinweise[csFeldkennzeichen];
+			}
+		}
+
 	}
 	else if (m_ListeInhalt[item][0].Left(6) == _T("Fehler"))
 	{
@@ -303,18 +318,29 @@ void CElsterDlg::OnNMClickListe(NMHDR *pNMHDR, LRESULT *pResult)
 		CString csMeldungstext;
 
 		// 2. Spalte
-		int nFeldkennzeichen = atoi(m_ListeInhalt[pNMItemActivate->iItem][1]);
-		if (nFeldkennzeichen)
+		CString csFeldkennzeichen = m_ListeInhalt[pNMItemActivate->iItem][1];
+		if (csFeldkennzeichen)
 		{
-			csMeldungstext += m_ListeFehler[nFeldkennzeichen] + (m_ListeFehler[nFeldkennzeichen] != _T("") ? _T(" ") : _T(""));
-			csMeldungstext += m_ListeHinweise[nFeldkennzeichen] + (m_ListeHinweise[nFeldkennzeichen] != _T("") ? _T(" ") : _T(""));
+			csMeldungstext += m_ListeFehler[csFeldkennzeichen] + (m_ListeFehler[csFeldkennzeichen] != _T("") ? _T(" ") : _T(""));
+			csMeldungstext += m_ListeHinweise[csFeldkennzeichen] + (m_ListeHinweise[csFeldkennzeichen] != _T("") ? _T(" ") : _T(""));
 		}
 		// 4. Spalte
-		nFeldkennzeichen = atoi(m_ListeInhalt[pNMItemActivate->iItem][3]);
-		if (nFeldkennzeichen)
+		csFeldkennzeichen = m_ListeInhalt[pNMItemActivate->iItem][3];
+		if (csFeldkennzeichen)
 		{
-			csMeldungstext += m_ListeFehler[nFeldkennzeichen] + (m_ListeFehler[nFeldkennzeichen] != _T("") ? _T(" ") : _T(""));
-			csMeldungstext += m_ListeHinweise[nFeldkennzeichen] + (m_ListeHinweise[nFeldkennzeichen] != _T("") ? _T(" ") :_T(""));
+			if (csMeldungstext != m_ListeFehler[csFeldkennzeichen])
+				csMeldungstext += m_ListeFehler[csFeldkennzeichen] + (m_ListeFehler[csFeldkennzeichen] != _T("") ? _T(" ") : _T(""));
+			if (csMeldungstext != m_ListeHinweise[csFeldkennzeichen])
+				csMeldungstext += m_ListeHinweise[csFeldkennzeichen] + (m_ListeHinweise[csFeldkennzeichen] != _T("") ? _T(" ") :_T(""));
+		}
+		// 6. Spalte (Elster-Feldname-Pfad)
+		csFeldkennzeichen = _T("/") + m_ListeInhalt[pNMItemActivate->iItem][5];
+		if (csFeldkennzeichen)
+		{
+			if (csMeldungstext != m_ListeFehler[csFeldkennzeichen])
+				csMeldungstext += m_ListeFehler[csFeldkennzeichen] + (m_ListeFehler[csFeldkennzeichen] != _T("") ? _T(" ") : _T(""));
+			if (csMeldungstext != m_ListeHinweise[csFeldkennzeichen])
+				csMeldungstext += m_ListeHinweise[csFeldkennzeichen] + (m_ListeHinweise[csFeldkennzeichen] != _T("") ? _T(" ") : _T(""));
 		}
 		if (m_ListeInhalt[pNMItemActivate->iItem][0].Left(6) == _T("Fehler"))
 				csMeldungstext += m_ListeInhalt[pNMItemActivate->iItem][0];

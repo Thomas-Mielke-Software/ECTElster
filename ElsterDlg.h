@@ -72,9 +72,9 @@ private:
 
 	// Variablen für die Steuerung von m_Liste 
 	CEricFormularlogik* m_pEric;						// abhängig vom Formular unterschiedliche Logik (EÜR/UStVA)
-	CString m_ListeInhalt[500][5];						// ist owner-drawn, Spalten: Feldbeschreibung, KZ, Feldwert, 
-	CMap<int, int, CString, CString> m_ListeHinweise;	// nach Validierung werden Einträge des ListCtrl 
-	CMap<int, int, CString, CString> m_ListeFehler;		// ggf. farbig hervorgehoben und Hinweise/Fehler gezeigt
+	CString m_ListeInhalt[500][6];						// ist owner-drawn, Spalten: Feldbeschreibung, KZ, Feldwert, Elster-Feldname(Pfad)
+	CMap<CString, CString&, CString, CString&> m_ListeHinweise;	// nach Validierung werden Einträge des ListCtrl 
+	CMap<CString, CString&, CString, CString&> m_ListeFehler;		// ggf. farbig hervorgehoben und Hinweise/Fehler gezeigt
 
 	// Member-Funktionen
 	void EricKontext(BOOL bNurValidieren, CTime &Jetzt, CString &MomentanerFormularAnzeigename, CString &Jahr, CString &Zeitraum, CQuickList *pListe);
