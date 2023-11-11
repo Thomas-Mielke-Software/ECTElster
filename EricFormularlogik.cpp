@@ -429,6 +429,11 @@ CString CEricFormularlogik::Render(
 			int Zeile = m_pListe->GetItemCount() + 2;  // unter letzte Zeile einfügen (mit einer Leerzeile Abstand)
 			CString csKlartextFehlerUtf8;
 			Utf8toAnsi(klartextFehler, csKlartextFehlerUtf8);
+			int nPos;
+			if ((nPos = csKlartextFehlerUtf8.Find(". Zur Ermittlung")) > 0)
+			{
+				csKlartextFehlerUtf8 = csKlartextFehlerUtf8.Left(nPos) + " (auf farblich hinterlegte Zeilen klicken für die Meldung).";
+			}
 			ListeInhalt[Zeile++][0] = csKlartextFehlerUtf8;
 			m_pListe->SetItemCount(Zeile);
 
@@ -522,9 +527,7 @@ CString CEricFormularlogik::Render(
 							int Zeile = m_pListe->GetItemCount() + 1;  // unter letzte Zeile einfügen (mit einer Leerzeile Abstand)
 							csMeldungTyp.ReleaseBuffer();
 							if (csMeldungTyp == _T("FehlerRegelpruefung")) csMeldungTyp = _T("Fehler");
-							CString csTextUtf8;
-							Utf8toAnsi(csText, csTextUtf8);
-							ListeInhalt[Zeile++][0] = csMeldungTyp + _T(": ") + csTextUtf8;
+							ListeInhalt[Zeile++][0] = csMeldungTyp + _T(": ") + csText;
 							m_pListe->SetItemCount(Zeile);
 							m_pListe->EnsureVisible(Zeile - 1, FALSE);
 						}

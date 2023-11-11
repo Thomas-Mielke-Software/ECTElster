@@ -106,6 +106,19 @@ CString CEricFormularlogikEUeR::GetDatenteil()
 	std::vector<Formularabschnitt> dummyAbschnittarray(0);
     WerteAusEcaFormularGenerieren(pE77, dummyFeldarray, dummyAbschnittarray, FLAG_GEN_XML);  // <EUER> etc.
 
+	// "Vorsatz"
+	LPXNode pVorsatz = ZuXmlBaumHinzufuegen(pE77, "Vorsatz", "");
+	ZuXmlBaumHinzufuegen(pVorsatz, "Unterfallart", "77");
+    ZuXmlBaumHinzufuegen(pVorsatz, "Vorgang", "01");
+	ZuXmlBaumHinzufuegen(pVorsatz, "StNr", m_Bundesfinanzamtsnummer);
+	ZuXmlBaumHinzufuegen(pVorsatz, "Zeitraum", m_Jahr);								// >2021</Zeitraum>
+	ZuXmlBaumHinzufuegen(pVorsatz, "AbsName	", XMLEscape(m_pEinstellungCtrl->HoleEinstellung(_T("vorname")) + _T(" ") + m_pEinstellungCtrl->HoleEinstellung(_T("name"))));
+	ZuXmlBaumHinzufuegen(pVorsatz, "AbsStr", XMLEscape(m_pEinstellungCtrl->HoleEinstellung(_T("strasse"))));
+	ZuXmlBaumHinzufuegen(pVorsatz, "AbsPlz", XMLEscape(m_pEinstellungCtrl->HoleEinstellung(_T("plz"))));
+	ZuXmlBaumHinzufuegen(pVorsatz, "AbsOrt", XMLEscape(m_pEinstellungCtrl->HoleEinstellung(_T("ort"))));
+	ZuXmlBaumHinzufuegen(pVorsatz, "Copyright", "2023 Thomas Mielke (GNU LGPL v2.1)");
+	ZuXmlBaumHinzufuegen(pVorsatz, "OrdNrArt", "S");
+	ZuXmlBaumHinzufuegen(pVorsatz, "Rueckuebermittlung/Bescheid", "2");  // TODO: Rueckuebermittlung/Bescheid Checkbox
     return xmlDatenTeil.GetXML();  
 }
 
@@ -282,188 +295,11 @@ void CEricFormularlogikEUeR::UpdateListe(CString& csFormularDateipfad, CString(&
 			Zeile++;
 		}
 	}
-
-
-
-	if (1==0)
-	{
-
-		// Formularlayout in Liste übertragen
-		// Spalten: 1. EC&T FeldID Bemessungsgrundlage, 2. EC&T FeldID Steuer, 
-		//          3. tatsächliches KZ Bemessungsgrundlage, 4. tatsächliches KZ Steuer
-		static int Formularlayout[][4] = {
-			81, 1081, 0, 0,
-			86, 1086, 0, 0,
-			87, 0, 0, 0,
-			35, 36, 0, 0,
-			77, 0, 0, 0,
-			76, 80, 0, 0,
-			0, 0, 0, 0,
-			41, 0, 0, 0,
-			44, 0, 0, 0,
-			49, 0, 0, 0,
-			43, 0, 0, 0,
-			48, 0, 0, 0,
-			0, 0, 0, 0,
-			91, 0, 0, 0,
-			89, 1189, 0, 0,
-			93, 1193, 0, 0,
-			90, 0, 0, 0,
-			95, 98, 0, 0,
-			94, 96, 0, 0,
-			0, 0, 0, 0,
-			46, 47, 0, 0,
-			// veraltet	52, 53, 0, 0,	
-			73, 74, 0, 0,
-			// veraltet	78, 79, 0, 0,	
-			84, 85, 0, 0,
-			0, 0, 0, 0,
-			42, 0, 0, 0,
-			// veraltet	68, 0, 0, 0,
-			60, 0, 0, 0,
-			21, 0, 0, 0,
-			45, 0, 0, 0,
-			0, 0, 0, 0,
-			-IDS_SEPARATOR, 0, 0, 0,
-			-IDS_UMSATZSTEUER, 2003, 0, 0,
-			0, 0, 0, 0,
-			0, 1466, 0, 66,
-			0, 61, 0, 0,
-			0, 62, 0, 0,
-			0, 67, 0, 0,
-			0, 63, 0, 0,
-			0, 59, 0, 0,
-			0, 64, 0, 0,
-			-IDS_SEPARATOR, 0, 0, 0,
-			-IDS_VERBLEIBENDER_BETRAG, 2004, 0, 0,
-			0, 0, 0, 0,
-			0, 65, 0, 0,
-			0, 69, 0, 0,
-			-IDS_SEPARATOR, 0, 0, 0,
-			0, 39, 0, 0,
-			0, 0, 0, 0,
-			-IDS_SEPARATOR, 0, 0, 0,
-			0, 83, 0, 0
-		};
-		static int AnzahlFormularlayoutZeilen = sizeof(Formularlayout) / sizeof(Formularlayout[0]);
-
-		// Hinweis: Dies ist kein Beispiel für durchdachten Code... aber er funktioniert!
-
-		int Zeile, Spalte;
-		CString FeldWert83Merken;
-		BOOL bSternchenHinweisAnzeigen = FALSE;
-		for (Zeile = 0; Zeile < sizeof(ListeInhalt) / sizeof(ListeInhalt[0]); Zeile++)	// Listenspeicher initialisieren
-			for (Spalte = 0; Spalte < sizeof(ListeInhalt[0]) / sizeof(ListeInhalt[0][0]); Spalte++)
-				ListeInhalt[Zeile][Spalte] = _T("");
-		for (Zeile = 0; Zeile < AnzahlFormularlayoutZeilen; Zeile++)
-		{
-			extern CECTElsterApp theApp;
-			CString ResourceString;
-
-			int LayoutWert = Formularlayout[Zeile][0];
-			int LayoutWert2 = Formularlayout[Zeile][1];
-			if (LayoutWert < 0)			// negative Werte sind Ressource Strings
-			{
-				LoadString(theApp.m_hInstance, -LayoutWert, ResourceString.GetBuffer(10000), 10000);
-				ListeInhalt[Zeile][LayoutWert != -IDS_SEPARATOR ? 0 : 4] = ResourceString;  // Separator nur in der Summenspalte anzeigen, alle anderen IDS_STRINGs in der ersten Spalte anzeigen
-
-				if (LayoutWert2 > 0)
-				{
-					CString Feldwert2 = m_pFormularCtrl->HoleFeldwertUeberID(LayoutWert2);
-					if (Formularlayout[Zeile][3]) LayoutWert2 = Formularlayout[Zeile][3]; // tatsächliches KZ, nicht EC&T FeldID anzeigen
-					if (LayoutWert2 < 100)
-					{
-						CString Feldwert2AlsString;
-						Feldwert2AlsString.Format(_T("%d"), LayoutWert2);
-						ListeInhalt[Zeile][3] = Feldwert2AlsString;	// Feld ID (KZ) in 4. Spalte eintragen
-					}
-					ListeInhalt[Zeile][4] = Feldwert2;				// den Feldwert zu der ID in 5. Spalte eintragen
-				}
-			}
-			else if (LayoutWert > 0 || LayoutWert2 > 0)	// positive Werte sind FeldIDs
-			{
-				CString Feldbeschreibung = m_pFormularCtrl->HoleFeldbeschreibungUeberID(max(LayoutWert, LayoutWert2));
-				ListeInhalt[Zeile][0] = Feldbeschreibung;
-				//m_pListe->InsertItem (Zeile, Feldbeschreibung);		
-
-				if (LayoutWert > 0)
-				{
-					CString Feldwert = m_pFormularCtrl->HoleFeldwertUeberID(LayoutWert);
-					if (Formularlayout[Zeile][3]) LayoutWert = Formularlayout[Zeile][2]; // tatsächliches KZ, nicht EC&T FeldID anzeigen
-					if (LayoutWert < 100)
-					{
-						CString FeldwertAlsString;
-						FeldwertAlsString.Format(_T("%d"), LayoutWert);
-						if ((LayoutWert != 68 && LayoutWert != 52 && LayoutWert != 78) || Feldwert != _T(""))  // veraltete Felder nur anzeigen, wenn sie Werte enthalten (Validierung springt dann an!)
-							ListeInhalt[Zeile][1] = FeldwertAlsString;	// Feld ID (KZ) in 2. Spalte eintragen
-					}
-					ListeInhalt[Zeile][2] = Feldwert;					// den Feldwert zu der ID in 3. Spalte eintragen
-				}
-
-				if (LayoutWert2 > 0)
-				{
-					CString Feldwert2 = m_pFormularCtrl->HoleFeldwertUeberID(LayoutWert2);
-					if (Formularlayout[Zeile][3]) LayoutWert2 = Formularlayout[Zeile][3]; // tatsächliches KZ, nicht EC&T FeldID anzeigen
-					if (LayoutWert2 == 83)
-						FeldWert83Merken = Feldwert2;
-					if (LayoutWert2 < 100)
-					{
-						CString Feldwert2AlsString;
-						Feldwert2AlsString.Format(_T("%d"), LayoutWert2);
-						if ((LayoutWert2 != 53 && LayoutWert2 != 79) || Feldwert2 != _T(""))  // veraltete Felder nur anzeigen, wenn sie Werte enthalten (Validierung springt dann an!)
-							ListeInhalt[Zeile][3] = Feldwert2AlsString;	// Feld ID (KZ) in 4. Spalte eintragen
-					}
-					if (LayoutWert2 > 100 && (LayoutWert2 - 1000 == LayoutWert || LayoutWert2 - 1100 == LayoutWert) && Feldwert2 != _T(""))
-					{
-						Feldwert2 += _T("*");
-						bSternchenHinweisAnzeigen = TRUE;
-					}
-					ListeInhalt[Zeile][4] = Feldwert2;			// den Feldwert zu der ID in 5. Spalte eintragen
-				}
-	#ifdef TESTVERBINDUNG
-				else
-					ListeInhalt[Zeile][3] = _T("TEST!");
-	#endif
-			}
-		}
-
-		// Hinweis auf bereits übertragene Voranmeldungen für den Zeitraum
-		int nZeitraum = m_pFormularCtrl->HoleVoranmeldungszeitraum();
-		if (nZeitraum > 12) nZeitraum += 28;	// 1-12 Monat; 1. Quartal == 41, 4. Q. == 44
-		CString Zeitraum;
-		Zeitraum.Format(_T("%d"), nZeitraum);
-		CString Jahr;
-		Jahr.Format(_T("%-0.0d"), (int)m_pDokumentCtrl->GetJahr());
-		CString FeldWert83VonLetzterUebertragung = m_pDokumentCtrl->HoleBenutzerdefWert(_T("Elster"), _T("UST-Zahlbetrag-") + Jahr + _T("-") + Zeitraum);
-		if (FeldWert83VonLetzterUebertragung.GetLength())
-		{
-			if (FeldWert83VonLetzterUebertragung == FeldWert83Merken)
-			{
-				ListeInhalt[++Zeile][0] = _T("Der Umsatzsteuerbetrag entspricht dem bei der letzten Übertragung übermittelten.");
-				ListeInhalt[++Zeile][0] = _T("Es ist wahrscheinlich keine weitere Datenübertragung nötig.");
-			}
-			else
-			{
-				ListeInhalt[++Zeile][0] = _T("ACHTUNG: Der Umsatzsteuerbetrag entspricht nicht dem bei der letzten Übertragung übermittelten. (") + FeldWert83VonLetzterUebertragung + _T(")");
-				ListeInhalt[++Zeile][0] = _T("Es ist deshalb wohl eine berichtigte Anmeldung für diesen Voranmeldungszeitraum nötig.");
-			}
-			m_KorrigierteAnmeldung = TRUE;
-		}
-		else
-		{
-			m_KorrigierteAnmeldung = FALSE;
-		}
-	}
 #ifdef TESTVERBINDUNG
 	++Zeile;
 	ListeInhalt[++Zeile][0] = _T("ACHTUNG: Das installierte OCX ist nur eine Testversion und baut nur eine Testverbindung auf.");
 	ListeInhalt[++Zeile][0] = _T("               Es werden keine Daten als reale Vorgänge behandelt.");
 #endif
-	if (bSternchenHinweisAnzeigen)
-	{
-		++Zeile;
-		ListeInhalt[++Zeile][0] = _T("Hinweis: Mit '*' gekennzeichnete Steuer sind nur aus der Bemessungsgrundlage errechnete Zwischenwerte und werden nicht gesondert an das Finanzamt übertragen.");
-	}
 
 	m_pListe->SetItemCount(Zeile);
 	m_pListe->RedrawItems(0, Zeile - 1);
