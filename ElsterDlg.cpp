@@ -74,6 +74,10 @@ void CElsterDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_ZEIGE, m_Zeige);
 	DDX_Text(pDX, IDC_DATEI, m_Datei);
 	DDX_Text(pDX, IDC_PASSWORT, m_Passwort);
+	DDX_Control(pDX, IDC_RECHTSFORM, m_RechtsformCtrl);
+	DDX_Control(pDX, IDC_GRUNDSTUECKSVERAEUSSERUNGEN, m_GrundstuecksveraeusserungenCtrl);
+	DDX_Control(pDX, IDC_EINKUNFTSART, m_EinkunftsartCtrl);
+	DDX_Control(pDX, IDC_BETRIEBSINHABER, m_BetriebsinhaberCtrl);
 }
 
 
@@ -100,6 +104,10 @@ BEGIN_MESSAGE_MAP(CElsterDlg, CDialog)
 	ON_NOTIFY(NM_CLICK, IDC_LISTE, &CElsterDlg::OnNMClickListe)
 	#pragma warning(pop)
 	ON_BN_CLICKED(IDC_AKTUALISIEREN, &CElsterDlg::OnBnClickedAktualisieren)
+	ON_CBN_SELCHANGE(IDC_GRUNDSTUECKSVERAEUSSERUNGEN, &CElsterDlg::OnCbnSelchangeGrundstuecksveraeusserungen)
+	ON_CBN_SELCHANGE(IDC_EINKUNFTSART, &CElsterDlg::OnCbnSelchangeEinkunftsart)
+	ON_CBN_SELCHANGE(IDC_RECHTSFORM, &CElsterDlg::OnCbnSelchangeRechtsform)
+	ON_CBN_SELCHANGE(IDC_BETRIEBSINHABER, &CElsterDlg::OnCbnSelchangeBetriebsinhaber)
 END_MESSAGE_MAP()
 
 
@@ -151,6 +159,61 @@ BOOL CElsterDlg::OnInitDialog()
 	m_FormularCtrl.SetzeDokumentID(m_dokID);
 	m_DokumentCtrl.SetID(m_dokID);	// und das Dokument-Objekt sowieso...
 
+	// Rechtsform Combobox aufbauen
+	struct RechtsformTyp
+	{
+		int code;
+		PTCHAR name;
+	} rechtsformen[] =
+	{
+		0, _T("<bitte auswälen>"),
+		110, _T("Hausgewerbetreibende oder gleichgestellte Person"),
+		120, _T("Sonstige Einzelgewerbetreibende (außer Hausgewerbe und gleichgestellte Personen)"),
+		130, _T("Land- oder Forstwirt"),
+		140, _T("Angehörige(r) der freien Berufe"),
+		150, _T("Sonstige selbstständig tätige Personen"),
+		160, _T("Person mit Beteiligungen an gewerblichen Personengesellschaften"),
+		190, _T("Sonstige natürliche Person")
+		/* ab hier nur Bilanzierer -- können ignoriert werden
+		310, _T("Aktiengesellschaft"),
+		320, _T("Kommanditgesellschaft auf Aktien"),
+		350, _T("Gesellschaft mit beschränkter Haftung"),
+		360, _T("Europäische Gesellschaft(SE)"),
+		370, _T("Unternehmergesellschaft(haftungsbeschränkt)"),
+		450, _T("Europäische Genossenschaft(SCE)"),
+		490, _T("sonstige Genossenschaft im Sinne des Genossenschaftsgesetzes"),
+		510, _T("Versicherungsverein auf Gegenseitigkeit"),
+		590, _T("sonstige juristische Person des privaten Rechts"),
+		621, _T("Nichtrechtsfähiger Verein"),
+		810, _T("Gebietskörperschaft"),
+		820, _T("Öffentlich-rechtliche Religionsgesellschaft"),
+		834, _T("Sonstige juristische Person des öffentlichen Rechts(zum Beispiel Zweckverband)"),
+		910, _T("Ausländische Rechtsform, die mit Körperschaften nach § 1 Absatz 1 Nummer 1 KStG vergleichbar ist"),
+		200, _T("Atypisch stille Gesellschaft"),
+		210, _T("Offene Handelsgesellschaft"),
+		220, _T("Kommanditgesellschaft"),
+		230, _T("GmbH und Co.KG"),
+		240, _T("GmbH und Co.OHG"),
+		250, _T("Aktiengesellschaft und Co.KG"),
+		260, _T("Aktiengesellschaft und Co.OHG"),
+		270, _T("Gesellschaft des bürgerlichen Rechts"),
+		280, _T("Europäische wirtschaftliche Interessenvereinigung(EWIV)"),
+		290, _T("sonstige Personengesellschaften"),
+		920, _T("ausländische Rechtsform, die einer Personengesellschaft entspricht") */
+	};
+	m_RechtsformCtrl.ResetContent();
+	for (int rechtsform = 0; rechtsform < sizeof(rechtsformen) / sizeof(rechtsformen[0]); rechtsform++)
+	{
+		m_RechtsformCtrl.AddString(rechtsformen[rechtsform].name);
+		m_RechtsformCtrl.SetItemData(m_RechtsformCtrl.GetCount() - 1, rechtsformen[rechtsform].code);
+	}
+	m_RechtsformCtrl.SetCurSel(0);
+
+	// andere Comboboxen voreinstellen
+	m_EinkunftsartCtrl.SetCurSel(0);
+	m_BetriebsinhaberCtrl.SetCurSel(0);
+	m_GrundstuecksveraeusserungenCtrl.SetCurSel(0);
+
 	// Formular/Voranm.zeitr. Combobox aufbauen
 	m_VoranmeldungszeitraumCtrl.ResetContent();
 	int n = m_FormularCtrl.HoleFormularanzahl();
@@ -165,7 +228,7 @@ BOOL CElsterDlg::OnInitDialog()
 				m_VoranmeldungszeitraumCtrl.AddString(Formularname);
 				m_VoranmeldungszeitraumCtrl.SetItemData(m_VoranmeldungszeitraumCtrl.GetCount()-1, i);	// Index speichern, um darüber bei Verarbeitung den Pfad zu gewinnen
 			}
-		}	
+		}
 
 	// Vorauswahl des Formulars nach heutigem Datum -- unter Einbeziehung der Dauerfristverlängerung
 	int jj = m_DokumentCtrl.GetJahr();
@@ -240,6 +303,57 @@ BOOL CElsterDlg::OnInitDialog()
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+//	UMSCHALTUNG STEUERELEMENTE BEI FORMULARWECHSEL
+//
+void CElsterDlg::UpdateSteuerelemente(int formulartyp)
+{
+	if (formulartyp == FORMULARTYP_USTVA)
+	{
+		GetDlgItem(IDC_KORRIGIERTE_ANMELDUNG)->ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_BELEGE_WERDEN_NACHGEREICHT)->ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_VERRECHNUNG_DES_ERSTATTUNGSANSPRUCHS)->ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_EINZUGSERMAECHTIGUNG_WIDERRUFEN)->ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_EMAIL_ADRESSE_STATIC)->ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_EMAIL_ADRESSE)->ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_TELEFON_STATIC)->ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_TELEFON)->ShowWindow(SW_SHOW);
+
+		GetDlgItem(IDC_EINKUNFTSART_STATIC)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_EINKUNFTSART)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_RECHTSFORM_STATIC)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_RECHTSFORM)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_BETRIEBSINHABER_STATIC)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_BETRIEBSINHABER)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_GRUNDSTUECKSVERAEUSSERUNGEN_STATIC)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_GRUNDSTUECKSVERAEUSSERUNGEN)->ShowWindow(SW_HIDE);		
+	}
+	else // if (formulartyp == FORMULARTYP_EUER)
+	{ 
+		GetDlgItem(IDC_KORRIGIERTE_ANMELDUNG)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_BELEGE_WERDEN_NACHGEREICHT)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_VERRECHNUNG_DES_ERSTATTUNGSANSPRUCHS)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_EINZUGSERMAECHTIGUNG_WIDERRUFEN)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_EMAIL_ADRESSE_STATIC)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_EMAIL_ADRESSE)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_TELEFON_STATIC)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_TELEFON)->ShowWindow(SW_HIDE);
+
+		GetDlgItem(IDC_EINKUNFTSART_STATIC)->ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_EINKUNFTSART)->ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_RECHTSFORM_STATIC)->ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_RECHTSFORM)->ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_BETRIEBSINHABER_STATIC)->ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_BETRIEBSINHABER)->ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_GRUNDSTUECKSVERAEUSSERUNGEN_STATIC)->ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_GRUNDSTUECKSVERAEUSSERUNGEN)->ShowWindow(SW_SHOW);
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+//	LISTE
+//
 
 // Item-Callback für CQuickList
 LRESULT CElsterDlg::OnGetListItem(WPARAM wParam, LPARAM lParam)
@@ -359,9 +473,13 @@ void CElsterDlg::OnTimer(UINT_PTR nIDEvent)
 {
 	KillTimer(1);
 
-	if (nIDEvent == 2)	// ERiC-Validierung mit Zeitverzögerung
+	BOOL bNurSpaltenbreitenAnpassen = FALSE;
+	if (nIDEvent == 3)	// nur Listenspalten neu berechnen
+		bNurSpaltenbreitenAnpassen = TRUE;
+	if (nIDEvent == 2 || nIDEvent == 3)	// ERiC-Validierung mit Zeitverzögerung
 	{
 		KillTimer(2);
+		KillTimer(3);
 		UpdateData();
 		CString MomentanerFormularAnzeigename;
 		CTime Jetzt;
@@ -424,6 +542,7 @@ void CElsterDlg::EricKontext(BOOL bNurValidieren, CTime& Jetzt, CString& Momenta
 		{
 			m_pEric = new CEricFormularlogikEUeR();
 			m_pEric->Init(&m_FormularCtrl, &m_EinstellungCtrl, &m_DokumentCtrl);
+			UpdateSteuerelemente(FORMULARTYP_EUER);
 		}
 	}
 	else
@@ -449,12 +568,18 @@ Vielleicht ist das falsche Buchungsjahr geöffnet oder der falsche Zeitraum ausge
 		{
 			m_pEric = new CEricFormularlogikUStVA();
 			m_pEric->Init(&m_FormularCtrl, &m_EinstellungCtrl, &m_DokumentCtrl);
+			UpdateSteuerelemente(FORMULARTYP_USTVA);
 		}
 	}
 }
 
 void CElsterDlg::ERiC(BOOL bNurValidieren = FALSE)
 {
+	CString csRechtsform = "150";					// Für EÜR: Defaultwerte
+	CString csEinkunftsart = "3";					// für vorläufige 
+	CString csBetriebsinhaber = "1";				// Plausibilitätsprüfung
+	CString csGrundstuecksveraeusserungen = "2";	// beim Aufbau der Liste
+
 	UpdateData();
 
 	if (!bNurValidieren)
@@ -477,6 +602,43 @@ void CElsterDlg::ERiC(BOOL bNurValidieren = FALSE)
 				return;
 			}
 		}
+
+		if (m_pEric && m_pEric->IsKindOf(RUNTIME_CLASS(CEricFormularlogikEUeR)))
+		{
+			if (m_RechtsformCtrl.GetCurSel())
+			{
+				AfxMessageBox(_T("Bitte die Rechtsform des Betriebs auswählen."));
+				m_RechtsformCtrl.SetFocus();
+				return;
+			}
+			if (m_EinkunftsartCtrl.GetCurSel())
+			{
+				AfxMessageBox(_T("Bitte die Einkunftsart des Betriebs auswählen."));
+				m_EinkunftsartCtrl.SetFocus();
+				return;
+			}
+			if (m_BetriebsinhaberCtrl.GetCurSel())
+			{
+				AfxMessageBox(_T("Bitte den Inhaber bzw. die Inhaberin des Betriebs auswählen."));
+				m_BetriebsinhaberCtrl.SetFocus();
+				return;
+			}
+			if (m_GrundstuecksveraeusserungenCtrl.GetCurSel())
+			{
+				AfxMessageBox(_T("Bitte Angaben machen, ob im Wirtschaftsjahr Veräusserungen Grundstücken oder entspr. Rechten stattfanden."));
+				m_GrundstuecksveraeusserungenCtrl.SetFocus();
+				return;
+			}
+		}
+	}
+
+	if (m_pEric && m_pEric->IsKindOf(RUNTIME_CLASS(CEricFormularlogikEUeR)))
+	{
+		int nSel = m_RechtsformCtrl.GetCurSel();
+		if (nSel > 0) csRechtsform.Format("%d", m_RechtsformCtrl.GetItemData(nSel));
+		if ((nSel = m_EinkunftsartCtrl.GetCurSel()) > 0) csEinkunftsart.Format("%d", nSel);
+		if ((nSel = m_BetriebsinhaberCtrl.GetCurSel()) > 0) csBetriebsinhaber.Format("%d", nSel);
+		if ((nSel = m_GrundstuecksveraeusserungenCtrl.GetCurSel()) > 0) csGrundstuecksveraeusserungen.Format("%d", nSel);	
 	}
 
 	CString Jahr;
@@ -540,6 +702,10 @@ void CElsterDlg::ERiC(BOOL bNurValidieren = FALSE)
 		m_BelegeWerdenNachgereicht,
 		m_VerrechnungDesErstattungsanspruchs,
 		m_EinzugsermaechtigungWiderrufen,
+		csRechtsform,
+		csEinkunftsart,
+		csBetriebsinhaber,
+		csGrundstuecksveraeusserungen,
 		Jetzt,
 		Jahr,
 		Zeitraum,
@@ -641,7 +807,7 @@ void CElsterDlg::OnSize(UINT nType, int cx, int cy)
 
 	if (m_pEric)
 	{
-		SetTimer(2, 1, NULL);
+		SetTimer(3, 1, NULL);
 
 		// "senden an Finanzamt" ausblenden, wenn Fenster zu schmal
 		RECT r;
@@ -750,4 +916,36 @@ void CElsterDlg::OnBnClickedAktualisieren()
 
 	GetDlgItem(IDOK)->EnableWindow();	 // Senden-Button kann wieder gedrückt werden
 	m_Liste.InvalidateRect(NULL, TRUE);	 // Liste neu aufbauen
+}
+
+
+void CElsterDlg::OnCbnSelchangeGrundstuecksveraeusserungen()
+{
+	SetTimer(2, 1, NULL);
+}
+
+
+void CElsterDlg::OnCbnSelchangeEinkunftsart()
+{
+	if (m_EinkunftsartCtrl.GetCurSel() == 1)
+	{
+		AfxMessageBox(_T("Sorry, 'Land- und Forstwirtschaft' wird derzeit nicht unterstützt, da abweichende Buchungsjahre mit der internen Datenstruktur schlecht abbildbar sind. :("));
+		m_FinanzamtCtrl.SetFocus();
+		m_EinkunftsartCtrl.SetCurSel(0);
+		return;
+	}
+
+	SetTimer(2, 1, NULL);
+}
+
+
+void CElsterDlg::OnCbnSelchangeRechtsform()
+{
+	SetTimer(2, 1, NULL);
+}
+
+
+void CElsterDlg::OnCbnSelchangeBetriebsinhaber()
+{
+	SetTimer(2, 1, NULL);
 }

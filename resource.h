@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ generated include file.
-// Used by ECTElster.rc
+// Von Microsoft Visual C++ generierte Includedatei.
+// Verwendet durch ECTElster.rc
 //
 #define IDS_ECTELSTER                   1
 #define IDD_ABOUTBOX_ECTELSTER          1
@@ -32,28 +32,36 @@
 #define IDC_EINZUGSERMAECHTIGUNG_WIDERRUFEN 215
 #define IDC_INFO                        216
 #define IDC_VERSION                     217
+#define IDC_EINKUNFTSART_STATIC         217
 #define IDC_ERGEBNIS                    218
 #define IDC_ZEIGE                       219
 #define IDC_SIGNATUROPTIONEN            220
 #define IDC_FINANZAMT_NICHT_IN_DER_LISTE 221
 #define IDC_RADIO1                      222
+#define IDC_EINKUNFTSART                222
 #define IDC_RADIO2                      223
+#define IDC_RECHTSFORM_STATIC           223
 #define IDC_RADIO3                      224
+#define IDC_RECHTSFORM                  224
 #define IDC_RADIO4                      225
+#define IDC_BETRIEBSINHABER_STATIC      225
 #define IDC_DATEI                       226
 #define IDC_DURCHSUCHEN                 227
 #define IDC_PASSWORT                    228
 #define IDC_SIGNATUROPTIONENRAHMEN      229
 #define IDC_SIGNATUROPTION1             230
+#define IDC_BETRIEBSINHABER             230
 #define IDC_SIGNATUROPTION2             231
 #define IDC_SIGNATUROPTION3             232
 #define IDC_SIGNATUROPTION4             233
+#define IDC_GRUNDSTUECKSVERAEUSSERUNGEN_STATIC 233
 #define IDC_DATEI_STATIC                234
 #define IDC_PASSWORT_STATIC             235
 #define IDC_PASSWORT_STATUS             236
 #define IDC_SIGNATURANMERKUNG_STATIC    237
 #define IDC_BUTTON1                     238
 #define IDC_AKTUALISIEREN               238
+#define IDC_GRUNDSTUECKSVERAEUSSERUNGEN 239
 
 // Next default values for new objects
 // 

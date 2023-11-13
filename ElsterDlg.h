@@ -31,6 +31,9 @@
 
 // CElsterDlg dialog
 
+#define FORMULARTYP_EUER	1
+#define FORMULARTYP_USTVA	2
+
 class CElsterDlg : public CDialog
 {
 //	DECLARE_DYNAMIC(CElsterDlg)
@@ -80,9 +83,11 @@ private:
 	void EricKontext(BOOL bNurValidieren, CTime &Jetzt, CString &MomentanerFormularAnzeigename, CString &Jahr, CString &Zeitraum, CQuickList *pListe);
 	void ERiC(BOOL bNurValidieren);
 	LRESULT OnGetListItem(WPARAM wParam, LPARAM lParam);
+	void UpdateSteuerelemente(int formulartyp);
 
 	// Message-Handler
 	DECLARE_MESSAGE_MAP()
+private:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	virtual BOOL OnInitDialog();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
@@ -101,4 +106,13 @@ private:
 	afx_msg void OnEnKillfocusDatei();
 	afx_msg void OnNMClickListe(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnBnClickedAktualisieren();
+	CComboBox m_RechtsformCtrl;
+	CComboBox m_GrundstuecksveraeusserungenCtrl;
+	CComboBox m_EinkunftsartCtrl;
+	CComboBox m_BetriebsinhaberCtrl;
+public:
+	afx_msg void OnCbnSelchangeGrundstuecksveraeusserungen();
+	afx_msg void OnCbnSelchangeEinkunftsart();
+	afx_msg void OnCbnSelchangeRechtsform();
+	afx_msg void OnCbnSelchangeBetriebsinhaber();
 };

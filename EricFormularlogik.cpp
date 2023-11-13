@@ -64,6 +64,10 @@ CString CEricFormularlogik::Render(
 	BOOL bBelegeWerdenNachgereicht,
 	BOOL bVerrechnungDesErstattungsanspruchs,
 	BOOL bEinzugsermaechtigungWiderrufen,
+	CString& csRechtsform,
+	CString& csEinkunftsart,
+	CString& csBetriebsinhaber,
+	CString&csGrundstuecksveraeusserungen,
 	CTime &Jetzt,
 	CString &Jahr,
 	CString &Zeitraum,
@@ -95,11 +99,17 @@ CString CEricFormularlogik::Render(
 	m_BelegeWerdenNachgereicht = bBelegeWerdenNachgereicht;
 	m_VerrechnungDesErstattungsanspruchs = bVerrechnungDesErstattungsanspruchs;
 	m_EinzugsermaechtigungWiderrufen = bEinzugsermaechtigungWiderrufen;
+	m_csRechtsform = csRechtsform;
+	m_csEinkunftsart = csEinkunftsart;
+	m_csBetriebsinhaber = csBetriebsinhaber;
+	m_csGrundstuecksveraeusserungen = csGrundstuecksveraeusserungen;
 
 	// normale Dialog-Controls
 	m_pListe = pListe;
 	m_pListeHinweise = pListeHinweise;
 	m_pListeFehler = pListeFehler;
+	m_pListeHinweise->RemoveAll();
+	m_pListeFehler->RemoveAll();
 
 	// sonstige
 	m_Jetzt = Jetzt;

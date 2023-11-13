@@ -39,6 +39,10 @@ public:
 	BOOL m_BelegeWerdenNachgereicht;
 	BOOL m_VerrechnungDesErstattungsanspruchs;
 	BOOL m_EinzugsermaechtigungWiderrufen;
+	CString m_csRechtsform;
+	CString m_csEinkunftsart;
+	CString m_csBetriebsinhaber;
+	CString m_csGrundstuecksveraeusserungen;
 
 	// Pointer auf Dialog-Controls
 	CFormularCtrl *m_pFormularCtrl;
@@ -90,6 +94,10 @@ public:
 		BOOL bBelegeWerdenNachgereicht,
 		BOOL bVerrechnungDesErstattungsanspruchs,
 		BOOL bEinzugsermaechtigungWiderrufen,
+		CString &csRechtsform,
+		CString &csEinkunftsart,
+		CString &csBetriebsinhaber,
+		CString &csGrundstuecksveraeusserungen,
 		CTime &Jetzt,
 		CString &Jahr,
 		CString &Zeitraum,

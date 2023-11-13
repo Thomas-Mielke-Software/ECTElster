@@ -59,10 +59,6 @@ bool CEricFormularlogikEUeR::CompareInterval(Formularfeld f1, Formularfeld f2)
 	return (f1.seite * 10000 + f1.vertikal < f2.seite * 10000 + f2.vertikal);
 }
 
-// TODO: E6000602 Rechtsform in <Allg> als Enumeration!!
-// TODO: E6000603 Einkunftsart: Land- und Forstwirtschaft = 1, Gewerbebetrieb = 2, Selbständige Arbeit = 3
-// TODO: E6000604 Enumeration - 1 [Steuerpflichtige Person/Ehemann/Person A (Ehegatte A/Lebenspartner[in] A)/Gesellschaft/Körperschaft] 2[Ehefrau / Person B(Ehegatte B / Lebenspartner[in] B)] - 3[Beide Ehegatten / Lebenspartner[innen]]
-// TODO: E6000019 Wurden im Kalenderjahr / Wirtschaftsjahr Grundstücke / grundstücksgleiche Rechte entnommen oder veräußert ? (Ja = 1, Nein = 2)
 CString CEricFormularlogikEUeR::GetDatenteil()
 {
     XNode xmlDatenTeil;  // xml-Ausgabe für ERiC (root node hier <DatenTeil>)
@@ -94,10 +90,10 @@ CString CEricFormularlogikEUeR::GetDatenteil()
     ZuXmlBaumHinzufuegen(pAllg, "E6000024", XMLEscape(m_pEinstellungCtrl->HoleEinstellung(_T("plz"))));
     ZuXmlBaumHinzufuegen(pAllg, "E6000025", XMLEscape(m_pEinstellungCtrl->HoleEinstellung(_T("ort"))));
     ZuXmlBaumHinzufuegen(pAllg, "E6000017", XMLEscape(m_pEinstellungCtrl->HoleEinstellung(_T("unternehmensart1"))));
-    ZuXmlBaumHinzufuegen(pAllg, "E6000602", "140");
-    ZuXmlBaumHinzufuegen(pAllg, "E6000603", "3");
-    ZuXmlBaumHinzufuegen(pAllg, "E6000604", "1");
-    ZuXmlBaumHinzufuegen(pAllg, "E6000019", "2");
+    ZuXmlBaumHinzufuegen(pAllg, "E6000602", m_csRechtsform);
+	ZuXmlBaumHinzufuegen(pAllg, "E6000603", m_csEinkunftsart);
+	ZuXmlBaumHinzufuegen(pAllg, "E6000604", m_csBetriebsinhaber);
+	ZuXmlBaumHinzufuegen(pAllg, "E6000019", m_csGrundstuecksveraeusserungen);
 
     // .eca-Formular -> ERiC-XML
     ZuXmlBaumHinzufuegen(pE77, "EUER/BEin", ""); /// Reihenfolge vordefinieren
