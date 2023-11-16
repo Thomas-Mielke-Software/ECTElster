@@ -214,6 +214,39 @@ BOOL CElsterDlg::OnInitDialog()
 	m_BetriebsinhaberCtrl.SetCurSel(0);
 	m_GrundstuecksveraeusserungenCtrl.SetCurSel(0);
 
+	// Gibt es mehrere Betriebe? (eine EÜR pro Betrieb anbieten)
+	CString csMehrereBetriebe = m_EinstellungCtrl.HoleEinstellung(_T("[Betriebe]Betrieb00Name"));
+	if (!csMehrereBetriebe.IsEmpty())
+		for (int i = 0; i < 100; i++)
+		{
+			CString csKey;
+			csKey.Format(_T("[Betriebe]Betrieb%02d"), i);
+			Betrieb b;
+			b.name = m_EinstellungCtrl.HoleEinstellung(csKey + _T("Name"));
+			if (b.name.IsEmpty()) break;
+			CString csUnternehmensart = m_EinstellungCtrl.HoleEinstellung(csKey + _T("Unternehmensart"));
+			int nTokenPos = 0;
+			CString csElem;  // jeweiliges Element in den durch Tabulatoren getrennten Betriebsangaben
+			if (!csUnternehmensart.IsEmpty() && (csElem = csUnternehmensart.Tokenize(_T("\t"), nTokenPos)) != "")
+				b.art = csElem;
+			if (nTokenPos > 0 && (csElem = csUnternehmensart.Tokenize(_T("\t"), nTokenPos)) != "")
+			b.rechtsform = csElem;
+			if (nTokenPos > 0 && (csElem = csUnternehmensart.Tokenize(_T("\t"), nTokenPos)) != "")
+			b.steuernummer = csElem;
+			if (nTokenPos > 0 && (csElem = csUnternehmensart.Tokenize(_T("\t"), nTokenPos)) != "")
+			b.einkunftsart = csElem;
+			if (nTokenPos > 0 && (csElem = csUnternehmensart.Tokenize(_T("\t"), nTokenPos)) != "")
+			b.inhaber = csElem;
+
+			m_Betriebe.push_back(b);
+		}
+	else
+	{ // nur ein Betrieb
+		Betrieb dummy;
+		m_Betriebe.push_back(dummy);
+	}
+
+
 	// Formular/Voranm.zeitr. Combobox aufbauen
 	m_VoranmeldungszeitraumCtrl.ResetContent();
 	int n = m_FormularCtrl.HoleFormularanzahl();
@@ -221,12 +254,17 @@ BOOL CElsterDlg::OnInitDialog()
 	for (int formularart = 0; formularart < sizeof(formulararten) / sizeof(formulararten[0]); formularart++)
 		for (i = 0; i < n; i++)
 		{
-			CString Formularname = m_FormularCtrl.HoleFormularnamen(i, formulararten[formularart]);
-			if (Formularname.GetLength() && m_FormularCtrl.HoleVoranmeldungszeitraum() != 0 &&
-				((Formularname.GetLength() < 21 || Formularname.Left(21) != "Umsatzsteuererklärung")))
+			for (const auto& b : m_Betriebe)
 			{
-				m_VoranmeldungszeitraumCtrl.AddString(Formularname);
-				m_VoranmeldungszeitraumCtrl.SetItemData(m_VoranmeldungszeitraumCtrl.GetCount()-1, i);	// Index speichern, um darüber bei Verarbeitung den Pfad zu gewinnen
+				CString Formularname = m_FormularCtrl.HoleFormularnamen(i, formulararten[formularart]);
+				if (Formularname.GetLength() && m_FormularCtrl.HoleVoranmeldungszeitraum() != 0 &&
+					((Formularname.GetLength() < 21 || Formularname.Left(21) != "Umsatzsteuererklärung")))
+				{
+					if (formularart == 0 && !b.name.IsEmpty()) Formularname += " für " + b.name;  // ggf Ein EÜR-Formular pro Betrieb anbieten
+					m_VoranmeldungszeitraumCtrl.AddString(Formularname);
+					m_VoranmeldungszeitraumCtrl.SetItemData(m_VoranmeldungszeitraumCtrl.GetCount() - 1, i);	// Index speichern, um darüber bei Verarbeitung den Pfad zu gewinnen
+					if (formularart == 1) break;  // nur ein USt.-VA-Formular für alle Betriebe
+				}
 			}
 		}
 
@@ -482,15 +520,16 @@ void CElsterDlg::OnTimer(UINT_PTR nIDEvent)
 		KillTimer(3);
 		UpdateData();
 		CString MomentanerFormularAnzeigename;
+		CString Betrieb;
 		CTime Jetzt;
 		CString Zeitraum = "";
 
 		int jj = m_DokumentCtrl.GetJahr();
 		CString Jahr;
 		Jahr.Format(_T("%-0.04d"), jj);
-		EricKontext(true, Jetzt, MomentanerFormularAnzeigename, Jahr, Zeitraum, &m_Liste);
+		EricKontext(true, Jetzt, MomentanerFormularAnzeigename, Betrieb, Jahr, Zeitraum, &m_Liste);
 		m_FormularDateipfad = m_FormularCtrl.HoleFormularpfad(m_VoranmeldungszeitraumCtrl.GetItemData(m_VoranmeldungszeitraumCtrl.GetCurSel()));
-		if (m_pEric) m_pEric->UpdateListe(m_FormularDateipfad, m_ListeInhalt, &m_Liste);
+		if (m_pEric) m_pEric->UpdateListe(m_FormularDateipfad, Betrieb, m_ListeInhalt, &m_Liste);
 		UpdateData(FALSE);  // UpdateListe() ändert z.B. evtl. die "korrigierte Anmeldung" Checkbox
 		ERiC(TRUE);
 		m_Liste.InvalidateRect(NULL, FALSE);
@@ -516,7 +555,7 @@ void CElsterDlg::OnBnClickedOk()
 // benutzt die ERiC-Bibliothek um entweder die Hinweis- bzw. Fehlerliste zu befüllen oder aber Daten an Elster zu versenden
 // für eine bessere Trennung von GUI und Logik ist es in CEricFormularlogik ausgelagert
 
-void CElsterDlg::EricKontext(BOOL bNurValidieren, CTime& Jetzt, CString& MomentanerFormularAnzeigename, CString &Jahr, CString &Zeitraum, CQuickList* pListe)
+void CElsterDlg::EricKontext(BOOL bNurValidieren, CTime& Jetzt, CString& MomentanerFormularAnzeigename, CString& csBetrieb, CString &Jahr, CString &Zeitraum, CQuickList* pListe)
 {
 	int nZeitraum = m_FormularCtrl.HoleVoranmeldungszeitraum();
 	if (nZeitraum > 12) nZeitraum += 28;	// 1-12 Monat; 1. Quartal == 41, 4. Q. == 44
@@ -525,9 +564,12 @@ void CElsterDlg::EricKontext(BOOL bNurValidieren, CTime& Jetzt, CString& Momenta
 
 	Jetzt = CTime::GetCurrentTime();
 	m_VoranmeldungszeitraumCtrl.GetLBText(m_VoranmeldungszeitraumCtrl.GetCurSel(), MomentanerFormularAnzeigename);
+	csBetrieb = "";
 	if (MomentanerFormularAnzeigename.Left(12) == "E/Ü-Rechnung")  // eine Art dependency injection
 	{
-		if (!bNurValidieren && MomentanerFormularAnzeigename.Right(4) != Jahr)
+		if (MomentanerFormularAnzeigename.GetLength() > 22 && MomentanerFormularAnzeigename.Mid(17, 5) == _T(" für "))
+			csBetrieb = MomentanerFormularAnzeigename.Mid(22);
+		if (!bNurValidieren && MomentanerFormularAnzeigename.GetLength() >= 17 && MomentanerFormularAnzeigename.Mid(13, 4) != Jahr)
 		{
 			AfxMessageBox("Das ausgewählte Formular '" + MomentanerFormularAnzeigename + "' passt nicht zum Buchungsjahr " + Jahr + " des geöffneten Dokuments. Fals das Buchungsjahr falsch gesetzt wurde, kann es in den Einstellungen -> Allgemein (rechts bei den Dokumenteigenschaften) korrigiert werden.");
 			return;
@@ -686,7 +728,8 @@ void CElsterDlg::ERiC(BOOL bNurValidieren = FALSE)
 	CString MomentanerFormularAnzeigename;
 	CTime Jetzt;
 	CString Zeitraum;
-	EricKontext(bNurValidieren, Jetzt, MomentanerFormularAnzeigename, Jahr, Zeitraum, &m_Liste);
+	CString Betrieb;
+	EricKontext(bNurValidieren, Jetzt, MomentanerFormularAnzeigename, Betrieb, Jahr, Zeitraum, &m_Liste);
 	CString csErgebnis = m_pEric->Render(
 		m_hWnd,
 		m_FormularDateipfad,

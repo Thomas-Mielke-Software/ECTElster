@@ -202,7 +202,7 @@ void CEricFormularlogikEUeR::WerteAusEcaFormularGenerieren(LPXNode pXmlOut, std:
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //	LISTE AUFBAUEN
 //
-void CEricFormularlogikEUeR::UpdateListe(CString& csFormularDateipfad, CString(&ListeInhalt)[500][6], CQuickList* pListe, BOOL bNurSpaltenbreitenAnpassen)
+void CEricFormularlogikEUeR::UpdateListe(CString& csFormularDateipfad, CString& csBetrieb, CString(&ListeInhalt)[500][6], CQuickList* pListe, BOOL bNurSpaltenbreitenAnpassen)
 {
 	m_pListe = pListe;
 	m_FormularDateipfad = csFormularDateipfad;
@@ -245,7 +245,19 @@ void CEricFormularlogikEUeR::UpdateListe(CString& csFormularDateipfad, CString(&
 	}
 
 	// Formular vorbereiten
-	m_pFormularCtrl->WaehleFormular(m_FormularDateipfad);
+	TRY
+	{
+		m_pFormularCtrl->WaehleFormularUndBetrieb(m_FormularDateipfad, csBetrieb);
+	}
+	CATCH(COleException, e)
+	{
+		CString csMsg, csOrigMsg;
+		e->GetErrorMessage(csOrigMsg.GetBuffer(200), 200);
+		csMsg.Format("Achtung: Damit für jeden Betrieb eine eigene EÜR übertragen werden kann, wird EasyCash&Tax v2.48 oder höher benötigt. Die angezeigten Werte sind für alle Betriebe zusammengenommen, was wahrscheinlich nicht gewollt ist. Bitte mit dem Plugin-Manager updaten. Ursprüngliche Fehlermeldung: %s", (LPCTSTR)csOrigMsg);
+		AfxMessageBox(csMsg);
+		m_pFormularCtrl->WaehleFormular(m_FormularDateipfad);
+	}
+	END_CATCH
 
 	// Formularlayout aus .eca-Datei einlesen
 	std::vector<Formularfeld> Formularfelder(0);

@@ -28,11 +28,22 @@
 #include "AboutDlg.h"
 #include "QuickList.h"  // https://www.codeproject.com/Articles/8112/CQuickList
 #include "EricFormularlogik.h"
+#include <vector>
 
 // CElsterDlg dialog
 
 #define FORMULARTYP_EUER	1
 #define FORMULARTYP_USTVA	2
+
+struct Betrieb
+{
+	CString name;
+	CString art;
+	CString rechtsform;
+	CString steuernummer;
+	CString einkunftsart;
+	CString inhaber;
+};
 
 class CElsterDlg : public CDialog
 {
@@ -61,6 +72,7 @@ private:
 	BOOL m_BelegeWerdenNachgereicht;
 	BOOL m_VerrechnungDesErstattungsanspruchs;
 	BOOL m_EinzugsermaechtigungWiderrufen;
+	std::vector<Betrieb> m_Betriebe;
 
 	// Controls
 	CFormularCtrl m_FormularCtrl;
@@ -80,7 +92,7 @@ private:
 	CMap<CString, CString&, CString, CString&> m_ListeFehler;		// ggf. farbig hervorgehoben und Hinweise/Fehler gezeigt
 
 	// Member-Funktionen
-	void EricKontext(BOOL bNurValidieren, CTime &Jetzt, CString &MomentanerFormularAnzeigename, CString &Jahr, CString &Zeitraum, CQuickList *pListe);
+	void EricKontext(BOOL bNurValidieren, CTime &Jetzt, CString &MomentanerFormularAnzeigename, CString& csBetrieb, CString &Jahr, CString &Zeitraum, CQuickList *pListe);
 	void ERiC(BOOL bNurValidieren);
 	LRESULT OnGetListItem(WPARAM wParam, LPARAM lParam);
 	void UpdateSteuerelemente(int formulartyp);

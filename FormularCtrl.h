@@ -108,6 +108,18 @@ public:
 		InvokeHelper(0xB, DISPATCH_METHOD, VT_I4, (void*)&result, NULL);
 		return result;
 	}
+	CString HoleVerknuepfteKonten(long FeldID)
+	{
+		CString result;
+		static BYTE parms[] = VTS_I4;
+		InvokeHelper(0xC, DISPATCH_METHOD, VT_BSTR, (void*)&result, parms, FeldID);
+		return result;
+	}
+	void WaehleFormularUndBetrieb(LPCTSTR Formular, LPCTSTR Betrieb)
+	{
+		static BYTE parms[] = VTS_BSTR VTS_BSTR;
+		InvokeHelper(0xD, DISPATCH_METHOD, VT_EMPTY, NULL, parms, Formular, Betrieb);
+	}
 	void AboutBox()
 	{
 		InvokeHelper(DISPID_ABOUTBOX, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);

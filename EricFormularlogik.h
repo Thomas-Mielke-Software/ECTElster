@@ -107,7 +107,7 @@ public:
 		BOOL bNurValidieren);
 
 	// virtuelle Funktionen zur Beschickung der unterschiedlichen Formulare
-	virtual void UpdateListe(CString& csFormularDateipfad, CString (&m_pListeInhalt)[500][6], CQuickList* pListe, BOOL bNurSpaltenbreitenAnpassen = FALSE) { pListe->SetItemCount(0); return; };
+	virtual void UpdateListe(CString& csFormularDateipfad, CString& csBetrieb, CString (&m_pListeInhalt)[500][6], CQuickList* pListe, BOOL bNurSpaltenbreitenAnpassen = FALSE) { pListe->SetItemCount(0); return; };
 	virtual CString GetDatenteil() { return (CString)""; };
 	virtual CString GetLoginfo() { return (CString)""; };
 	virtual void UebertragungAbschliessen() {};

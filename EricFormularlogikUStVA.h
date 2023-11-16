@@ -27,7 +27,7 @@ class CEricFormularlogikUStVA :
     virtual CString GetDatenteil();
     virtual CString GetLoginfo();
     virtual void UebertragungAbschliessen();
-    virtual void UpdateListe(CString& csFormularDateipfad, CString (&m_pListeInhalt)[500][6], CQuickList* pListe, BOOL bNurSpaltenbreitenAnpassen = FALSE);
+    virtual void UpdateListe(CString& csFormularDateipfad, CString& csBetrieb, CString (&m_pListeInhalt)[500][6], CQuickList* pListe, BOOL bNurSpaltenbreitenAnpassen = FALSE);
     virtual CString GetVerfahren() { return (CString)_T("ElsterAnmeldung"); };
     virtual CString GetDatenart() { return (CString)_T("UStVA"); };
 
