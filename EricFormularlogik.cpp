@@ -130,6 +130,16 @@ CString CEricFormularlogik::Render(
 	CString DatenTeil = GetDatenteil();
 	if (DatenTeil == "") return csReturn;
 
+	CFile f;
+	CString csDateipfadDatenteil;
+	if (GetTempPath(MAX_PATH + 100, csDateipfadDatenteil.GetBuffer(MAX_PATH + 100)) > 0)
+	{
+		csDateipfadDatenteil.ReleaseBuffer();
+		csDateipfadDatenteil += "ECTElsterDatenteil.xml";
+		f.Open((LPCTSTR)csDateipfadDatenteil, CFile::modeCreate | CFile::modeWrite);
+		f.Write(DatenTeil, DatenTeil.GetLength());
+		f.Close();
+	}
 	// ___ typedef Funktionszeiger fuer notwendige ERiC API-Funktionen ___
 
 	typedef int (STDCALL* EricInitialisiereFun)(const char* pluginPfad, const char* logPfad);

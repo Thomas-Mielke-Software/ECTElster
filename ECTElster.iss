@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=Elster-Export Plugin für EasyCash&Tax -- Preview 1 für EÜR-Übertragung
-AppVerName=Elster-Export 2.23
+AppVerName=Elster-Export 3.0
 DiskSpanning=no
 AppPublisher=tm
 AppPublisherURL=http://www.easyct.de

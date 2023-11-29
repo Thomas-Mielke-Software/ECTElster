@@ -36,9 +36,6 @@ LPXNode CEricFormularlogikEUeR::ZuXmlBaumHinzufuegen(LPXNode pEricXml, const CSt
 	while ((csElem = csElsterFeldname.Tokenize(_T("/"), nTokenPos)) != "")
 		ElsterFeldnamenselemente.push_back(csElem);
 
-	if (!bRecycleBestehendenNode)
-		nTokenPos = nTokenPos + nTokenPos - nTokenPos;
-
 	// gemäß Elster-Feldnamen in XML-Baumstruktur herabsteigen und ggf neu einsortieren (absteigend)
 	LPXNode node = pEricXml;
 	for (int i = 0; i < ElsterFeldnamenselemente.size(); i++)
@@ -46,10 +43,19 @@ LPXNode CEricFormularlogikEUeR::ZuXmlBaumHinzufuegen(LPXNode pEricXml, const CSt
 		LPXNode foundNode = NULL;
 		if (!bRecycleBestehendenNode && i == ElsterFeldnamenselemente.size() - 1)	// Sonderfall: forciertes anlegen gleichnamiger Nodes für XML-Array gefordert?
 			node = node->AppendChild(ElsterFeldnamenselemente[i]);  
-		else if (foundNode = node->Find(ElsterFeldnamenselemente[i]))	// existiert Pfadebene bereits im Baum?
-			node = foundNode;											// dann einfach herabsteigen
-		else                  
-			node = node->AppendChild(ElsterFeldnamenselemente[i]);  // sonst in neu angehängte Ebene herabsteigen
+		else
+		{
+			for (auto const& child : node->GetChilds())
+				if (child->name == ElsterFeldnamenselemente[i])		// node->Find(ElsterFeldnamenselemente[i]) würde rekursiv durchsuchen :/
+				{
+					foundNode = child;
+					break;
+				}
+			if (foundNode)											// existiert Pfadebene bereits im Baum?
+				node = foundNode;									// dann einfach herabsteigen
+			else
+				node = node->AppendChild(ElsterFeldnamenselemente[i]);  // sonst in neu angehängte Ebene herabsteigen
+		}
 	}
 	if (node != pEricXml)  // wenn Reise durch den Baum erfolgreich, dann Wert eintragen
 		node->value = csFeldwert;
@@ -283,6 +289,15 @@ void CEricFormularlogikEUeR::UpdateListe(CString& csFormularDateipfad, CString& 
 		for (Spalte = 0; Spalte < sizeof(ListeInhalt[0]) / sizeof(ListeInhalt[0][0]); Spalte++)
 			ListeInhalt[Zeile][Spalte] = _T("");
 	Zeile = 0;
+
+
+	Zeile++;
+	ListeInhalt[Zeile++][0] = "ACHTUNG: Dies ist eine frühe Preview-Version der EÜR-Übertragung mittels Elster-Schnittstelle, die noch Fehler enthalten kann.";
+	ListeInhalt[Zeile++][0] = "      Es empfiehlt sich die Werte auf dem Versandbestätigungs-PDF, das nach dem Senden erstellt wird, noch einmal genau zu prüfen.";
+	ListeInhalt[Zeile++][0] = "      Sollten Probleme auftauchen, bitte eine der Kontaktoptionen nutzen (Infoknopf unten rechts).";
+	ListeInhalt[Zeile++][0] = "      Ansonsten gibt es keinen Grund, die Funktion nicht auszuprobieren: Im schlimmsten Fall muss eine korrigierte EÜR, wie gehabt, über das Elster-Onlineportal erstellt werden.";
+	Zeile++;
+
 	ListeInhalt[Zeile++][0] = "ANLAGE EÜR " + m_Jahr + (!m_csBetrieb.IsEmpty() ? (CString)" für " + m_csBetrieb : "");
 	auto abschnitt = begin(Abschnitte);
 	for (const auto& feld : Formularfelder)
@@ -393,9 +408,16 @@ void CEricFormularlogikEUeR::AveuerGenerieren(CString(&ListeInhalt)[500][6], int
 		CStringArray& csaKonten;		// Konten, die mit diesem Feld assoziiert sind, bilden eine AfA-Gruppe (Referenz auf csaaKonten[])
 		std::vector<long> buchungen;	// zugehörige Buchungs-IDs
 	} afaGruppen[] =
-	{ //									Bezeich.    AnschDatum AnschKosten Bw.Beginn   AfA         Abgänge     Bw.Ende      
-		// TODO: Grundstueck/Grund_u_Boden
-		// TODO: Grundstueck/Gebaeude
+	{   // Grunstücke/grundstücksgl.Rechte  Bezeich.    AnschDatum  AnschKosten Bw.Beginn   AfA         Abgänge     Bw.Ende    
+
+		// TODO: Grundstueck/Grund_u_Boden -- ist ja keine wirkliche AfA; wie man nicht-abzuschreibende Anlagegegenstäde behandeln kann muss im Hauptprogramm gelöst werden
+		
+		// Grundstueck/Gebaeude
+		1136, "Gebäude", "Summe AfA aller Grundstücke/grundstücksgleichen Rechte (Übertrag in Zeile 29 der Anlage EÜR)",
+		"Grundstueck/Gebaeude/Einz",		"E6007031", "",         "E6007032", "E6007034", "E6007038", "E6007040", "E6007062",
+		"Grundstueck/Gebaeude/Sum",			                        "E6007033", "E6007035", "E6007039", "E6007041", "E6007043",
+		"Grundstueck/GesamtSum",                                                            "E6007071",
+		csaaKonten[0], std::vector<long>(),
 
 		// Grundstueck/Andere
 		1136, "Andere (z. B. grundstücksgleiche Rechte)", "Summe AfA aller Grundstücke/grundstücksgleichen Rechte (Übertrag in Zeile 29 der Anlage EÜR)", 
@@ -404,27 +426,29 @@ void CEricFormularlogikEUeR::AveuerGenerieren(CString(&ListeInhalt)[500][6], int
 		"Grundstueck/GesamtSum",                                                           "E6007071",
 		csaaKonten[0], std::vector<long>(),
 
+
+		// Arbeitszimmer                   Bezeich.    AnschDatum  AnschKosten Bw.Beginn   AfA         Abgänge     Bw.Ende
+
+		// TODO: Arbeitszimmer Anteil Grund und Boden -- ist auch keine wirkliche AfA; wie man nicht-abzuschreibende Anlagegegenstäde behandeln kann muss im Hauptprogramm gelöst werden
+
+		// Arbeitszimmer Anteil Gebäude
+		1172, "Arbeitszimmer Anteil Gebäude", "Summe AfA (zu erfassen in Zeile 70 der Anlage EÜR)",
+		"Arbeitszimmer/Anteil_Gebauede/Einz", "E6007131", "",      "E6007132", "E6007134", "E6007138", "E6007140", "E6007142",
+		"Arbeitszimmer/Anteil_Gebauede/Sum",                       "E6007133", "E6007135", "E6007139", "E6007141", "E6007143",
+		"",                                                                                "",
+		csaaKonten[0], std::vector<long>(),
+
+
 		// Immaterielle_WG
 		1131, "Immaterielle Wirtschaftsgüter", "Summe AfA (Übertrag in Zeile 30 der Anlage EÜR)",
 		"Immaterielle_WG/Einz",			    "E6007244", "",	       "E6007245", "E6007246", "E6007248", "E6007249", "E6007250",
 		"Immaterielle_WG/Sum",			                           "E6007224", "E6007225", "E6007227", "E6007228", "E6007229",
 		"",																			       "",
 		csaaKonten[1], std::vector<long>(),
-/*
-Immaterielle_WG/Einz	E6007244	Bezeichnung
-Immaterielle_WG/Einz	E6007245	Anschaffungs-/Herstellungskosten/Einlagewert
-Immaterielle_WG/Einz	E6007246	Buchwert zu Beginn des Gewinnermittlungszeitraums
-Immaterielle_WG/Einz	E6007248	AfA
-Immaterielle_WG/Einz	E6007249	Abgänge
-Immaterielle_WG/Einz	E6007250	Buchwert am Ende des Gewinnermittlungszeitraums
 
-Immaterielle_WG/Sum	E6007224	Summe Anschaffungs-/Herstellungskosten/Einlagewert
-Immaterielle_WG/Sum	E6007225	Summe Buchwerte zu Beginn des Gewinnermittlungszeitraums
-Immaterielle_WG/Sum	E6007227	Summe AfA (Übertrag in Zeile 30 der Anlage EÜR)
-Immaterielle_WG/Sum	E6007228	Summe Abgänge
-Immaterielle_WG/Sum	E6007229	Summe Buchwerte am Ende des Gewinnermittlungszeitraums
 
-*/ 
+		// Bewegliche_WG					Bezeich.    AnschDatum  AnschKosten Bw.Beginn   AfA         Abgänge     Bw.Ende      
+
 		// Bewegliche_WG/KFZ
 		1130, "Kraftfahrzeuge", "Summe AfA aller beweglichen Wirtschaftsgüter (Übertrag in Zeile 31 der Anlage EÜR)",
 		"Bewegliche_WG/KFZ/Einz",		    "E6007311", "E6007326", "E6007312", "E6007314", "E6007320", "E6007322", "E6007324",
@@ -446,12 +470,48 @@ Immaterielle_WG/Sum	E6007229	Summe Buchwerte am Ende des Gewinnermittlungszeitra
 		"Bewegliche_WG/GesamtSum",                                                          "E6007372",
 		csaaKonten[4], std::vector<long>(),
 
+
 		// TODO: §7b
 		// TODO: §7g
-		// Sammelposten_VZ (GesamtSum)
-/*		1137, 
+
+		// Sammelposten_VZ					Bezeich.    AnschDatum  AnschKosten Bw.Beginn   AfA         Abgänge     Bw.Ende 
+
+		// Sammelposten aktuelles Jahr
+		1137, "Sammelposten", "Gesamtsumme Auflösungsbeträge (Übertrag in Zeile 44 der Anlage EÜR)",
+		"Sammelposten_VZ/Einz",		        "E6007381", "",         "E6007384", "",         "E6007385", "",         "E6007386", 
+		"Sammelposten_VZ/Sum",                                      "E6007393", "",         "E6007394", "",         "E6007395",
+		"GesamtSum",														                "E6017399",
+		csaaKonten[5], std::vector<long>(),
 		
-		csaaKonten[5], std::vector<long>(),*/
+		// Sammelposten Vorjahr
+		1137, "Sammelposten", "Gesamtsumme Auflösungsbeträge (Übertrag in Zeile 44 der Anlage EÜR)",
+		"",		                           "",          "",         "dummy",    "",         "dummy", "",            "dummy",
+		"Sammelposten_VZm1",                                        "E6017391", "E6017392", "E6017393", "",         "E6017394",
+		"GesamtSum",														                "E6017399",
+		csaaKonten[6], std::vector<long>(),
+
+		// Sammelposten vor zwei Jahren
+		1137, "Sammelposten", "Gesamtsumme Auflösungsbeträge (Übertrag in Zeile 44 der Anlage EÜR)",
+		"",		                           "",          "",         "dummy",    "",         "dummy", "",            "dummy",
+		"Sammelposten_VZm2",                                        "E6017395", "E6017396", "E6017397", "",         "E6017398",
+		"GesamtSum",														                "E6017399",
+		csaaKonten[7], std::vector<long>(),
+
+		// Sammelposten vor drei Jahren
+		1137, "Sammelposten", "Gesamtsumme Auflösungsbeträge (Übertrag in Zeile 44 der Anlage EÜR)",
+		"",		                           "",          "",         "dummy",    "",         "dummy", "",            "dummy",
+		"Sammelposten_VZm3",                                        "E6017400", "E6017401", "E6017402", "",         "E6017403",
+		"GesamtSum",														                "E6017399",
+		csaaKonten[8], std::vector<long>(),
+
+		// Sammelposten vor vier Jahren
+		1137, "Sammelposten", "Gesamtsumme Auflösungsbeträge (Übertrag in Zeile 44 der Anlage EÜR)",
+		"",		                           "",          "",         "dummy",    "",         "dummy", "",            "dummy",
+		"Sammelposten_VZm4",                                        "E6017404", "E6017405", "E6017406", "",         "",
+		"GesamtSum",														                "E6017399",
+		csaaKonten[9], std::vector<long>(),
+
+
 		0, /* Ende-Marker */ "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", csaaKonten[5], std::vector<long>()
 	};
 
@@ -468,25 +528,41 @@ Immaterielle_WG/Sum	E6007229	Summe Buchwerte am Ende des Gewinnermittlungszeitra
 		{
 			for (int i = 0; i < 100 && !ausgaben_posten_name[i].IsEmpty(); i++)											 // Ausgaben-Konten durchgehen
 				if ((m_pBuchungCtrl->GetAbschreibungJahre() > 1 && ausgaben_posten_name[i] == m_pBuchungCtrl->GetKonto())
-					|| (m_pBuchungCtrl->GetAbschreibungJahre() <= 1 && ausgaben_posten_name[i] == csUrspruenglichesKonto))	// passt es zu der Buchung?
+					|| (m_pBuchungCtrl->GetAbschreibungJahre() <= 1 && ausgaben_posten_name[i] == csUrspruenglichesKonto))	 // passt es zu der Buchung?
 				{
 					int g; // AfA-GruppenIterator
 					int nLetzteGruppeMitPassendemFeldkennzeichen = -1;
-					for (g = 0; afaGruppen[g].nFeldkennzeichen; g++)													 // haben wir eine AfA-Gruppe,
-					{																									 // bei dem das Konto der Buchung
-						if (ausgaben_posten_feldzuweisungen[i] == afaGruppen[g].nFeldkennzeichen)						 // mit einem AfA-Feld verknüpft ist
+					for (g = 0; afaGruppen[g].nFeldkennzeichen; g++)														  // haben wir eine AfA-Gruppe,
+					{																										  // bei dem das Konto der Buchung
+						if (ausgaben_posten_feldzuweisungen[i] == afaGruppen[g].nFeldkennzeichen)							  // mit einem AfA-Feld verknüpft ist
 						{
 							nLetzteGruppeMitPassendemFeldkennzeichen = g;  // möglichen fallback merken
-							if (ausgaben_posten_name[i].GetLength() >= afaGruppen[g].csGruppenbezeichnung.GetLength() && // und wo das rechte Ende Kontonames  
-								ausgaben_posten_name[i].Right(afaGruppen[g].csGruppenbezeichnung.GetLength()) ==		 // der Gruppenbezeichnung entspricht?
-								afaGruppen[g].csGruppenbezeichnung)
+							if (afaGruppen[g].csGruppenbezeichnung == "Sammelposten")
+							{
+								if (m_pBuchungCtrl->GetAbschreibungNr() == 1 &&											  // und, wenn es sich nicht um den
+									afaGruppen[g].elsterKontextSum == "Sammelposten_VZ/Sum")								  // Sonderfall der Sammelposten handelt,
+								{
+									break;	// Sammelposten des aktuellen Jahres
+								}
+								CString csVorjahressammelposten;
+								csVorjahressammelposten.Format("Sammelposten_VZm%d", m_pBuchungCtrl->GetAbschreibungNr() - 1);
+								if (m_pBuchungCtrl->GetAbschreibungNr() <= 5 &&
+									afaGruppen[g].elsterKontextSum == csVorjahressammelposten)
+								{
+									break;	// Sammelposten des 2. bis 5. Jahres -> "Sammelposten_VZm1" bis "Sammelposten_VZm4"
+								}
+								continue;  // ansonsten einfach weiter nach dem richtigen Sammelposten-Kontext suchen
+							}
+							else if (ausgaben_posten_name[i].GetLength() >= afaGruppen[g].csGruppenbezeichnung.GetLength() && // wo das rechte Ende Kontonames  
+								ausgaben_posten_name[i].Right(afaGruppen[g].csGruppenbezeichnung.GetLength()).MakeLower()	  // der Gruppenbezeichnung entspricht?
+								== afaGruppen[g].csGruppenbezeichnung.MakeLower())
 							{
 								break;
 							}
 						}
 					}
-					if (!afaGruppen[g].nFeldkennzeichen)																 // nicht? schade. dann letzte Gruppe
-						g = nLetzteGruppeMitPassendemFeldkennzeichen;													 // mit passendem Feldkennzeichen benutzen
+					if (!afaGruppen[g].nFeldkennzeichen)																 	 // nicht? schade. dann letzte Gruppe
+						g = nLetzteGruppeMitPassendemFeldkennzeichen;													 	 // mit passendem Feldkennzeichen benutzen
 
 					if (g >= 0)	
 					{
@@ -551,7 +627,11 @@ Immaterielle_WG/Sum	E6007229	Summe Buchwerte am Ende des Gewinnermittlungszeitra
 			if (flagsGen & FLAG_GEN_INTERN)
 			{
 				Zeile++;
-				ListeInhalt[Zeile++][0] = "  " + afaGruppen[g].csGruppenbezeichnung;
+				if (afaGruppen[g].csGruppenbezeichnung == "Sammelposten")
+					ListeInhalt[Zeile++][0].Format("  %s %d", afaGruppen[g].csGruppenbezeichnung, m_pDokumentCtrl->GetJahr() - atoi(afaGruppen[g].elsterKontextSum.Right(1)));
+				else
+					ListeInhalt[Zeile++][0] = "  " + afaGruppen[g].csGruppenbezeichnung;
+
 			}
 
 			// ... Buchungen der Gruppe durchgehen
@@ -577,18 +657,22 @@ Immaterielle_WG/Sum	E6007229	Summe Buchwerte am Ende des Gewinnermittlungszeitra
 				// --- Einz-Kontext ---
 
 				LPXNode xmlKontextEinz;
+				if (flagsGen & FLAG_GEN_XML)
+					xmlKontextEinz = ZuXmlBaumHinzufuegen(xmlAveur, afaGruppen[g].elsterKontextEinz, "", FALSE);  // FALSE = es werden auf der untersten Ebene mehrere Nodes des gleichen Namens angelegt
 
 				// E6007351 - Bezeichnung
-				if (flagsGen & FLAG_GEN_INTERN)
+				if (!afaGruppen[g].elsterBezeichnungEinz.IsEmpty())
 				{
-					Zeile++;
-					ListeInhalt[Zeile][0] = "    " + m_pBuchungCtrl->GetBeschreibung();
-					ListeInhalt[Zeile++][5] = "AVEUER/" + afaGruppen[g].elsterKontextEinz + "/" + afaGruppen[g].elsterBezeichnungEinz;
-				}
-				if (flagsGen & FLAG_GEN_XML)
-				{
-					xmlKontextEinz = ZuXmlBaumHinzufuegen(xmlAveur, afaGruppen[g].elsterKontextEinz, "", FALSE);  // FALSE = es werden mehrere Nodes des gleichen Namens angelegt
-					ZuXmlBaumHinzufuegen(xmlKontextEinz, afaGruppen[g].elsterBezeichnungEinz, m_pBuchungCtrl->GetBeschreibung());
+					if (flagsGen & FLAG_GEN_INTERN)
+					{
+						Zeile++;
+						ListeInhalt[Zeile][0] = "    " + m_pBuchungCtrl->GetBeschreibung();
+						ListeInhalt[Zeile++][5] = "AVEUER/" + afaGruppen[g].elsterKontextEinz + "/" + afaGruppen[g].elsterBezeichnungEinz;
+					}
+					if (flagsGen & FLAG_GEN_XML)
+					{
+						ZuXmlBaumHinzufuegen(xmlKontextEinz, afaGruppen[g].elsterBezeichnungEinz, m_pBuchungCtrl->GetBeschreibung());
+					}
 				}
 
 				// Anschaffungs-/Herstellungsdatum E6007366
@@ -606,7 +690,10 @@ Immaterielle_WG/Sum	E6007229	Summe Buchwerte am Ende des Gewinnermittlungszeitra
 
 				if (bIstAbgang)
 				{
-					// Buchwert zu Beginn des Gewinnermittlungszeitraums E6007352
+					if (afaGruppen[g].csGruppenbezeichnung == "Sammelposten" && flagsGen & FLAG_GEN_INTERN)
+						ListeInhalt[Zeile++][0] = "Hinweis: Abgänge von Sammelposten wie '" + m_pBuchungCtrl->GetBeschreibung() + "' sind nicht vorgesehen.";
+
+					// Anschaffungskosten E6007352
 					CString csUrspruenglicherNettobetrag = m_pBuchungCtrl->HoleBenutzerdefWert("EasyCash", "UrspruenglicherNettobetrag").TrimLeft();
 					COleCurrency cyUrspruenglicherNettobetrag;
 					cyAnschaffungskostenSum += cyUrspruenglicherNettobetrag;
@@ -614,14 +701,17 @@ Immaterielle_WG/Sum	E6007229	Summe Buchwerte am Ende des Gewinnermittlungszeitra
 						cyAnschaffungskostenSum += cyUrspruenglicherNettobetrag;
 					else
 						ListeInhalt[Zeile++][0] = "Fehler: Konvertieren des gemerkten urspruenglichen Nettobetrags des AfA-Abgangs schlug fehl. Irgendwas stimmt hier nicht. Bitte den Fehler melden.";
-					if (flagsGen & FLAG_GEN_INTERN)
+					if (!afaGruppen[g].elsterKontextEinz.IsEmpty())  // nur darstellen/verarbeiten, wenn es einen Elster-Kontext gibt
 					{
-						ListeInhalt[Zeile][0] = "      Anschaffungs-/Herstellungskosten/Einlagewert";
-						ListeInhalt[Zeile][4] = csUrspruenglicherNettobetrag;
-						ListeInhalt[Zeile++][5] = "AVEUER/" + afaGruppen[g].elsterKontextEinz + "/" + afaGruppen[g].elsterAnschaffungskostenEinz;
+						if (flagsGen & FLAG_GEN_INTERN)
+						{
+							ListeInhalt[Zeile][0] = "      Anschaffungs-/Herstellungskosten/Einlagewert";
+							ListeInhalt[Zeile][4] = csUrspruenglicherNettobetrag;
+							ListeInhalt[Zeile++][5] = "AVEUER/" + afaGruppen[g].elsterKontextEinz + "/" + afaGruppen[g].elsterAnschaffungskostenEinz;
+						}
+						if (flagsGen & FLAG_GEN_XML)
+							ZuXmlBaumHinzufuegen(xmlKontextEinz, afaGruppen[g].elsterAnschaffungskostenEinz, csUrspruenglicherNettobetrag);
 					}
-					if (flagsGen & FLAG_GEN_XML)
-						ZuXmlBaumHinzufuegen(xmlKontextEinz, afaGruppen[g].elsterAnschaffungskostenEinz, csUrspruenglicherNettobetrag);
 
 					// Buchwert zu Beginn des Gewinnermittlungszeitraums E6007354
 					CString csUrspruenglicherRestwert = m_pBuchungCtrl->HoleBenutzerdefWert("EasyCash", "UrspruenglicherRestwert").TrimLeft();
@@ -630,14 +720,17 @@ Immaterielle_WG/Sum	E6007229	Summe Buchwerte am Ende des Gewinnermittlungszeitra
 						cyBuchwertBeginnSum += cyUrspruenglicherRestwert;
 					else
 						ListeInhalt[Zeile++][0] = "Fehler: Konvertieren des gemerkten urspruenglichen Restwert des AfA-Abgangs schlug fehl. Irgendwas stimmt hier nicht. Bitte den Fehler melden.";
-					if (flagsGen & FLAG_GEN_INTERN)
+					if (!afaGruppen[g].elsterKontextEinz.IsEmpty())  // nur darstellen/verarbeiten, wenn es einen Elster-Kontext gibt
 					{
-						ListeInhalt[Zeile][0] = "      Buchwert zu Beginn des Gewinnermittlungszeitraums";
-						ListeInhalt[Zeile][4] = csUrspruenglicherRestwert;
-						ListeInhalt[Zeile++][5] = "AVEUER/" + afaGruppen[g].elsterKontextEinz + "/" + afaGruppen[g].elsterBuchwertBeginnEinz;
+						if (flagsGen & FLAG_GEN_INTERN)
+						{
+							ListeInhalt[Zeile][0] = "      Buchwert zu Beginn des Gewinnermittlungszeitraums";
+							ListeInhalt[Zeile][4] = csUrspruenglicherRestwert;
+							ListeInhalt[Zeile++][5] = "AVEUER/" + afaGruppen[g].elsterKontextEinz + "/" + afaGruppen[g].elsterBuchwertBeginnEinz;
+						}
+						if (flagsGen & FLAG_GEN_XML)
+							ZuXmlBaumHinzufuegen(xmlKontextEinz, afaGruppen[g].elsterBuchwertBeginnEinz, csUrspruenglicherRestwert);
 					}
-					if (flagsGen & FLAG_GEN_XML)
-						ZuXmlBaumHinzufuegen(xmlKontextEinz, afaGruppen[g].elsterBuchwertBeginnEinz, csUrspruenglicherRestwert);
 
 					// E6007356 - Zugänge
 					// TODO: implementieren in EC&T-Hauptprogramm
@@ -648,53 +741,65 @@ Immaterielle_WG/Sum	E6007229	Summe Buchwerte am Ende des Gewinnermittlungszeitra
 					// Abgänge E6007362
 					COleCurrency cyAbgaenge = (CURRENCY)m_pBuchungCtrl->HoleNetto();
 					cyAbgaengeSum += cyAbgaenge;
-					CString csAbgaenge = FormatCy2d(cyAbgaenge, 0UL, LANGID_DEUTSCH);
-					if (flagsGen & FLAG_GEN_INTERN)
+					if (!afaGruppen[g].elsterKontextEinz.IsEmpty())  // nur darstellen/verarbeiten, wenn es einen Elster-Kontext gibt
 					{
-						ListeInhalt[Zeile][0] = "      Abgänge";
-						ListeInhalt[Zeile][4] = csAbgaenge;
-						ListeInhalt[Zeile++][5] = "AVEUER/" + afaGruppen[g].elsterKontextEinz + "/" + afaGruppen[g].elsterAbgaengeEinz;
+						CString csAbgaenge = FormatCy2d(cyAbgaenge, 0UL, LANGID_DEUTSCH);
+						if (flagsGen & FLAG_GEN_INTERN)
+						{
+							ListeInhalt[Zeile][0] = "      Abgänge";
+							ListeInhalt[Zeile][4] = csAbgaenge;
+							ListeInhalt[Zeile++][5] = "AVEUER/" + afaGruppen[g].elsterKontextEinz + "/" + afaGruppen[g].elsterAbgaengeEinz;
+						}
+						if (flagsGen & FLAG_GEN_XML)
+							ZuXmlBaumHinzufuegen(xmlKontextEinz, afaGruppen[g].elsterAbgaengeEinz, csAbgaenge);
 					}
-					if (flagsGen & FLAG_GEN_XML)
-						ZuXmlBaumHinzufuegen(xmlKontextEinz, afaGruppen[g].elsterAbgaengeEinz, csAbgaenge);
 
 					// Buchwert am Ende des Gewinnermittlungszeitraums E6007364
-					if (flagsGen & FLAG_GEN_INTERN)
+					if (!afaGruppen[g].elsterKontextEinz.IsEmpty())  // nur darstellen/verarbeiten, wenn es einen Elster-Kontext gibt
 					{
-						ListeInhalt[Zeile][0] = "      Buchwert am Ende des Gewinnermittlungszeitraums";
-						ListeInhalt[Zeile][4] = "0,00";  // EC&T kann im Moment nur Totalabgänge verarbeiten (Ausscheiden des Anlagenguts)
-						ListeInhalt[Zeile++][5] = "AVEUER/" + afaGruppen[g].elsterKontextEinz + "/" + afaGruppen[g].elsterBuchwertEndeEinz;
+						if (flagsGen & FLAG_GEN_INTERN)
+						{
+							ListeInhalt[Zeile][0] = "      Buchwert am Ende des Gewinnermittlungszeitraums";
+							ListeInhalt[Zeile][4] = "0,00";  // EC&T kann im Moment nur Totalabgänge verarbeiten (Ausscheiden des Anlagenguts)
+							ListeInhalt[Zeile++][5] = "AVEUER/" + afaGruppen[g].elsterKontextEinz + "/" + afaGruppen[g].elsterBuchwertEndeEinz;
+						}
+						if (flagsGen & FLAG_GEN_XML)
+							ZuXmlBaumHinzufuegen(xmlKontextEinz, afaGruppen[g].elsterBuchwertEndeEinz, "0,00");
 					}
-					if (flagsGen & FLAG_GEN_XML)
-						ZuXmlBaumHinzufuegen(xmlKontextEinz, afaGruppen[g].elsterBuchwertEndeEinz, "0,00");
 				}
 				else
 				{
-					// Buchwert zu Beginn des Gewinnermittlungszeitraums E6007352
-					COleCurrency cyUrspruenglicherRestwert = m_pBuchungCtrl->HoleNetto();
-					cyAnschaffungskostenSum += cyUrspruenglicherRestwert;
-					CString csUrspruenglicherRestwert = FormatCy2d(cyUrspruenglicherRestwert, 0UL, LANGID_DEUTSCH);
-					if (flagsGen & FLAG_GEN_INTERN)
+					// Anschaffungskosten E6007352
+					COleCurrency csAnschaffungskosten = m_pBuchungCtrl->HoleNetto();
+					cyAnschaffungskostenSum += csAnschaffungskosten;
+					if (!afaGruppen[g].elsterKontextEinz.IsEmpty())  // nur darstellen/verarbeiten, wenn es einen Elster-Kontext gibt
 					{
-						ListeInhalt[Zeile][0] = "      Anschaffungs-/Herstellungskosten/Einlagewert";
-						ListeInhalt[Zeile][4] = csUrspruenglicherRestwert;
-						ListeInhalt[Zeile++][5] = "AVEUER/" + afaGruppen[g].elsterKontextEinz + "/" + afaGruppen[g].elsterAnschaffungskostenEinz;
+						CString csUrspruenglicherRestwert = FormatCy2d(csAnschaffungskosten, 0UL, LANGID_DEUTSCH);
+						if (flagsGen & FLAG_GEN_INTERN)
+						{
+							ListeInhalt[Zeile][0] = "      Anschaffungs-/Herstellungskosten/Einlagewert";
+							ListeInhalt[Zeile][4] = csUrspruenglicherRestwert;
+							ListeInhalt[Zeile++][5] = "AVEUER/" + afaGruppen[g].elsterKontextEinz + "/" + afaGruppen[g].elsterAnschaffungskostenEinz;
+						}
+						if (flagsGen & FLAG_GEN_XML)
+							ZuXmlBaumHinzufuegen(xmlKontextEinz, afaGruppen[g].elsterAnschaffungskostenEinz, csUrspruenglicherRestwert);
 					}
-					if (flagsGen & FLAG_GEN_XML)
-						ZuXmlBaumHinzufuegen(xmlKontextEinz, afaGruppen[g].elsterAnschaffungskostenEinz, csUrspruenglicherRestwert);
 
 					// Buchwert zu Beginn des Gewinnermittlungszeitraums E6007354
 					COleCurrency cyAbschreibungRestwert = m_pBuchungCtrl->GetAbschreibungRestwert();
 					cyBuchwertBeginnSum += cyAbschreibungRestwert;
-					CString csAbschreibungRestwert = FormatCy2d(cyAbschreibungRestwert, 0UL, LANGID_DEUTSCH);
-					if (flagsGen & FLAG_GEN_INTERN)
+					if (!afaGruppen[g].elsterKontextEinz.IsEmpty())  // nur darstellen/verarbeiten, wenn es einen Elster-Kontext gibt
 					{
-						ListeInhalt[Zeile][0] = "      Buchwert zu Beginn des Gewinnermittlungszeitraums";
-						ListeInhalt[Zeile][4] = csAbschreibungRestwert;
-						ListeInhalt[Zeile++][5] = "AVEUER/" + afaGruppen[g].elsterKontextEinz + "/" + afaGruppen[g].elsterBuchwertBeginnEinz;
+						CString csAbschreibungRestwert = FormatCy2d(cyAbschreibungRestwert, 0UL, LANGID_DEUTSCH);
+						if (flagsGen & FLAG_GEN_INTERN)
+						{
+							ListeInhalt[Zeile][0] = "      Buchwert zu Beginn des Gewinnermittlungszeitraums";
+							ListeInhalt[Zeile][4] = csAbschreibungRestwert;
+							ListeInhalt[Zeile++][5] = "AVEUER/" + afaGruppen[g].elsterKontextEinz + "/" + afaGruppen[g].elsterBuchwertBeginnEinz;
+						}
+						if (flagsGen & FLAG_GEN_XML)
+							ZuXmlBaumHinzufuegen(xmlKontextEinz, afaGruppen[g].elsterBuchwertBeginnEinz, csAbschreibungRestwert);
 					}
-					if (flagsGen & FLAG_GEN_XML)
-						ZuXmlBaumHinzufuegen(xmlKontextEinz, afaGruppen[g].elsterBuchwertBeginnEinz, csAbschreibungRestwert);
 
 					// E6007356 - Zugänge
 					// TODO: implementieren in EC&T-Hauptprogramm
@@ -706,27 +811,45 @@ Immaterielle_WG/Sum	E6007229	Summe Buchwerte am Ende des Gewinnermittlungszeitra
 					COleCurrency cyAfA = m_pBuchungCtrl->HoleBuchungsjahrNetto(m_pDokumentCtrl->GetID());
 					cyAfaSum += cyAfA;
 					CString csAfA = FormatCy2d(cyAfA, 0UL, LANGID_DEUTSCH);
-					if (flagsGen & FLAG_GEN_INTERN)
+					if (!afaGruppen[g].elsterKontextEinz.IsEmpty())  // nur darstellen/verarbeiten, wenn es einen Elster-Kontext gibt
 					{
-						ListeInhalt[Zeile][0] = "      AfA";
-						ListeInhalt[Zeile][4] = csAfA;
-						ListeInhalt[Zeile++][5] = "AVEUER/" + afaGruppen[g].elsterKontextEinz + "/" + afaGruppen[g].elsterAfaEinz;
+						if (flagsGen & FLAG_GEN_INTERN)
+						{
+							ListeInhalt[Zeile][0] = "      AfA";
+							ListeInhalt[Zeile][4] = csAfA;
+							ListeInhalt[Zeile++][5] = "AVEUER/" + afaGruppen[g].elsterKontextEinz + "/" + afaGruppen[g].elsterAfaEinz;
+						}
+						if (flagsGen & FLAG_GEN_XML)
+							ZuXmlBaumHinzufuegen(xmlKontextEinz, afaGruppen[g].elsterAfaEinz, csAfA);
 					}
-					if (flagsGen & FLAG_GEN_XML)
-						ZuXmlBaumHinzufuegen(xmlKontextEinz, afaGruppen[g].elsterAfaEinz, csAfA);
 
 					// Buchwert am Ende des Gewinnermittlungszeitraums E6007364
 					COleCurrency cyBuchwertAmEndeDesGewinnermittlungszeitraums = (CURRENCY)(cyAbschreibungRestwert - cyAfA);
 					cyBuchwertEndeSum += cyBuchwertAmEndeDesGewinnermittlungszeitraums;
-					CString csBuchwertAmEndeDesGewinnermittlungszeitraums = FormatCy2d(cyBuchwertAmEndeDesGewinnermittlungszeitraums, 0UL, LANGID_DEUTSCH);
-					if (flagsGen & FLAG_GEN_INTERN)
+					if (!afaGruppen[g].elsterKontextEinz.IsEmpty())  // nur darstellen/verarbeiten, wenn es einen Elster-Kontext gibt
 					{
-						ListeInhalt[Zeile][0] = "      Buchwert am Ende des Gewinnermittlungszeitraums";
-						ListeInhalt[Zeile][4] = csBuchwertAmEndeDesGewinnermittlungszeitraums;
-						ListeInhalt[Zeile++][5] = "AVEUER/" + afaGruppen[g].elsterKontextEinz + "/" + afaGruppen[g].elsterBuchwertEndeEinz;
+						CString csBuchwertAmEndeDesGewinnermittlungszeitraums = FormatCy2d(cyBuchwertAmEndeDesGewinnermittlungszeitraums, 0UL, LANGID_DEUTSCH);
+						if (flagsGen & FLAG_GEN_INTERN)
+						{
+							ListeInhalt[Zeile][0] = "      Buchwert am Ende des Gewinnermittlungszeitraums";
+							ListeInhalt[Zeile][4] = csBuchwertAmEndeDesGewinnermittlungszeitraums;
+							ListeInhalt[Zeile++][5] = "AVEUER/" + afaGruppen[g].elsterKontextEinz + "/" + afaGruppen[g].elsterBuchwertEndeEinz;
+						}
+						if (flagsGen & FLAG_GEN_XML)
+							ZuXmlBaumHinzufuegen(xmlKontextEinz, afaGruppen[g].elsterBuchwertEndeEinz, csBuchwertAmEndeDesGewinnermittlungszeitraums);
 					}
-					if (flagsGen & FLAG_GEN_XML)
-						ZuXmlBaumHinzufuegen(xmlKontextEinz, afaGruppen[g].elsterBuchwertEndeEinz, csBuchwertAmEndeDesGewinnermittlungszeitraums);
+
+					// Sanity-Checks für Sammelposten
+					if (afaGruppen[g].csGruppenbezeichnung == "Sammelposten" && flagsGen & FLAG_GEN_INTERN)
+					{
+						ListeInhalt[Zeile++][0].Format("      %s im %dten Jahr mit einer Auflösungsrate von %s €", (LPCTSTR)m_pBuchungCtrl->GetBeschreibung(), m_pBuchungCtrl->GetAbschreibungNr(), (LPCTSTR)csAfA);
+						if (cyAnschaffungskostenSum < COleCurrency(250, 0) || cyAnschaffungskostenSum >= COleCurrency(1000, 0))
+							ListeInhalt[Zeile++][0] = "Hinweis: Pool-AfA-Sammelposten wie '" + m_pBuchungCtrl->GetBeschreibung() + "' dürfen nur einen Anschaffungswert von min. 250 € bis max. 999,99 € haben.";
+						if (m_pBuchungCtrl->GetAbschreibungGenauigkeit() != 0)
+							ListeInhalt[Zeile++][0] = "Hinweis: Pool-AfA-Sammelposten wie '" + m_pBuchungCtrl->GetBeschreibung() + "' müssen mit ganzjährlicher Abschreibungsgenauigkeit gebucht werden.";
+						if (m_pBuchungCtrl->GetAbschreibungJahre() != 5)
+							ListeInhalt[Zeile++][0] = "Hinweis: Pool-AfA-Sammelposten wie '" + m_pBuchungCtrl->GetBeschreibung() + "' müssen über genau fünf Jahre abgeschrieben werden.";
+					}
 				}
 			}
 		}
@@ -759,15 +882,18 @@ Immaterielle_WG/Sum	E6007229	Summe Buchwerte am Ende des Gewinnermittlungszeitra
 				ZuXmlBaumHinzufuegen(xmlKontextSum, afaGruppen[g].elsterAnschaffungskostenSum, csAnschaffungskostenSum);
 
 			// Buchwert zu Beginn des Gewinnermittlungszeitraums Summe
-			CString csBuchwertBeginn = FormatCy2d(cyBuchwertBeginnSum, 0UL, LANGID_DEUTSCH);
-			if (flagsGen & FLAG_GEN_INTERN)
+			if (cyBuchwertBeginnSum != COleCurrency(0, 0))
 			{
-				ListeInhalt[Zeile][0] = "    Summe der Buchwerte zu Beginn des Gewinnermittlungszeitraums";
-				ListeInhalt[Zeile][4] = csBuchwertBeginn;
-				ListeInhalt[Zeile++][5] = "AVEUER/" + afaGruppen[g].elsterKontextSum + "/" + afaGruppen[g].elsterBuchwertBeginnSum;
+				CString csBuchwertBeginn = FormatCy2d(cyBuchwertBeginnSum, 0UL, LANGID_DEUTSCH);
+				if (flagsGen & FLAG_GEN_INTERN)
+				{
+					ListeInhalt[Zeile][0] = "    Summe der Buchwerte zu Beginn des Gewinnermittlungszeitraums";
+					ListeInhalt[Zeile][4] = csBuchwertBeginn;
+					ListeInhalt[Zeile++][5] = "AVEUER/" + afaGruppen[g].elsterKontextSum + "/" + afaGruppen[g].elsterBuchwertBeginnSum;
+				}
+				if (flagsGen & FLAG_GEN_XML)
+					ZuXmlBaumHinzufuegen(xmlKontextSum, afaGruppen[g].elsterBuchwertBeginnSum, csBuchwertBeginn);
 			}
-			if (flagsGen & FLAG_GEN_XML)
-				ZuXmlBaumHinzufuegen(xmlKontextSum, afaGruppen[g].elsterBuchwertBeginnSum, csBuchwertBeginn);
 
 			// E6007356 - Zugänge
 			// TODO: implementieren in EC&T-Hauptprogramm
@@ -830,9 +956,16 @@ Immaterielle_WG/Sum	E6007229	Summe Buchwerte am Ende des Gewinnermittlungszeitra
 				}
 				if (flagsGen & FLAG_GEN_XML)
 				{
-					LPXNode xmlKontextAfaGesamtSum;
-					xmlKontextAfaGesamtSum = ZuXmlBaumHinzufuegen(xmlAveur, afaGruppen[g].elsterKontextAfaGesamtSum, "");
-					ZuXmlBaumHinzufuegen(xmlKontextAfaGesamtSum, afaGruppen[g].elsterAfaGesamtSum, csAfaGesamtSum);
+					/*if (afaGruppen[g].csGruppenbezeichnung == "Sammelposten")
+					{
+						LPXNode xmlKontextAfaGesamtSum = ZuXmlBaumHinzufuegen(xmlAveur, 
+							afaGruppen[g].elsterKontextAfaGesamtSum + _T("/") + afaGruppen[g].elsterAfaGesamtSum, csAfaGesamtSum);
+					}
+					else*/
+					{
+						LPXNode xmlKontextAfaGesamtSum = ZuXmlBaumHinzufuegen(xmlAveur, afaGruppen[g].elsterKontextAfaGesamtSum, "");
+						ZuXmlBaumHinzufuegen(xmlKontextAfaGesamtSum, afaGruppen[g].elsterAfaGesamtSum, csAfaGesamtSum);
+					}
 				}
 			}
 

@@ -328,18 +328,25 @@ BOOL CElsterDlg::OnInitDialog()
 //#ifdef _DEBUG
 //	if (LB_ERR != m_VoranmeldungszeitraumCtrl.SetCurSel(0))  // Debugging EÜR !  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 //#else
-	if (LB_ERR != m_VoranmeldungszeitraumCtrl.SetCurSel(m_VoranmeldungszeitraumCtrl.FindString(0, csWunschformular)))
-//#endif
-
+	//if (LB_ERR != m_VoranmeldungszeitraumCtrl.SetCurSel(m_VoranmeldungszeitraumCtrl.FindString(0, csWunschformular)))  <-- findet ggf. nicht das erste Vorkommen des Teilstrings
+	for (i = 0; i < m_VoranmeldungszeitraumCtrl.GetCount(); i++)
 	{
-		// Liste mit Feldern initialisieren
-		if (m_Liste && m_FormularCtrl/* && m_Liste.GetItemCount()*/)
+		CString csTemp;
+		m_VoranmeldungszeitraumCtrl.GetLBText(i, csTemp);
+		if (csTemp.GetLength() >= csWunschformular.GetLength() && csTemp.Left(csWunschformular.GetLength()))
 		{
-			SetTimer(2, 1, NULL);
+			m_VoranmeldungszeitraumCtrl.SetCurSel(i);
+			// Liste mit Feldern initialisieren
+			if (m_Liste && m_FormularCtrl/* && m_Liste.GetItemCount()*/)
+			{
+				SetTimer(2, 1, NULL);
+			}
+			break;
 		}
 	}
-	else
+	if (i == m_VoranmeldungszeitraumCtrl.GetCount())  // nicht gefunden?
 		UpdateData(FALSE);
+//#endif
 
 	AfxGetApp()->EndWaitCursor();
 	//SetTimer(1, 1, NULL);

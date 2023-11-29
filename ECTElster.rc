@@ -115,7 +115,7 @@ IDB_ELSTER48X48         BITMAP                  "Elster48x48.bmp"
 // Dialog
 //
 
-IDD_ABOUTBOX_ECTELSTER DIALOGEX 0, 0, 333, 149
+IDD_ABOUTBOX_ECTELSTER DIALOGEX 0, 0, 333, 242
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About ECTElster Control"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
@@ -123,13 +123,15 @@ BEGIN
     CONTROL         IDC_EINSTELLUNGCTRL1,IDC_STATIC,"Static",SS_BITMAP,13,14,32,30
     LTEXT           "Elster Plugin für EasyCash&Tax",IDC_STATIC,53,17,102,8,SS_NOPREFIX
     LTEXT           "Copyleft (c) 2023 Thomas Mielke ",IDC_STATIC,53,29,114,8
-    DEFPUSHBUTTON   "OK",IDOK,276,128,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,276,221,50,14,WS_GROUP
     LTEXT           "",IDC_VERSION,171,17,55,8
     LTEXT           "Bei Problemen oder Wünschen bitte einen Post im EC&&T-Forum 'Elster-Export-Plugin' hinterlassen. Besser wäre allerdings noch auf GitHub einen 'Issue' aufzumachen:",IDC_STATIC,54,69,272,26
     LTEXT           "Veröffentlich unter der GNU LGPL 2.1\r\nhttps://github.com/Thomas-Mielke-Software/ECTElster",IDC_STATIC,54,44,272,17
     LTEXT           "Bei Problemen oder Wünschen bitte bei www.easyct.de/tracker registrieren und einen kurzen Bericht unter der Kategorie 'Plugin: Elster' hinterlassen. So ist gewährleistet, dass nichts in Vergessenheit gerät.",IDC_STATIC,289,7,37,12,NOT WS_VISIBLE
     PUSHBUTTON      "https://github.com/Thomas-Mielke-Software/ECTElster/issues",IDC_GITHUB,52,90,274,14
     PUSHBUTTON      "https://easyct.de/forum/viewforum.php?forum_id=11",IDC_ECTFORUM,52,107,272,14
+    LTEXT           "Hinweis: Für die Anlage AVEÜR funktionieren Konten, die den Feldern 1136, 1131, 1130, 1137, 1135 und 1172 zugewiesen sind. Um eine Spezielle AfA-Untergruppe außer ""Andere"" zu benutzen, muss der Kontenname mit der AfA-Gruppe enden, z.B. um in der AfA-Obergruppe ""Bewegliche Wirtschaftsgüter"" die Gruppe ""Kraftfahrzeuge"" zu adressieren könnte ein Konto ""AfA auf Kraftfahrzeuge"" angelegt (und Feld 1130 zugewiesen) werden.",IDC_STATIC,54,127,272,51
+    LTEXT           "Einschränkungen: Es ist momentan noch nicht möglich §7g-Sonderabschreibungen  oder Zugänge zu laufenden AfAs sowie Teilabgänge zu behandeln. Außerdem werden nicht abzuschreibende Anlagegüter nicht berücksichtigt wie z.B. Grundstücke, Finanzanlagen oder Umlaufvermögen. Bitte in diesen Fällen die EÜR/AVEÜR mit dem Elster-Onlineformular erklären.",IDC_STATIC,54,180,272,39
 END
 
 IDD_PROPPAGE_ECTELSTER DIALOG 0, 0, 250, 62
@@ -228,7 +230,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 326
         TOPMARGIN, 7
-        BOTTOMMARGIN, 142
+        BOTTOMMARGIN, 235
     END
 
     IDD_PROPPAGE_ECTELSTER, DIALOG

@@ -40,7 +40,7 @@ extern const WORD _wVerMajor;
 extern const WORD _wVerMinor;
 
 // auskommentieren, um echte Daten senden zu können:
-#define TESTVERBINDUNG
+//#define TESTVERBINDUNG
 //!!!!!!!!!!!! und nicht vergessen: bei einem neuen Jahr das Copyright-Datum hochsetzen!!!
 #if defined(NDEBUG)
 #if defined(TESTVERBINDUNG)
