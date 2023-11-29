@@ -21,10 +21,10 @@
 #include "XMLite.h"  // https://www.codeproject.com/Articles/3426/XMLite-simple-XML-parser
 #include "EricFormularlogik.h"
 
-// CEricFormularlogikEUeR::WerteAusEcaFormularGenerieren Parameter 3
-#define FLAG_GEN_XML        0x1
-#define FLAG_GEN_STDVECTOR  0x2
-#define FLAG_GEN_ABSCHNITTE 0x4
+// CEricFormularlogikEUeR::WerteAusEcaFormularGenerieren oder CEricFormularlogikEUeR::Aveur, jeweils letzter Parameter
+#define FLAG_GEN_XML        0x1     // Ausgabe als ERiC-XML
+#define FLAG_GEN_INTERN     0x2     // Ausgabe in internem Format (std::vector oder Listen-Array)
+#define FLAG_GEN_ABSCHNITTE 0x4     // generiert Abschnittsüberschriften
 
 class Formularfeld
 {
@@ -92,12 +92,17 @@ class CEricFormularlogikEUeR :
     virtual void UpdateListe(CString& csFormularDateipfad, CString& csBetrieb, CString (&m_pListeInhalt)[500][6], CQuickList* pListe, BOOL bNurSpaltenbreitenAnpassen = FALSE);
     virtual CString GetVerfahren() { return (CString)_T("ElsterErklaerung"); };
     virtual CString GetDatenart() { return (CString)_T("EUER"); };
+    virtual CString GetVersandbestaetigungPrefix() { 
+        CString csTempBetrieb = m_csBetrieb;
+        csTempBetrieb.Replace(_T(" "), _T("_"));
+        return (CString)_T("EÜR") + m_Jahr + _T("_") + csTempBetrieb +(CString)_T("_"); };
 
 private:
     CString m_GewinnMerken;
 
     // interne Hilfsfunktion
     void WerteAusEcaFormularGenerieren(LPXNode pXmlOut, std::vector<Formularfeld> &felder, std::vector<Formularabschnitt>& abschnittarray, int flagsGen);
-    LPXNode ZuXmlBaumHinzufuegen(LPXNode pEricXml, const CString &csElsterFeldname, const CString &csFeldwert);
+    LPXNode ZuXmlBaumHinzufuegen(LPXNode pEricXml, const CString &csElsterFeldname, const CString &csFeldwert, BOOL bRecycleBestehendenNode = TRUE);
     static bool CompareInterval(Formularfeld f1, Formularfeld f2);  // Hilfsfunktion für vector-sort
+    void AveuerGenerieren(CString(&ListeInhalt)[500][6], int& Zeile, LPXNode xml, int flagsGen);
 };

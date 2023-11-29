@@ -40,7 +40,7 @@ extern const WORD _wVerMajor;
 extern const WORD _wVerMinor;
 
 // auskommentieren, um echte Daten senden zu können:
-//#define TESTVERBINDUNG
+#define TESTVERBINDUNG
 //!!!!!!!!!!!! und nicht vergessen: bei einem neuen Jahr das Copyright-Datum hochsetzen!!!
 #if defined(NDEBUG)
 #if defined(TESTVERBINDUNG)
@@ -58,3 +58,4 @@ extern void Ansi2Utf8(CString ansiText, CStringA& utf8Text);
 extern void Utf8toAnsi(CStringA utf8Text, CString& ansiText);
 extern int RegSearchReplace(CString& string, LPCTSTR sSearchExp, LPCTSTR sReplaceExp, CStringArray& csaReplaceCount);	// Helfer für reguläre Ausdrücke
 extern void PrintString(CString Dokumentname, CString Text);
+extern CString FormatCy2d(COleCurrency& c, DWORD dwFlags = 0, LCID lcid = LANG_USER_DEFAULT);

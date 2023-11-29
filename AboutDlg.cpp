@@ -40,6 +40,8 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_VERSION, m_Version);
+	DDX_Control(pDX, IDC_GITHUB, m_GitHub);
+	DDX_Control(pDX, IDC_ECTFORUM, m_EctForum);
 }
 
 
@@ -48,3 +50,19 @@ END_MESSAGE_MAP()
 
 
 // CAboutDlg message handlers
+
+
+BOOL CAboutDlg::OnInitDialog()
+{
+	CDialog::OnInitDialog();
+
+	m_GitHub.SetURL(_T("https://github.com/Thomas-Mielke-Software/ECTElster/issues"));
+	m_GitHub.SetTooltip(_T("Auf GitHub kann man sich z.B. mit einem Microsoft-Konto einloggen."));
+	m_GitHub.SizeToContent();
+
+	m_EctForum.SetURL(_T("https://easyct.de/forum/viewforum.php?forum_id=11"));
+	m_EctForum.SetTooltip(_T("Ein vorheriger Login bzw. eine Registrierung ist nötig, um im EC&&T-Forum schreiben zu können."));
+	m_EctForum.SizeToContent();
+
+	return TRUE;
+}

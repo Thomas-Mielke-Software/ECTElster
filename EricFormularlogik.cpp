@@ -42,11 +42,13 @@ CEricFormularlogik::CEricFormularlogik()
 void CEricFormularlogik::Init(
 	CFormularCtrl* pFormularCtrl,
 	CEinstellung* pEinstellungCtrl,
-	CDokumentCtrl* pDokumentCtrl)
+	CDokumentCtrl* pDokumentCtrl,
+	CBuchungCtrl* pBuchungCtrl)
 {
 	m_pFormularCtrl = pFormularCtrl;
 	m_pEinstellungCtrl = pEinstellungCtrl;
 	m_pDokumentCtrl = pDokumentCtrl;
+	m_pBuchungCtrl = pBuchungCtrl;
 }
 
 CString CEricFormularlogik::Render(
@@ -74,6 +76,7 @@ CString CEricFormularlogik::Render(
 	CString &Bundesfinanzamtsnummer,
 	CString &EmpfaengerFinanzamt,
 	CString &MomentanerFormularAnzeigename,
+	CString &csBetrieb,
 	BOOL bNurValidieren = FALSE)
 {
 	extern CECTElsterApp theApp;
@@ -122,6 +125,7 @@ CString CEricFormularlogik::Render(
 	m_HerstellerID = HerstellerID;
 	m_MomentanerFormularAnzeigename = MomentanerFormularAnzeigename;
 	m_AppVersion = theApp.GetVersion();
+	m_csBetrieb = csBetrieb;
 
 	CString DatenTeil = GetDatenteil();
 	if (DatenTeil == "") return csReturn;
@@ -277,7 +281,7 @@ CString CEricFormularlogik::Render(
 	eric_druck_parameter_t druckEinstellungen;
 	druckEinstellungen.vorschau = 0;
 	druckEinstellungen.ersteSeite = 0;
-	PDFDatei = (CString)temp_path + Jetzt.Format(_T("Elster-Übertragungsbericht-%Y%m%d%H%M%S.pdf"));
+	PDFDatei = (CString)temp_path + GetVersandbestaetigungPrefix() + Jetzt.Format(_T("Elster-Versandbestätigung-%Y%m%d%H%M%S.pdf"));
 	druckEinstellungen.pdfName = PDFDatei;
 	druckEinstellungen.fussText = _T("EasyCash&Tax Elster-Export");
 	druckEinstellungen.duplexDruck = 0;

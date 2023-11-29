@@ -29,6 +29,7 @@
 #include "QuickList.h"  // https://www.codeproject.com/Articles/8112/CQuickList
 #include "EricFormularlogik.h"
 #include <vector>
+#include "CBuchungCtrl.h"
 
 // CElsterDlg dialog
 
@@ -79,6 +80,7 @@ private:
 	CString m_FormularDateipfad;    // ... des aktuell ausgewählten Formulars
 	CEinstellung m_EinstellungCtrl;
 	CDokumentCtrl m_DokumentCtrl;
+	CBuchungCtrl m_BuchungCtrl;
 	CComboBox m_VoranmeldungszeitraumCtrl;
 	CComboBox m_FinanzamtCtrl;
 	CQuickList m_Liste;			// Ersatz für CListCtrl, siehe https://www.codeproject.com/Articles/8112/CQuickList

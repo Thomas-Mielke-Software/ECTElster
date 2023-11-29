@@ -22,6 +22,7 @@
 #include "FormularCtrl.h"
 #include "einstellungctrl.h"
 #include "dokumentctrl.h"
+#include "CBuchungCtrl.h"
 #include "QuickList.h"  // https://www.codeproject.com/Articles/8112/CQuickList
 
 // CEricFormularlogik benutzt die ERiC-Bibliothek um entweder die Hinweis- bzw. 
@@ -49,6 +50,7 @@ public:
 	CString m_FormularDateipfad;    // ... des aktuell im Dialog ausgewählten Formulars
 	CEinstellung *m_pEinstellungCtrl;
 	CDokumentCtrl *m_pDokumentCtrl;
+	CBuchungCtrl* m_pBuchungCtrl;
 	CQuickList *m_pListe;			// Ersatz für CListCtrl, siehe https://www.codeproject.com/Articles/8112/CQuickList
 
 	// Variablen für die Steuerung von m_Liste in ElsterDlg
@@ -66,6 +68,7 @@ public:
 	CString m_HerstellerID;
 	CString m_MomentanerFormularAnzeigename;
 	CString m_AppVersion;
+	CString m_csBetrieb;
 	
 #define RENDER_NEUTRAL 0
 #define RENDER_LOG_ZEIGEN1 1
@@ -79,7 +82,8 @@ public:
 	void Init(
 		CFormularCtrl* pFormularCtrl,
 		CEinstellung* pEinstellungCtrl,
-		CDokumentCtrl* pDokumentCtrl);
+		CDokumentCtrl* pDokumentCtrl,
+		CBuchungCtrl* pBuchungCtrl);
 	CString Render(HWND m_hWnd,
 		CString &FormularDateipfad,
 		CQuickList* pListe,
@@ -104,13 +108,15 @@ public:
 		CString &Bundesfinanzamtsnummer,
 		CString &EmpfaengerFinanzamt,
 		CString &MomentanerFormularAnzeigename,
+		CString &csBetrieb,
 		BOOL bNurValidieren);
 
 	// virtuelle Funktionen zur Beschickung der unterschiedlichen Formulare
 	virtual void UpdateListe(CString& csFormularDateipfad, CString& csBetrieb, CString (&m_pListeInhalt)[500][6], CQuickList* pListe, BOOL bNurSpaltenbreitenAnpassen = FALSE) { pListe->SetItemCount(0); return; };
-	virtual CString GetDatenteil() { return (CString)""; };
-	virtual CString GetLoginfo() { return (CString)""; };
+	virtual CString GetDatenteil() { return (CString)_T(""); };
+	virtual CString GetLoginfo() { return (CString)_T(""); };
 	virtual void UebertragungAbschliessen() {};
-	virtual CString GetVerfahren() { return (CString)""; };
-	virtual CString GetDatenart() { return (CString)""; };
+	virtual CString GetVerfahren() { return (CString)_T(""); };
+	virtual CString GetDatenart() { return (CString)_T(""); };
+	virtual CString GetVersandbestaetigungPrefix() { return (CString)_T(""); };
 };

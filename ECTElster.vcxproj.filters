@@ -72,6 +72,9 @@
     <ClCompile Include="EricFormularlogikEUeR.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CBuchungCtrl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="ECTElster.def">
@@ -140,6 +143,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EricFormularlogikEUeR.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CBuchungCtrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

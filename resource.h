@@ -61,7 +61,11 @@
 #define IDC_SIGNATURANMERKUNG_STATIC    237
 #define IDC_BUTTON1                     238
 #define IDC_AKTUALISIEREN               238
+#define IDC_GITHUB                      238
 #define IDC_GRUNDSTUECKSVERAEUSSERUNGEN 239
+#define IDC_BUTTON2                     239
+#define IDC_ECTFORUM                    239
+#define IDC_BUCHUNGCTRL1                240
 
 // Next default values for new objects
 // 
@@ -69,7 +73,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        205
 #define _APS_NEXT_COMMAND_VALUE         32768
-#define _APS_NEXT_CONTROL_VALUE         239
+#define _APS_NEXT_CONTROL_VALUE         241
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

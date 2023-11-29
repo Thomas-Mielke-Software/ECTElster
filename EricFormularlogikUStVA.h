@@ -30,6 +30,7 @@ class CEricFormularlogikUStVA :
     virtual void UpdateListe(CString& csFormularDateipfad, CString& csBetrieb, CString (&m_pListeInhalt)[500][6], CQuickList* pListe, BOOL bNurSpaltenbreitenAnpassen = FALSE);
     virtual CString GetVerfahren() { return (CString)_T("ElsterAnmeldung"); };
     virtual CString GetDatenart() { return (CString)_T("UStVA"); };
+    virtual CString GetVersandbestaetigungPrefix() { return (CString)_T("UStVA") + m_Zeitraum + _T("_"); };
 
 private:
     CString m_FeldWert83Merken;

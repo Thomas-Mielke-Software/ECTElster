@@ -259,3 +259,33 @@ extern void PrintString(CString Dokumentname, CString Text)
 	GlobalFree(printdlg.m_pd.hDevNames);
 	if (pdm) GlobalUnlock(pdm);
 }
+
+// formatiert CURRENCY immer auf zwei Nachkommastellen
+CString FormatCy2d(COleCurrency& c, DWORD dwFlags, LCID lcid)
+{
+	if (lcid != MAKELCID(MAKELANGID(0x07, 0x01), SORT_DEFAULT))  // currently only German format supported
+		AfxThrowNotSupportedException();
+
+	CString temp;
+	temp = c.Format(dwFlags, lcid);
+	TCHAR* tempBuffer = temp.GetBuffer(50);
+	TCHAR* cp = strchr(tempBuffer, _T(','));
+	int size = strlen(tempBuffer);
+	if (cp == tempBuffer + size - 3)  // two decimals -> everything fine, just return
+		temp.ReleaseBuffer(size); 
+	else if (cp == NULL)	// no decimals
+	{
+		strcat(tempBuffer, _T(",00"));
+		temp.ReleaseBuffer(size + 3);
+	}
+	else
+	{	// check for only one decimal, like "1,2"
+		if (size > 2 && tempBuffer[size - 2] == _T(',') && isdigit(tempBuffer[size - 1]))
+		{
+			tempBuffer[size] = _T('0');
+			tempBuffer[size + 1] = _T('\0');
+			temp.ReleaseBuffer(size + 1);
+		}
+	}
+	return temp;
+}

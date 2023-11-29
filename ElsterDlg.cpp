@@ -78,6 +78,7 @@ void CElsterDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_GRUNDSTUECKSVERAEUSSERUNGEN, m_GrundstuecksveraeusserungenCtrl);
 	DDX_Control(pDX, IDC_EINKUNFTSART, m_EinkunftsartCtrl);
 	DDX_Control(pDX, IDC_BETRIEBSINHABER, m_BetriebsinhaberCtrl);
+	DDX_Control(pDX, IDC_BUCHUNGCTRL1, m_BuchungCtrl);
 }
 
 
@@ -134,10 +135,10 @@ BOOL CElsterDlg::OnInitDialog()
 
 	m_Telefon = m_EinstellungCtrl.HoleEinstellung(_T("[Allgemein]telefon"));
 	m_EmailAdresse = m_EinstellungCtrl.HoleEinstellung(_T("[Allgemein]emailadresse"));
-
 	//m_Signaturoption = atoi(m_EinstellungCtrl.HoleEinstellung("[ElsterExport]signaturoption"));
 	//if (m_Signaturoption > 3) m_Signaturoption = 0;
 	m_Datei = m_EinstellungCtrl.HoleEinstellung(_T("[ElsterExport]signaturdatei"));
+	UpdateData(FALSE);
 
 	// Finanzamt-Combobox aufbauen
 	int i;
@@ -270,56 +271,65 @@ BOOL CElsterDlg::OnInitDialog()
 
 	// Vorauswahl des Formulars nach heutigem Datum -- unter Einbeziehung der Dauerfristverlängerung
 	int jj = m_DokumentCtrl.GetJahr();
-	int nDauerfristverlaengerungTage = 0;
-	CString Key;
-	Key.Format(_T("Sondervorauszahlung%-04.4d"), jj);
-	if (atoi(m_DokumentCtrl.HoleBenutzerdefWert(_T("Dauerfristverlängerung"), Key)))
-		nDauerfristverlaengerungTage = 30;
-
-	CTime now = CTime::GetCurrentTime();
-	CString Zeitraum;
-	if (atoi(m_EinstellungCtrl.HoleEinstellung(_T("monatliche_voranmeldung")).GetBuffer(0)))
-	{ // Quartalsweise
-		if (now >= CTime(jj+1, 1, 1, 0, 0, 0) + CTimeSpan(nDauerfristverlaengerungTage, 0, 0, 0)) // schon neues Jahr? dann letztes Quartal voreinstellen
-			Zeitraum = _T("4. Quartal");
-		else if (now >= CTime(jj, 10, 1, 0, 0, 0) + CTimeSpan(nDauerfristverlaengerungTage, 0, 0, 0))
-			Zeitraum = _T("3. Quartal");
-		else if (now >= CTime(jj, 7, 1, 0, 0, 0) + CTimeSpan(nDauerfristverlaengerungTage, 0, 0, 0))
-			Zeitraum = _T("2. Quartal");
-		else // if (now >= CTime(jj, 4, 1, 0, 0, 0))
-			Zeitraum = _T("1. Quartal");
-	}
-	else
-	{ // Monatlich
-		now -= CTimeSpan(28, 0, 0, 0) + CTimeSpan(nDauerfristverlaengerungTage, 0, 0, 0);
-		if (now.GetYear() < jj)
-			Zeitraum = _T("Januar");
-		else if (now.GetYear() > jj)
-			Zeitraum = _T("Dezember");
-		else
-			switch (now.GetMonth())
-			{
-			case 1:  Zeitraum = _T("Januar"); break;
-			case 2:  Zeitraum = _T("Februar"); break;
-			case 3:  Zeitraum = _T("März"); break;
-			case 4:  Zeitraum = _T("April"); break;
-			case 5:  Zeitraum = _T("Mai"); break;
-			case 6:  Zeitraum = _T("Juni"); break;
-			case 7:  Zeitraum = _T("Juli"); break;
-			case 8:  Zeitraum = _T("August"); break;
-			case 9:  Zeitraum = _T("September"); break;
-			case 10: Zeitraum = _T("Oktober"); break;
-			case 11: Zeitraum = _T("November"); break;
-			case 12: Zeitraum = _T("Dezember"); break;
-			}
-	}
 	CString Jahr;
 	Jahr.Format(_T("%-0.04d"), jj);
-#ifdef _DEBUG
-	if (LB_ERR != m_VoranmeldungszeitraumCtrl.SetCurSel(0))  // Debugging EÜR !  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-#else
-	if (LB_ERR != m_VoranmeldungszeitraumCtrl.SetCurSel(m_VoranmeldungszeitraumCtrl.FindString(0, _T("Umsatzsteuer-Voranmeldung ") + Jahr + _T(" ") + Zeitraum)))
-#endif
+
+	CTime now = CTime::GetCurrentTime();
+	CString Zeitraum, csWunschformular;
+	if (jj < now.GetYear())
+	{
+		csWunschformular = "E/Ü-Rechnung " + Jahr;
+	}
+	else
+	{
+		int nDauerfristverlaengerungTage = 0;
+		CString Key;
+		Key.Format(_T("Sondervorauszahlung%-04.4d"), jj);
+		if (atoi(m_DokumentCtrl.HoleBenutzerdefWert(_T("Dauerfristverlängerung"), Key)))
+			nDauerfristverlaengerungTage = 30;
+
+		if (atoi(m_EinstellungCtrl.HoleEinstellung(_T("monatliche_voranmeldung")).GetBuffer(0)))
+		{ // Quartalsweise
+			if (now >= CTime(jj + 1, 1, 1, 0, 0, 0) + CTimeSpan(nDauerfristverlaengerungTage, 0, 0, 0)) // schon neues Jahr? dann letztes Quartal voreinstellen
+				Zeitraum = _T("4. Quartal");
+			else if (now >= CTime(jj, 10, 1, 0, 0, 0) + CTimeSpan(nDauerfristverlaengerungTage, 0, 0, 0))
+				Zeitraum = _T("3. Quartal");
+			else if (now >= CTime(jj, 7, 1, 0, 0, 0) + CTimeSpan(nDauerfristverlaengerungTage, 0, 0, 0))
+				Zeitraum = _T("2. Quartal");
+			else // if (now >= CTime(jj, 4, 1, 0, 0, 0))
+				Zeitraum = _T("1. Quartal");
+		}
+		else
+		{ // Monatlich
+			now -= CTimeSpan(28, 0, 0, 0) + CTimeSpan(nDauerfristverlaengerungTage, 0, 0, 0);
+			if (now.GetYear() < jj)
+				Zeitraum = _T("Januar");
+			else if (now.GetYear() > jj)
+				Zeitraum = _T("Dezember");
+			else
+				switch (now.GetMonth())
+				{
+				case 1:  Zeitraum = _T("Januar"); break;
+				case 2:  Zeitraum = _T("Februar"); break;
+				case 3:  Zeitraum = _T("März"); break;
+				case 4:  Zeitraum = _T("April"); break;
+				case 5:  Zeitraum = _T("Mai"); break;
+				case 6:  Zeitraum = _T("Juni"); break;
+				case 7:  Zeitraum = _T("Juli"); break;
+				case 8:  Zeitraum = _T("August"); break;
+				case 9:  Zeitraum = _T("September"); break;
+				case 10: Zeitraum = _T("Oktober"); break;
+				case 11: Zeitraum = _T("November"); break;
+				case 12: Zeitraum = _T("Dezember"); break;
+				}
+		}
+		csWunschformular = _T("Umsatzsteuer-Voranmeldung ") + Jahr + _T(" ") + Zeitraum;
+	}
+//#ifdef _DEBUG
+//	if (LB_ERR != m_VoranmeldungszeitraumCtrl.SetCurSel(0))  // Debugging EÜR !  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+//#else
+	if (LB_ERR != m_VoranmeldungszeitraumCtrl.SetCurSel(m_VoranmeldungszeitraumCtrl.FindString(0, csWunschformular)))
+//#endif
 
 	{
 		// Liste mit Feldern initialisieren
@@ -424,7 +434,7 @@ LRESULT CElsterDlg::OnGetListItem(WPARAM wParam, LPARAM lParam)
 			}
 			else if (m_ListeHinweise[csFeldkennzeichen] != _T(""))	// Hinweise gelb
 			{
-				data->m_colors.m_backColor = RGB(255,255,32);
+				data->m_colors.m_backColor = RGB(255,255,64);
 				data->m_tooltip = m_ListeHinweise[csFeldkennzeichen];
 			}
 		}
@@ -438,7 +448,7 @@ LRESULT CElsterDlg::OnGetListItem(WPARAM wParam, LPARAM lParam)
 			}
 			else if (m_ListeHinweise[csFeldkennzeichen] != _T(""))	// Hinweise gelb
 			{
-				data->m_colors.m_backColor = RGB(255, 255, 32);
+				data->m_colors.m_backColor = RGB(255, 255, 64);
 				data->m_tooltip = m_ListeHinweise[csFeldkennzeichen];
 			}
 		}
@@ -452,10 +462,17 @@ LRESULT CElsterDlg::OnGetListItem(WPARAM wParam, LPARAM lParam)
 	else if (m_ListeInhalt[item][0].Left(9) == _T("Hinweis: "))
 	{
 		data->m_textStyle.m_italic = true;
-		data->m_colors.m_backColor = RGB(255, 255, 32);
+		data->m_colors.m_backColor = RGB(255, 255, 64);
+	}
+	else if (data->m_text.Left(2) != "  " && m_ListeInhalt[item][1].IsEmpty() && m_ListeInhalt[item][3].IsEmpty())
+	{
+		data->m_textStyle.m_bold = true;  // Abschnittsüberschriften hervorheben
+		data->m_textStyle.m_italic = true;
 	}
 	else if (data->m_text.Left(4) != "    " && m_ListeInhalt[item][1].IsEmpty() && m_ListeInhalt[item][3].IsEmpty())
-		data->m_textStyle.m_bold = true;  // Abschnittsüberschriften hervorheben
+		data->m_textStyle.m_bold = true;  // Gruppenüberschriften hervorheben
+	else if (data->m_text.Left(6) != "      " && m_ListeInhalt[item][1].IsEmpty() && m_ListeInhalt[item][3].IsEmpty())
+		data->m_textStyle.m_italic = true;  // AfA-Bezeichnungen hervorheben
 
     return 0;
 }
@@ -500,7 +517,10 @@ void CElsterDlg::OnNMClickListe(NMHDR *pNMHDR, LRESULT *pResult)
 				csMeldungstext += m_ListeInhalt[pNMItemActivate->iItem][0];
 		
 		if (csMeldungstext.Trim() != _T(""))
+		{
+			csMeldungstext.Replace("&apos;", "'");
 			AfxMessageBox(csMeldungstext);
+		}
 	}
 	
 	*pResult = 0;
@@ -533,6 +553,7 @@ void CElsterDlg::OnTimer(UINT_PTR nIDEvent)
 		UpdateData(FALSE);  // UpdateListe() ändert z.B. evtl. die "korrigierte Anmeldung" Checkbox
 		ERiC(TRUE);
 		m_Liste.InvalidateRect(NULL, FALSE);
+		GetDlgItem(IDOK)->EnableWindow(TRUE);
 	}
 
 	CDialog::OnTimer(nIDEvent);
@@ -583,7 +604,7 @@ void CElsterDlg::EricKontext(BOOL bNurValidieren, CTime& Jetzt, CString& Momenta
 		if (!m_pEric)
 		{
 			m_pEric = new CEricFormularlogikEUeR();
-			m_pEric->Init(&m_FormularCtrl, &m_EinstellungCtrl, &m_DokumentCtrl);
+			m_pEric->Init(&m_FormularCtrl, &m_EinstellungCtrl, &m_DokumentCtrl, &m_BuchungCtrl);
 			UpdateSteuerelemente(FORMULARTYP_EUER);
 		}
 	}
@@ -609,7 +630,7 @@ Vielleicht ist das falsche Buchungsjahr geöffnet oder der falsche Zeitraum ausge
 		if (!m_pEric)
 		{
 			m_pEric = new CEricFormularlogikUStVA();
-			m_pEric->Init(&m_FormularCtrl, &m_EinstellungCtrl, &m_DokumentCtrl);
+			m_pEric->Init(&m_FormularCtrl, &m_EinstellungCtrl, &m_DokumentCtrl, &m_BuchungCtrl);
 			UpdateSteuerelemente(FORMULARTYP_USTVA);
 		}
 	}
@@ -647,25 +668,25 @@ void CElsterDlg::ERiC(BOOL bNurValidieren = FALSE)
 
 		if (m_pEric && m_pEric->IsKindOf(RUNTIME_CLASS(CEricFormularlogikEUeR)))
 		{
-			if (m_RechtsformCtrl.GetCurSel())
+			if (m_RechtsformCtrl.GetCurSel() <= 0)
 			{
 				AfxMessageBox(_T("Bitte die Rechtsform des Betriebs auswählen."));
 				m_RechtsformCtrl.SetFocus();
 				return;
 			}
-			if (m_EinkunftsartCtrl.GetCurSel())
+			if (m_EinkunftsartCtrl.GetCurSel() <= 0)
 			{
 				AfxMessageBox(_T("Bitte die Einkunftsart des Betriebs auswählen."));
 				m_EinkunftsartCtrl.SetFocus();
 				return;
 			}
-			if (m_BetriebsinhaberCtrl.GetCurSel())
+			if (m_BetriebsinhaberCtrl.GetCurSel() <= 0)
 			{
 				AfxMessageBox(_T("Bitte den Inhaber bzw. die Inhaberin des Betriebs auswählen."));
 				m_BetriebsinhaberCtrl.SetFocus();
 				return;
 			}
-			if (m_GrundstuecksveraeusserungenCtrl.GetCurSel())
+			if (m_GrundstuecksveraeusserungenCtrl.GetCurSel() <= 0)
 			{
 				AfxMessageBox(_T("Bitte Angaben machen, ob im Wirtschaftsjahr Veräusserungen Grundstücken oder entspr. Rechten stattfanden."));
 				m_GrundstuecksveraeusserungenCtrl.SetFocus();
@@ -755,6 +776,7 @@ void CElsterDlg::ERiC(BOOL bNurValidieren = FALSE)
 		Bundesfinanzamtsnummer,
 		EmpfaengerFinanzamt,
 		MomentanerFormularAnzeigename,
+		Betrieb,
 		bNurValidieren);
 
 	if (!csErgebnis.IsEmpty())

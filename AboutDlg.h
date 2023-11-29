@@ -3,6 +3,8 @@
 
 // CAboutDlg dialog
 
+#include "afxlinkctrl.h"
+
 class CAboutDlg : public CDialog
 {
 	DECLARE_DYNAMIC(CAboutDlg)
@@ -20,4 +22,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	CString m_Version;
+	CMFCLinkCtrl m_GitHub;
+	CMFCLinkCtrl m_EctForum;
+	virtual BOOL OnInitDialog();
 };
