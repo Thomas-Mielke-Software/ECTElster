@@ -143,7 +143,8 @@ void CEricFormularlogikEUeR::UebertragungAbschliessen()
 
 }
 
-void CEricFormularlogikEUeR::WerteAusEcaFormularGenerieren(LPXNode pXmlOut, std::vector<Formularfeld> &feldarray, std::vector<Formularabschnitt>& abschnittarray, int flagsGen)
+// gibt FALSE zurück, wenn keine csElsterFeldnamen gefunden wurden
+BOOL CEricFormularlogikEUeR::WerteAusEcaFormularGenerieren(LPXNode pXmlOut, std::vector<Formularfeld> &feldarray, std::vector<Formularabschnitt>& abschnittarray, int flagsGen)
 {
     // Formulardefinitionsdatei in xmldoc laden
     XDoc xmldoc;
@@ -151,6 +152,7 @@ void CEricFormularlogikEUeR::WerteAusEcaFormularGenerieren(LPXNode pXmlOut, std:
 
     LPXNode xmlIn = xmldoc.GetRoot();  // XML-Input von der .eca-Datei
 
+	BOOL bElsterFeldnamenGefunden = FALSE;
     if (xmlIn)
     {
         LPXNode felder = NULL;
@@ -171,6 +173,8 @@ void CEricFormularlogikEUeR::WerteAusEcaFormularGenerieren(LPXNode pXmlOut, std:
                 csFeldname = feld->GetChildValue(_T("name"));
                 csTyp = feld->GetAttrValue("typ");
                 csElsterFeldname = feld->GetAttrValue("elsterfeldname");
+				if (!csElsterFeldname.IsEmpty())
+					bElsterFeldnamenGefunden = TRUE;
 				if (flagsGen & FLAG_GEN_XML)
 					ZuXmlBaumHinzufuegen(pXmlOut, csElsterFeldname, csFeldwert);
 				if (flagsGen & FLAG_GEN_INTERN)
@@ -212,6 +216,8 @@ void CEricFormularlogikEUeR::WerteAusEcaFormularGenerieren(LPXNode pXmlOut, std:
 			}
 		}		
     }
+
+	return bElsterFeldnamenGefunden;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -260,29 +266,41 @@ void CEricFormularlogikEUeR::UpdateListe(CString& csFormularDateipfad, CString& 
 	}
 
 	// Formular vorbereiten
+	int Zeile = 0, Spalte;
+	CString csMsgBetrieb;
 	TRY
 	{
-		m_pFormularCtrl->WaehleFormularUndBetrieb(m_FormularDateipfad, csBetrieb);
-		m_csBetrieb = csBetrieb;
+		if (!csBetrieb.IsEmpty())
+			m_pFormularCtrl->WaehleFormularUndBetrieb(m_FormularDateipfad, csBetrieb);
+		else
+			m_pFormularCtrl->WaehleFormular(m_FormularDateipfad);
+
 	}
 	CATCH(COleException, e)
 	{
-		CString csMsg, csOrigMsg;
+		CString csOrigMsg;
 		e->GetErrorMessage(csOrigMsg.GetBuffer(200), 200);
-		csMsg.Format("Achtung: Damit für jeden Betrieb eine eigene EÜR übertragen werden kann, wird EasyCash&Tax v2.48 oder höher benötigt. Die angezeigten Werte sind für alle Betriebe zusammengenommen, was wahrscheinlich nicht gewollt ist. Bitte mit dem Plugin-Manager updaten. Ursprüngliche Fehlermeldung: %s", (LPCTSTR)csOrigMsg);
-		AfxMessageBox(csMsg);
+		csMsgBetrieb.Format("Hinweis: Damit für jeden Betrieb eine eigene EÜR übertragen werden kann, wird EasyCash&Tax v2.48 oder höher benötigt. Die angezeigten Werte sind für alle Betriebe zusammengenommen, was wahrscheinlich nicht gewollt ist. Bitte mit dem Plugin-Manager updaten. Ursprüngliche Fehlermeldung: %s", (LPCTSTR)csOrigMsg);
 		m_pFormularCtrl->WaehleFormular(m_FormularDateipfad);
 	}
+	m_csBetrieb = csBetrieb;
+
 	END_CATCH
 
 	// Formularlayout aus .eca-Datei einlesen
 	std::vector<Formularfeld> Formularfelder(0);
 	std::vector<Formularabschnitt> Abschnitte(0);
-	WerteAusEcaFormularGenerieren(NULL, Formularfelder, Abschnitte, FLAG_GEN_INTERN | FLAG_GEN_ABSCHNITTE);
+	if (!WerteAusEcaFormularGenerieren(NULL, Formularfelder, Abschnitte, FLAG_GEN_INTERN | FLAG_GEN_ABSCHNITTE))
+	{
+		ListeInhalt[0][0] = "Fehler: Das ausgewählte Formular unterstützt noch nicht die EÜR-Übertragung. Das ist erst mit dem neuesten 2022er-EÜR-Formular möglich.";
+		m_pListe->SetItemCount(1);
+		m_pListe->RedrawItems(0, 0);
+		m_pListe->InvalidateRect(NULL, FALSE);
+		return;
+	}
 	sort(Formularfelder.begin(), Formularfelder.end(), CEricFormularlogikEUeR::CompareInterval);
 
 	// Formularlayout in Liste übertragen
-	int Zeile, Spalte;
 	CString FeldWert83Merken;
 	BOOL bSternchenHinweisAnzeigen = FALSE;
 	for (Zeile = 0; Zeile < sizeof(ListeInhalt) / sizeof(ListeInhalt[0]); Zeile++)	// Listenspeicher initialisieren
@@ -290,13 +308,24 @@ void CEricFormularlogikEUeR::UpdateListe(CString& csFormularDateipfad, CString& 
 			ListeInhalt[Zeile][Spalte] = _T("");
 	Zeile = 0;
 
-
 	Zeile++;
 	ListeInhalt[Zeile++][0] = "ACHTUNG: Dies ist eine frühe Preview-Version der EÜR-Übertragung mittels Elster-Schnittstelle, die noch Fehler enthalten kann.";
 	ListeInhalt[Zeile++][0] = "      Es empfiehlt sich die Werte auf dem Versandbestätigungs-PDF, das nach dem Senden erstellt wird, noch einmal genau zu prüfen.";
 	ListeInhalt[Zeile++][0] = "      Sollten Probleme auftauchen, bitte eine der Kontaktoptionen nutzen (Infoknopf unten rechts).";
 	ListeInhalt[Zeile++][0] = "      Ansonsten gibt es keinen Grund, die Funktion nicht auszuprobieren: Im schlimmsten Fall muss eine korrigierte EÜR, wie gehabt, über das Elster-Onlineportal erstellt werden.";
 	Zeile++;
+
+	if (!csMsgBetrieb.IsEmpty())
+	{
+		ListeInhalt[Zeile++][0] = csMsgBetrieb;
+		Zeile++;
+	}
+
+	if (m_MomentanerFormularAnzeigename.GetLength() >= 17 && m_MomentanerFormularAnzeigename.Mid(13, 4) != m_Jahr)
+	{
+		ListeInhalt[Zeile++][0] = "Hinweis: Das ausgewählte Formular '" + m_MomentanerFormularAnzeigename + "' passt nicht zum Buchungsjahr " + m_Jahr + " des geöffneten Dokuments. Fals das Buchungsjahr falsch gesetzt wurde, kann es in den Einstellungen -> Allgemein (rechts bei den Dokumenteigenschaften) korrigiert werden.";
+		Zeile++;
+	}
 
 	ListeInhalt[Zeile++][0] = "ANLAGE EÜR " + m_Jahr + (!m_csBetrieb.IsEmpty() ? (CString)" für " + m_csBetrieb : "");
 	auto abschnitt = begin(Abschnitte);
@@ -554,8 +583,8 @@ void CEricFormularlogikEUeR::AveuerGenerieren(CString(&ListeInhalt)[500][6], int
 								continue;  // ansonsten einfach weiter nach dem richtigen Sammelposten-Kontext suchen
 							}
 							else if (ausgaben_posten_name[i].GetLength() >= afaGruppen[g].csGruppenbezeichnung.GetLength() && // wo das rechte Ende Kontonames  
-								ausgaben_posten_name[i].Right(afaGruppen[g].csGruppenbezeichnung.GetLength()).MakeLower()	  // der Gruppenbezeichnung entspricht?
-								== afaGruppen[g].csGruppenbezeichnung.MakeLower())
+								CString(ausgaben_posten_name[i].Right(afaGruppen[g].csGruppenbezeichnung.GetLength())).MakeLower() // der Gruppenbezeichnung entspricht?
+								== CString(afaGruppen[g].csGruppenbezeichnung).MakeLower())
 							{
 								break;
 							}

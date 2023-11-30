@@ -2,14 +2,15 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 [Setup]
-AppName=Elster-Export Plugin für EasyCash&Tax -- Preview 1 für EÜR-Übertragung
-AppVerName=Elster-Export 3.0
+AppName=Elster-Export Plugin für EasyCash&Tax
+AppVerName=Elster-Export 3.1
 DiskSpanning=no
 AppPublisher=tm
 AppPublisherURL=http://www.easyct.de
 AppSupportURL=http://www.easyct.de
 AppUpdatesURL=http://www.easyct.de
-DefaultDirName={pf}\EasyCash&Tax\Plugins\Elster-Export
+DefaultDirName={pf}\EasyCash&Tax\Plugins\Elster-Export          
+UsePreviousAppDir=yes
 DefaultGroupName=EasyCash
 OutputBaseFilename=ECTElsterSetup
 OutputDir=C:\Users\mielk\Work\ECTElster\Setup
