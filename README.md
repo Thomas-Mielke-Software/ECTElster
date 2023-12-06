@@ -1,25 +1,33 @@
 # ECTElster - Elster-Plugin für die Finanzbuchhaltung EasyCash&Tax
 
 ## Voraussetzungen:
-- VS2017 Community Edition
+- VS2022 Community Edition
     - mit Visual C++ ATL für x86 und x64
     - mit Visual C++ MFC für x86 und x64
-    - inkl. einer passenden Windows SDK
+    - passende Windows SDK (14.3 Plattform empfohlen)
 - aktuelle ERiC-SDK
     - downloaden unter https://www.elster.de/elsterweb/infoseite/entwickler
-    - vorzugsweise in *"C:\Program Files (x86)\Elster"* installieren
+    - z.B. in "C:\Program Files (x86)\Elster" entpacken (.jar-Archive können z.B. mit 7zip entpackt werden)
     - ericapi.lib und .h Dateien in das Solution-Verzeichnis kopieren
     - siehe unten bei *ERiC Update Checkliste*
 
 
 ## Bauen:
-- ECTElster.sln in VS2017 öffnen
+- ECTElster.sln in VS2022 öffnen
 - Bei den Projekteigenschaften -> Konfigurationseigenschaften -> Bibliotheksverzeichnisse sicherstellen, dass die ein geeignetes SDK für die ucrt library enthalten ist, z.B. *"C:\Program Files (x86)\Windows Kits\10\Lib\10.0.17763.0\ucrt\x86"*
 - gleiches unter C/C++ -> Allgemein -> zusätzliche Header-Dateien, z.B. *"C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt"*
-- wenn man Visual Studio nicht ständig als Admin laufen lassen will, kann es die .ocx-Datei nicht während des Build-Vorgangs mit registrieren. Das ist nicht schlimm. Man kann es einmal manuell mit regsvr32.exe ECTElster.ocx im Debug-Verzeichnis machen und dann den Fehler ignorieren.
+- wenn man Visual Studio nicht ständig als Admin laufen lassen will, kann es die .ocx-Datei nicht während des Build-Vorgangs mit registrieren. Das ist nicht schlimm. Man kann es einmal manuell mit regsvr32.exe ECTElster.ocx im Debug-Verzeichnis machen und dann den Fehler ignorieren:
+```
+# für 32-bit den regsvr32 aus dem SysWOW64 benutzen!
+c:\windows\SysWOW64\regsvr32.exe "C:\Pfad\zu\meinen\Softwareprojekten\ECTElster\Debug\ECTElster.ocx"
+```
 
 ## Debuggen:
-ericapi.dll, ericxerces.dll und eSigner.dll aus dem ERiC-SDK ( z.B. C:\Program Files (x86)\Elster\ERiC-29.2.6.0\Windows-x86\dll ) sowie das gesamte plugins2-Verzeichnis in das Debug-Unterverzeichnis kopieren. Dort auch Kopien der Dateien des EC&T-Hauptprogramms ablegen (EasyCT.exe, EasyCTXP.dll, ECTIFace.dll, CrashSender1402.exe und crashrpt_lang.ini werden benötigt)
+ericapi.dll, ericxerces.dll und eSigner.dll aus dem ERiC-SDK ( z.B. C:\Program Files (x86)\Elster\ERiC-XX.X.X.X\Windows-x86\dll ) sowie das gesamte plugins2-Verzeichnis in das Debug-Unterverzeichnis kopieren. Dort auch Kopien der Dateien des EC&T-Hauptprogramms ablegen (EasyCT.exe, EasyCTXP.dll, ECTIFace.dll, CrashSender1402.exe und crashrpt_lang.ini werden benötigt). Das .ocx der Schnittstelle zum Hauptprogramm registrieren:
+```
+# für 32-bit den regsvr32 aus dem SysWOW64 benutzen!
+c:\windows\SysWOW64\regsvr32.exe "C:\Pfad\zu\meinen\Softwareprojekten\ECTElster\Debug\EasyCTX.ocx"
+```
 
 ## Verpacken:
 - InnoSetup herunterladen ( http://www.jrsoftware.org/isdl.php )
@@ -29,7 +37,7 @@ ericapi.dll, ericxerces.dll und eSigner.dll aus dem ERiC-SDK ( z.B. C:\Program F
 - ggf. Pfade und *AppVerName=* anpassen
 
 ## Hinweise zum Hacken:
-Die eigentliche Musik spielt in ElsterDlg.cpp. Es wird dort im Kern eine ListCtrl Abwandlung namens *QuickList* verwendet und darin der Aufbau des Formulars nachgeahmt. Wenn eine Validierung via ERiC-API erfolgreich ist, kann es mit dieser API versendet werden. 
+Die eigentliche Musik bei der Oberfläche spielt in ElsterDlg.cpp. Es wird dort im Kern eine ListCtrl Abwandlung namens *QuickList* verwendet und darin der Aufbau des Formulars nachgeahmt. Wenn eine Validierung via ERiC-API erfolgreich ist, kann es mit dieser API versendet werden, was in den 'Formularlogik'-Klassen geschieht. 
 
 ## ERiC Update Checkliste
 
@@ -54,6 +62,6 @@ Die eigentliche Musik spielt in ElsterDlg.cpp. Es wird dort im Kern eine ListCtr
 ## Credits:
 Dank gebührt Olaf Stüben von Winston, der bei der ersten Version des Plugins behilflich war. Außerdem wird folgende Software vom Plugin verwendet:
 - ERiC-API der bayrischen Finanzverwaltung
-- XMLite: leichtgewichtige Klassen für XML-Parsing
+- XMLite: leichtgewichtige Klassen für XML-Parsing von Cho Kyung Min
 - CRegExp: Klasse für reguläre Ausdrücke von Henry Spencer, CodeGuru-Post durch Zafir Anjum 
 - QuickList: CListCtrl replacement von PEK
