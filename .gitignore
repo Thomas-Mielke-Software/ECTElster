@@ -336,3 +336,8 @@ Setup/
 
 # Elster-Bibliotheksdateien (werden manuell in das Projektverzeichnis kopiert)
 eric*
+
+# Temp-Verzeichnisse
+Temp
+Temp2
+enc_temp_folder
