@@ -810,7 +810,7 @@ void CElsterDlg::OnBnClickedZeige()
 	Caption.ReleaseBuffer();
 	if (Caption == _T("&Zeige Log"))
 	{
-		m_Zeige.SetWindowText(_T("&Zeige Voranm."));
+		m_Zeige.SetWindowText(_T("&Zeige Formular"));
 		m_Liste.ShowWindow(SW_HIDE);
 		m_ErgebnisCtrl.ShowWindow(SW_SHOW);
 		if (!m_ErgebnisCtrl.GetWindowTextLength())
@@ -846,6 +846,12 @@ void CElsterDlg::OnBnClickedCancel()
 void CElsterDlg::OnCbnSelchangeVoranmeldungszeitraum()
 {
 	SetTimer(2, 1, NULL);
+
+	CString Caption;
+	m_Zeige.GetWindowText(Caption.GetBuffer(1000), 1000);
+	Caption.ReleaseBuffer();
+	if (Caption == _T("&Zeige Formular"))
+		OnBnClickedZeige();
 }
 
 
