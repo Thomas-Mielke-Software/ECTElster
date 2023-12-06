@@ -333,7 +333,7 @@ BOOL CElsterDlg::OnInitDialog()
 	{
 		CString csTemp;
 		m_VoranmeldungszeitraumCtrl.GetLBText(i, csTemp);
-		if (csTemp.GetLength() >= csWunschformular.GetLength() && csTemp.Left(csWunschformular.GetLength()))
+		if (csTemp.GetLength() >= csWunschformular.GetLength() && csTemp.Left(csWunschformular.GetLength()) == csWunschformular)
 		{
 			m_VoranmeldungszeitraumCtrl.SetCurSel(i);
 			// Liste mit Feldern initialisieren
