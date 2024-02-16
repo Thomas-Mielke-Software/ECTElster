@@ -57,8 +57,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 3,2,0,1
- PRODUCTVERSION 3,2,0,1
+ FILEVERSION 3,4,0,1
+ PRODUCTVERSION 3,4,0,1
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -75,12 +75,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Thomas Mielke Softwareentwicklung"
             VALUE "FileDescription", "Elster Export Plugin ActiveX"
-            VALUE "FileVersion", "3.2.0.1"
+            VALUE "FileVersion", "3.4.0.1"
             VALUE "InternalName", "ECTElster.ocx"
-            VALUE "LegalCopyright", "copyleft (LGPL v2.1) 1999-2023 Thomas Mielke. "
+            VALUE "LegalCopyright", "copyleft (LGPL v2.1) 1999-2024 Thomas Mielke. "
             VALUE "OriginalFilename", "ECTElster.ocx"
             VALUE "ProductName", "Elster Export Plugin"
-            VALUE "ProductVersion", "3.2.0.1"
+            VALUE "ProductVersion", "3.4.0.1"
         END
     END
     BLOCK "VarFileInfo"
@@ -132,8 +132,9 @@ BEGIN
     PUSHBUTTON      "https://easyct.de/forum/viewforum.php?forum_id=11",IDC_ECTFORUM,52,107,286,14
     LTEXT           "Hinweis: Für die Anlage AVEÜR funktionieren Konten, die den Feldern 1136, 1131, 1130, 1137, 1135 und 1172 zugewiesen sind.",IDC_STATIC,54,127,284,17
     LTEXT           "Einschränkungen: Es ist momentan noch nicht möglich §7g-Sonderabschreibungen  oder Zugänge zu laufenden AfAs sowie Teilabgänge zu behandeln.",IDC_STATIC,54,179,284,18
-    LTEXT           "Um eine Spezielle AfA-Untergruppe außer 'Andere' zu benutzen, muss der Kontenname mit der AfA-Gruppe enden, z.B. um in der AfA-Obergruppe 'Bewegliche Wirtschaftsgüter' die Gruppe 'Kraftfahrzeuge' zu adressieren könnte ein Konto 'AfA auf Kraftfahrzeuge' angelegt (und Feld 1130 zugewiesen) werden.",IDC_STATIC,54,144,284,33
+    LTEXT           "Um eine Spezielle AfA-Untergruppe außer 'Andere' zu benutzen, muss der Kontenname mit der AfA-Gruppe enden,  z.B. um in der AfA-Obergruppe 'Bewegliche ",IDC_STATIC,54,144,284,16
     LTEXT           "Außerdem werden nicht abzuschreibende Anlagegüter nicht berücksichtigt wie z.B. Grundstücke, Finanzanlagen oder Umlaufvermögen. Bitte in diesen Fällen die EÜR/AVEÜR mit dem Elster-Onlineformular erklären.",IDC_STATIC,54,199,284,27
+    LTEXT           "Wirtschaftsgüter' die Gruppe 'Kraftfahrzeuge' zu adressieren könnte ein Konto 'AfA auf Kraftfahrzeuge' angelegt (und Feld 1130 zugewiesen) werden.",IDC_STATIC,54,160,284,15
 END
 
 IDD_PROPPAGE_ECTELSTER DIALOG 0, 0, 250, 62

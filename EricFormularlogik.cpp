@@ -491,12 +491,13 @@ CString CEricFormularlogik::Render(
 						}
 						int nFeldidentifikator = atoi(csFeldidentifikator);
 
-						if (nFeldidentifikator && csText != _T(""))
+						if (nFeldidentifikator && csText != _T(""))  // numerischer Feldidentifikator aus Feld-Kz der USt.-Voranm.
 						{
 							CString csTatsaechlicheFeldnummer;
 
 							CStringArray csaErsetzteAusdruecke;
 							int nAnzahlErsetzteAusdruecke = RegSearchReplace(csText, _T("(\\&apos;\\$/Elster\\[[0-9]+\\]/DatenTeil\\[[0-9]+\\]/Nutzdatenblock\\[[0-9]+\\]/Nutzdaten\\[[0-9]+\\]/Anmeldungssteuern\\[[0-9]+\\]/Steuerfall\\[[0-9]+\\]/Umsatzsteuervoranmeldung\\[[0-9]+\\]/Kz)([0-9]+)(\\[[0-9]+\\]\\$\\&apos;)"), _T("\\2"), csaErsetzteAusdruecke);
+							
 							int i;
 							for (i = 0; i < csaErsetzteAusdruecke.GetSize() && i < nAnzahlErsetzteAusdruecke; i++)
 							{
@@ -532,6 +533,11 @@ CString CEricFormularlogik::Render(
 						}
 						else // nicht-numerischer Feldidentifikator in Form des Elster-Feldnamen-Pfades
 						{
+
+							CStringArray csaErsetzteE6000017;
+							int nAnzahlErsetzteE6000017 = RegSearchReplace(csText, _T("(\\&apos;\\$/EUER\\[[0-9]+\\]/Allg\\[[0-9]+\\]/E6000017\\[[0-9]+\\]\\$\\&apos;)"), _T("'Unternehmensart'"), csaErsetzteE6000017);
+							if (nAnzahlErsetzteE6000017)
+								csText += _T(" Bitte die Unternehmensart unter Einstellungen -> pers. Daten (oder bei mehreren angelegten Betrieben im Filter-Menübereich unter Betrieb) korrigieren.");
 							CStringArray csaErsetzteAusdruecke;
 							int nAnzahlErsetzteAusdruecke = RegSearchReplace(csFeldidentifikator, _T("(\\[[0-9]+\\])"), _T(""), csaErsetzteAusdruecke);
 							if (nAnzahlErsetzteAusdruecke > 0 && csFeldidentifikator[0] == _T('/'))
@@ -564,7 +570,7 @@ CString CEricFormularlogik::Render(
 				Fehlertext += _T(" Bitte überprüfen Sie die rot unterlegten Beträge bzw. Meldungen im Einzelnen noch einmal.");
 				if (GetDatenart() == "UStVA")
 					Fehlertext += _T(" Insbesondere bei Buchungen mit dem Leistungsempfänger als Steuerschuldner und innergem. Erwerben kann es zu Unstimmigkeiten kommen.");
-				Fehlertext += _T(" Die Such - Funktion auf www.easyct.de kann hier hilfreich sein.Außerdem stellen Sie bitte sicher, dass in den Einstellungen unter pers.Angaben ein korrekter Name eingetragen ist in der Form Vorname - Leerzeichen - Nachname.\r\n\r\nDetails anzeigen ? ");
+				Fehlertext += _T(" Die  Such - Funktion auf www.easyct.de kann hier hilfreich sein. Außerdem stellen Sie bitte sicher, dass in den Einstellungen unter pers.Angaben ein korrekter Name eingetragen ist in der Form Vorname - Leerzeichen - Nachname.\r\n\r\nDetails anzeigen ? ");
 				if (AfxMessageBox(Fehlertext, MB_YESNO) == IDYES)
 				{
 					if (ergebnisPuffer)

@@ -40,8 +40,13 @@ extern const WORD _wVerMajor;
 extern const WORD _wVerMinor;
 
 // auskommentieren, um echte Daten senden zu können:
-//#define TESTVERBINDUNG
-//!!!!!!!!!!!! und nicht vergessen: bei einem neuen Jahr das Copyright-Datum hochsetzen!!!
+//#define TESTVERBINDUNG 
+//!!! nach Änderung hier das Projekt komplett neu bauen, weil die Compile-Optimierung das sonst nicht merkt
+//!!! Plugin-Komponente registrieren: c:\windows\SysWOW64\regsvr32.exe C:\Users\mielk\Work\ECTElster\Debug\ECTElster.ocx
+//!!! EC&T-Schnittstelle für EC&T-Programmdateien im Debug-Verzeichnis registrieren: 
+//!!! c:\windows\SysWOW64\regsvr32.exe C:\Users\mielk\Work\ECTElster\Debug\EasyCTX.ocx
+//!!! nicht vergessen den die drei ERiC-Dateien aus dem Pluginverzeichnis und das plugins2-Verzeichnis ins Debug-Verzeichnis zu kopieren!
+//!!! und nicht vergessen: bei einem neuen Jahr das Copyright-Datum hochsetzen!
 #if defined(NDEBUG)
 #if defined(TESTVERBINDUNG)
 #pragma message("")

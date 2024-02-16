@@ -73,6 +73,7 @@ private:
 	BOOL m_BelegeWerdenNachgereicht;
 	BOOL m_VerrechnungDesErstattungsanspruchs;
 	BOOL m_EinzugsermaechtigungWiderrufen;
+	CString m_csBetrieb;  // vom OnSelchange der Formular-ComboBox gesetzt
 	std::vector<Betrieb> m_Betriebe;
 
 	// Controls
@@ -94,7 +95,7 @@ private:
 	CMap<CString, CString&, CString, CString&> m_ListeFehler;		// ggf. farbig hervorgehoben und Hinweise/Fehler gezeigt
 
 	// Member-Funktionen
-	void EricKontext(BOOL bNurValidieren, CTime &Jetzt, CString &MomentanerFormularAnzeigename, CString& csBetrieb, CString &Jahr, CString &Zeitraum, CQuickList *pListe);
+	void EricKontext(BOOL bNurValidieren, CTime &Jetzt, CString &MomentanerFormularAnzeigename, CString &Jahr, CString &Zeitraum, CQuickList *pListe);
 	void ERiC(BOOL bNurValidieren);
 	LRESULT OnGetListItem(WPARAM wParam, LPARAM lParam);
 	void UpdateSteuerelemente(int formulartyp);

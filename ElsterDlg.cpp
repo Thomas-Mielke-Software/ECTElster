@@ -547,16 +547,15 @@ void CElsterDlg::OnTimer(UINT_PTR nIDEvent)
 		KillTimer(3);
 		UpdateData();
 		CString MomentanerFormularAnzeigename;
-		CString Betrieb;
 		CTime Jetzt;
 		CString Zeitraum = "";
 
 		int jj = m_DokumentCtrl.GetJahr();
 		CString Jahr;
 		Jahr.Format(_T("%-0.04d"), jj);
-		EricKontext(true, Jetzt, MomentanerFormularAnzeigename, Betrieb, Jahr, Zeitraum, &m_Liste);
+		EricKontext(true, Jetzt, MomentanerFormularAnzeigename, Jahr, Zeitraum, &m_Liste);
 		m_FormularDateipfad = m_FormularCtrl.HoleFormularpfad(m_VoranmeldungszeitraumCtrl.GetItemData(m_VoranmeldungszeitraumCtrl.GetCurSel()));
-		if (m_pEric) m_pEric->UpdateListe(m_FormularDateipfad, Betrieb, m_ListeInhalt, &m_Liste);
+		if (m_pEric) m_pEric->UpdateListe(m_FormularDateipfad, m_csBetrieb, m_ListeInhalt, &m_Liste);
 		UpdateData(FALSE);  // UpdateListe() ändert z.B. evtl. die "korrigierte Anmeldung" Checkbox
 		ERiC(TRUE);
 		m_Liste.InvalidateRect(NULL, FALSE);
@@ -583,7 +582,7 @@ void CElsterDlg::OnBnClickedOk()
 // benutzt die ERiC-Bibliothek um entweder die Hinweis- bzw. Fehlerliste zu befüllen oder aber Daten an Elster zu versenden
 // für eine bessere Trennung von GUI und Logik ist es in CEricFormularlogik ausgelagert
 
-void CElsterDlg::EricKontext(BOOL bNurValidieren, CTime& Jetzt, CString& MomentanerFormularAnzeigename, CString& csBetrieb, CString &Jahr, CString &Zeitraum, CQuickList* pListe)
+void CElsterDlg::EricKontext(BOOL bNurValidieren, CTime& Jetzt, CString& MomentanerFormularAnzeigename, CString &Jahr, CString &Zeitraum, CQuickList* pListe)
 {
 	int nZeitraum = m_FormularCtrl.HoleVoranmeldungszeitraum();
 	if (nZeitraum > 12) nZeitraum += 28;	// 1-12 Monat; 1. Quartal == 41, 4. Q. == 44
@@ -592,11 +591,11 @@ void CElsterDlg::EricKontext(BOOL bNurValidieren, CTime& Jetzt, CString& Momenta
 
 	Jetzt = CTime::GetCurrentTime();
 	m_VoranmeldungszeitraumCtrl.GetLBText(m_VoranmeldungszeitraumCtrl.GetCurSel(), MomentanerFormularAnzeigename);
-	csBetrieb = "";
+	m_csBetrieb = "";
 	if (MomentanerFormularAnzeigename.Left(12) == "E/Ü-Rechnung")  // eine Art dependency injection
 	{
 		if (MomentanerFormularAnzeigename.GetLength() > 22 && MomentanerFormularAnzeigename.Mid(17, 5) == _T(" für "))
-			csBetrieb = MomentanerFormularAnzeigename.Mid(22);
+			m_csBetrieb = MomentanerFormularAnzeigename.Mid(22);
 		if (!bNurValidieren && MomentanerFormularAnzeigename.GetLength() >= 17 && MomentanerFormularAnzeigename.Mid(13, 4) != Jahr)
 		{
 			AfxMessageBox("Das ausgewählte Formular '" + MomentanerFormularAnzeigename + "' passt nicht zum Buchungsjahr " + Jahr + " des geöffneten Dokuments. Fals das Buchungsjahr falsch gesetzt wurde, kann es in den Einstellungen -> Allgemein (rechts bei den Dokumenteigenschaften) korrigiert werden.");
@@ -756,8 +755,7 @@ void CElsterDlg::ERiC(BOOL bNurValidieren = FALSE)
 	CString MomentanerFormularAnzeigename;
 	CTime Jetzt;
 	CString Zeitraum;
-	CString Betrieb;
-	EricKontext(bNurValidieren, Jetzt, MomentanerFormularAnzeigename, Betrieb, Jahr, Zeitraum, &m_Liste);
+	EricKontext(bNurValidieren, Jetzt, MomentanerFormularAnzeigename, Jahr, Zeitraum, &m_Liste);
 	CString csErgebnis = m_pEric->Render(
 		m_hWnd,
 		m_FormularDateipfad,
@@ -783,7 +781,7 @@ void CElsterDlg::ERiC(BOOL bNurValidieren = FALSE)
 		Bundesfinanzamtsnummer,
 		EmpfaengerFinanzamt,
 		MomentanerFormularAnzeigename,
-		Betrieb,
+		m_csBetrieb,
 		bNurValidieren);
 
 	if (!csErgebnis.IsEmpty())

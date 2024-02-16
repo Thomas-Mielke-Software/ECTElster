@@ -283,9 +283,8 @@ void CEricFormularlogikEUeR::UpdateListe(CString& csFormularDateipfad, CString& 
 		csMsgBetrieb.Format("Hinweis: Damit für jeden Betrieb eine eigene EÜR übertragen werden kann, wird EasyCash&Tax v2.48 oder höher benötigt. Die angezeigten Werte sind für alle Betriebe zusammengenommen, was wahrscheinlich nicht gewollt ist. Bitte mit dem Plugin-Manager updaten. Ursprüngliche Fehlermeldung: %s", (LPCTSTR)csOrigMsg);
 		m_pFormularCtrl->WaehleFormular(m_FormularDateipfad);
 	}
-	m_csBetrieb = csBetrieb;
-
 	END_CATCH
+	m_csBetrieb = csBetrieb;
 
 	// Formularlayout aus .eca-Datei einlesen
 	std::vector<Formularfeld> Formularfelder(0);
