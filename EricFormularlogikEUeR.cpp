@@ -176,7 +176,12 @@ BOOL CEricFormularlogikEUeR::WerteAusEcaFormularGenerieren(LPXNode pXmlOut, std:
 				if (!csElsterFeldname.IsEmpty())
 					bElsterFeldnamenGefunden = TRUE;
 				if (flagsGen & FLAG_GEN_XML)
+				{
+					// const PTCHAR abziehbarNode = _T("EUER/BAus/Beschr_abziehbar/Abziehbar");
+					// if (csElsterFeldname.Left(strlen(abziehbarNode)) == abziehbarNode)  // dafür sorgen, dass im XML der "nicht abziehbar"-Node vor dem Abziehbar-Node geschrieben wird
+					// 	ZuXmlBaumHinzufuegen(pXmlOut, "EUER/BAus/Beschr_abziehbar/Nicht_abziehbar", "");
 					ZuXmlBaumHinzufuegen(pXmlOut, csElsterFeldname, csFeldwert);
+				}
 				if (flagsGen & FLAG_GEN_INTERN)
 				{
 					int seite = atoi(feld->GetAttrValue("seite"));
@@ -223,7 +228,7 @@ BOOL CEricFormularlogikEUeR::WerteAusEcaFormularGenerieren(LPXNode pXmlOut, std:
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //	LISTE AUFBAUEN
 //
-void CEricFormularlogikEUeR::UpdateListe(CString& csFormularDateipfad, CString& csBetrieb, CString(&ListeInhalt)[500][6], CQuickList* pListe, BOOL bNurSpaltenbreitenAnpassen)
+void CEricFormularlogikEUeR::UpdateListe(CString& csMomentanerFormularAnzeigename, CString& csJahr, CString& csFormularDateipfad, CString& csBetrieb, CString(&ListeInhalt)[500][6], CQuickList* pListe, BOOL bNurSpaltenbreitenAnpassen)
 {
 	m_pListe = pListe;
 	m_FormularDateipfad = csFormularDateipfad;
@@ -308,9 +313,9 @@ void CEricFormularlogikEUeR::UpdateListe(CString& csFormularDateipfad, CString& 
 	Zeile = 0;
 
 	Zeile++;
-	ListeInhalt[Zeile++][0] = "ACHTUNG: Dies ist eine frühe Preview-Version der EÜR-Übertragung mittels Elster-Schnittstelle, die noch Fehler enthalten kann.";
+	ListeInhalt[Zeile++][0] = "ACHTUNG: Dies ist Beta-Version der EÜR-Übertragung mittels Elster-Schnittstelle, die noch Fehler enthalten kann.";
 	ListeInhalt[Zeile++][0] = "      Es empfiehlt sich die Werte auf dem Versandbestätigungs-PDF, das nach dem Senden erstellt wird, noch einmal genau zu prüfen.";
-	ListeInhalt[Zeile++][0] = "      Sollten Probleme auftauchen, bitte eine der Kontaktoptionen nutzen (Infoknopf unten rechts).";
+	ListeInhalt[Zeile++][0] = "      Sollten hier Warnungen (gelb) oder Fehler (rot) aufgelistet werden, die keinen Sinn ergeben, bitte eine der Kontaktoptionen nutzen (Infoknopf unten rechts).";
 	ListeInhalt[Zeile++][0] = "      Ansonsten gibt es keinen Grund, die Funktion nicht auszuprobieren: Im schlimmsten Fall muss eine korrigierte EÜR, wie gehabt, über das Elster-Onlineportal erstellt werden.";
 	Zeile++;
 
@@ -320,9 +325,9 @@ void CEricFormularlogikEUeR::UpdateListe(CString& csFormularDateipfad, CString& 
 		Zeile++;
 	}
 
-	if (m_MomentanerFormularAnzeigename.GetLength() >= 17 && m_MomentanerFormularAnzeigename.Mid(13, 4) != m_Jahr)
+	if (csMomentanerFormularAnzeigename.GetLength() >= 17 && m_MomentanerFormularAnzeigename.Mid(13, 4) != csJahr)
 	{
-		ListeInhalt[Zeile++][0] = "Hinweis: Das ausgewählte Formular '" + m_MomentanerFormularAnzeigename + "' passt nicht zum Buchungsjahr " + m_Jahr + " des geöffneten Dokuments. Fals das Buchungsjahr falsch gesetzt wurde, kann es in den Einstellungen -> Allgemein (rechts bei den Dokumenteigenschaften) korrigiert werden.";
+		ListeInhalt[Zeile++][0] = "Hinweis: Das ausgewählte Formular '" + csMomentanerFormularAnzeigename + "' passt nicht zum Buchungsjahr " + csJahr + " des geöffneten Dokuments. Falls das Buchungsjahr falsch gesetzt wurde, kann es in den Einstellungen -> Allgemein (rechts bei den Dokumenteigenschaften) korrigiert werden.";
 		Zeile++;
 	}
 
@@ -798,11 +803,11 @@ void CEricFormularlogikEUeR::AveuerGenerieren(CString(&ListeInhalt)[500][6], int
 				else
 				{
 					// Anschaffungskosten E6007352
-					COleCurrency csAnschaffungskosten = m_pBuchungCtrl->HoleNetto();
-					cyAnschaffungskostenSum += csAnschaffungskosten;
+					COleCurrency cyAnschaffungskosten = m_pBuchungCtrl->HoleNetto();
+					cyAnschaffungskostenSum += cyAnschaffungskosten;
 					if (!afaGruppen[g].elsterKontextEinz.IsEmpty())  // nur darstellen/verarbeiten, wenn es einen Elster-Kontext gibt
 					{
-						CString csUrspruenglicherRestwert = FormatCy2d(csAnschaffungskosten, 0UL, LANGID_DEUTSCH);
+						CString csUrspruenglicherRestwert = FormatCy2d(cyAnschaffungskosten, 0UL, LANGID_DEUTSCH);
 						if (flagsGen & FLAG_GEN_INTERN)
 						{
 							ListeInhalt[Zeile][0] = "      Anschaffungs-/Herstellungskosten/Einlagewert";
@@ -871,7 +876,7 @@ void CEricFormularlogikEUeR::AveuerGenerieren(CString(&ListeInhalt)[500][6], int
 					if (afaGruppen[g].csGruppenbezeichnung == "Sammelposten" && flagsGen & FLAG_GEN_INTERN)
 					{
 						ListeInhalt[Zeile++][0].Format("      %s im %dten Jahr mit einer Auflösungsrate von %s €", (LPCTSTR)m_pBuchungCtrl->GetBeschreibung(), m_pBuchungCtrl->GetAbschreibungNr(), (LPCTSTR)csAfA);
-						if (cyAnschaffungskostenSum < COleCurrency(250, 0) || cyAnschaffungskostenSum >= COleCurrency(1000, 0))
+						if (cyAnschaffungskosten < COleCurrency(250, 0) || cyAnschaffungskosten >= COleCurrency(1000, 0))
 							ListeInhalt[Zeile++][0] = "Hinweis: Pool-AfA-Sammelposten wie '" + m_pBuchungCtrl->GetBeschreibung() + "' dürfen nur einen Anschaffungswert von min. 250 € bis max. 999,99 € haben.";
 						if (m_pBuchungCtrl->GetAbschreibungGenauigkeit() != 0)
 							ListeInhalt[Zeile++][0] = "Hinweis: Pool-AfA-Sammelposten wie '" + m_pBuchungCtrl->GetBeschreibung() + "' müssen mit ganzjährlicher Abschreibungsgenauigkeit gebucht werden.";

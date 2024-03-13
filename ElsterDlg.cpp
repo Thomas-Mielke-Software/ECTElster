@@ -555,7 +555,7 @@ void CElsterDlg::OnTimer(UINT_PTR nIDEvent)
 		Jahr.Format(_T("%-0.04d"), jj);
 		EricKontext(true, Jetzt, MomentanerFormularAnzeigename, Jahr, Zeitraum, &m_Liste);
 		m_FormularDateipfad = m_FormularCtrl.HoleFormularpfad(m_VoranmeldungszeitraumCtrl.GetItemData(m_VoranmeldungszeitraumCtrl.GetCurSel()));
-		if (m_pEric) m_pEric->UpdateListe(m_FormularDateipfad, m_csBetrieb, m_ListeInhalt, &m_Liste);
+		if (m_pEric) m_pEric->UpdateListe(MomentanerFormularAnzeigename, Jahr, m_FormularDateipfad, m_csBetrieb, m_ListeInhalt, &m_Liste);
 		UpdateData(FALSE);  // UpdateListe() ändert z.B. evtl. die "korrigierte Anmeldung" Checkbox
 		ERiC(TRUE);
 		m_Liste.InvalidateRect(NULL, FALSE);

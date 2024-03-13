@@ -133,7 +133,7 @@ void CEricFormularlogikUStVA::UebertragungAbschliessen()
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //	LISTE AUFBAUEN
 //
-void CEricFormularlogikUStVA::UpdateListe(CString &csFormularDateipfad, CString& csBetrieb, CString (&ListeInhalt)[500][6], CQuickList* pListe, BOOL bNurSpaltenbreitenAnpassen)
+void CEricFormularlogikUStVA::UpdateListe(CString& csMomentanerFormularAnzeigename, CString& csJahr, CString &csFormularDateipfad, CString& csBetrieb, CString (&ListeInhalt)[500][6], CQuickList* pListe, BOOL bNurSpaltenbreitenAnpassen)
 {
 	m_pListe = pListe;
 	m_FormularDateipfad = csFormularDateipfad;
