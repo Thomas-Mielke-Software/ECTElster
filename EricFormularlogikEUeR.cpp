@@ -173,6 +173,8 @@ BOOL CEricFormularlogikEUeR::WerteAusEcaFormularGenerieren(LPXNode pXmlOut, std:
                 csFeldname = feld->GetChildValue(_T("name"));
                 csTyp = feld->GetAttrValue("typ");
                 csElsterFeldname = feld->GetAttrValue("elsterfeldname");
+				if (nID == 1140)			// Patch für die EÜR-Formulare 2022/2023: 
+					csElsterFeldname = "";	// "EUER/BEin/USt_Vereinnahmt_Unentgeltl/Sum/E6000601" war auch in Feld 7 und somit doppelt definiert
 				if (!csElsterFeldname.IsEmpty())
 					bElsterFeldnamenGefunden = TRUE;
 				if (flagsGen & FLAG_GEN_XML)
@@ -325,7 +327,7 @@ void CEricFormularlogikEUeR::UpdateListe(CString& csMomentanerFormularAnzeigenam
 		Zeile++;
 	}
 
-	if (csMomentanerFormularAnzeigename.GetLength() >= 17 && m_MomentanerFormularAnzeigename.Mid(13, 4) != csJahr)
+	if (csMomentanerFormularAnzeigename.GetLength() >= 17 && csMomentanerFormularAnzeigename.Mid(13, 4) != csJahr)
 	{
 		ListeInhalt[Zeile++][0] = "Hinweis: Das ausgewählte Formular '" + csMomentanerFormularAnzeigename + "' passt nicht zum Buchungsjahr " + csJahr + " des geöffneten Dokuments. Falls das Buchungsjahr falsch gesetzt wurde, kann es in den Einstellungen -> Allgemein (rechts bei den Dokumenteigenschaften) korrigiert werden.";
 		Zeile++;

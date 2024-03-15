@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=Elster-Export Plugin für EasyCash&Tax
-AppVerName=Elster-Export 3.5
+AppVerName=Elster-Export 3.7
 DiskSpanning=no
 AppPublisher=tm
 AppPublisherURL=http://www.easyct.de
@@ -40,16 +40,16 @@ Source: "C:\Programme (noinstall)\ERiC\ERiC-39.3.2.0\Windows-x86\dll\plugins2\ch
 Source: "C:\Programme (noinstall)\ERiC\ERiC-39.3.2.0\Windows-x86\dll\plugins2\commonData.dll"; DestDir: {app}\plugins2; Flags: ignoreversion
 
 ; .ecf-Dateien für EÜR
-Source: C:\Users\mielk\Work\EasyCash\EUeR\2022\EUeR-d-2022-1.png; DestDir: {app}\..\..; Flags: ignoreversion
-Source: C:\Users\mielk\Work\EasyCash\EUeR\2022\EUeR-d-2022-2.png; DestDir: {app}\..\..; Flags: ignoreversion
-Source: C:\Users\mielk\Work\EasyCash\EUeR\2022\EUeR-d-2022-3.png; DestDir: {app}\..\..; Flags: ignoreversion
-Source: C:\Users\mielk\Work\EasyCash\EUeR\2022\EUeR-d-2022-4.png; DestDir: {app}\..\..; Flags: ignoreversion
-Source: C:\Users\mielk\Work\EasyCash\EUeR\2022\EUeR-d-2022.ecf; DestDir: {app}\..\..; Flags: ignoreversion     
-Source: C:\Users\mielk\Work\EasyCash\EUeR\2023\EUeR-d-2023-1.png; DestDir: {app}\..\..; Flags: ignoreversion
-Source: C:\Users\mielk\Work\EasyCash\EUeR\2023\EUeR-d-2023-2.png; DestDir: {app}\..\..; Flags: ignoreversion
-Source: C:\Users\mielk\Work\EasyCash\EUeR\2023\EUeR-d-2023-3.png; DestDir: {app}\..\..; Flags: ignoreversion
-Source: C:\Users\mielk\Work\EasyCash\EUeR\2023\EUeR-d-2023-4.png; DestDir: {app}\..\..; Flags: ignoreversion
-Source: C:\Users\mielk\Work\EasyCash\EUeR\2023\EUeR-d-2023.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+;Source: C:\Users\mielk\Work\EasyCash\EUeR\2022\EUeR-d-2022-1.png; DestDir: {app}\..\..; Flags: ignoreversion
+;Source: C:\Users\mielk\Work\EasyCash\EUeR\2022\EUeR-d-2022-2.png; DestDir: {app}\..\..; Flags: ignoreversion
+;Source: C:\Users\mielk\Work\EasyCash\EUeR\2022\EUeR-d-2022-3.png; DestDir: {app}\..\..; Flags: ignoreversion
+;Source: C:\Users\mielk\Work\EasyCash\EUeR\2022\EUeR-d-2022-4.png; DestDir: {app}\..\..; Flags: ignoreversion
+;Source: C:\Users\mielk\Work\EasyCash\EUeR\2022\EUeR-d-2022.ecf; DestDir: {app}\..\..; Flags: ignoreversion     
+;Source: C:\Users\mielk\Work\EasyCash\EUeR\2023\EUeR-d-2023-1.png; DestDir: {app}\..\..; Flags: ignoreversion
+;Source: C:\Users\mielk\Work\EasyCash\EUeR\2023\EUeR-d-2023-2.png; DestDir: {app}\..\..; Flags: ignoreversion
+;Source: C:\Users\mielk\Work\EasyCash\EUeR\2023\EUeR-d-2023-3.png; DestDir: {app}\..\..; Flags: ignoreversion
+;Source: C:\Users\mielk\Work\EasyCash\EUeR\2023\EUeR-d-2023-4.png; DestDir: {app}\..\..; Flags: ignoreversion
+;Source: C:\Users\mielk\Work\EasyCash\EUeR\2023\EUeR-d-2023.ecf; DestDir: {app}\..\..; Flags: ignoreversion
 
 ; .ecf-Dateien für USt-VA
 ;Source: C:\Users\mielk\Work\EasyCash\UVA\D-2023\uva-d-2023-1.png; DestDir: {app}\..\..; Flags: ignoreversion
