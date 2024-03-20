@@ -29,6 +29,8 @@ ericapi.dll, ericxerces.dll und eSigner.dll aus dem ERiC-SDK ( z.B. C:\Program F
 c:\windows\SysWOW64\regsvr32.exe "C:\Pfad\zu\meinen\Softwareprojekten\ECTElster\Debug\EasyCTX.ocx"
 ```
 
+Siehe dazu auch die beiden .bat-Dateien im Projektverzeichnis.
+
 ## Verpacken:
 - InnoSetup herunterladen ( http://www.jrsoftware.org/isdl.php )
 - InnoSetup starten
