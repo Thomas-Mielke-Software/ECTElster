@@ -179,9 +179,9 @@ BOOL CEricFormularlogikEUeR::WerteAusEcaFormularGenerieren(LPXNode pXmlOut, std:
 					bElsterFeldnamenGefunden = TRUE;
 				if (flagsGen & FLAG_GEN_XML)
 				{
-					// const PTCHAR abziehbarNode = _T("EUER/BAus/Beschr_abziehbar/Abziehbar");
-					// if (csElsterFeldname.Left(strlen(abziehbarNode)) == abziehbarNode)  // dafür sorgen, dass im XML der "nicht abziehbar"-Node vor dem Abziehbar-Node geschrieben wird
-					// 	ZuXmlBaumHinzufuegen(pXmlOut, "EUER/BAus/Beschr_abziehbar/Nicht_abziehbar", "");
+					const PTCHAR abziehbarNode = _T("EUER/BAus/Beschr_abziehbar/Abziehbar");
+					if (csElsterFeldname.Left(strlen(abziehbarNode)) == abziehbarNode)  // dafür sorgen, dass im XML der "nicht abziehbar"-Node vor dem Abziehbar-Node geschrieben wird
+						ZuXmlBaumHinzufuegen(pXmlOut, "EUER/BAus/Beschr_abziehbar/Nicht_abziehbar", "");
 					ZuXmlBaumHinzufuegen(pXmlOut, csElsterFeldname, csFeldwert);
 				}
 				if (flagsGen & FLAG_GEN_INTERN)

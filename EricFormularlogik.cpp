@@ -534,10 +534,20 @@ CString CEricFormularlogik::Render(
 						else // nicht-numerischer Feldidentifikator in Form des Elster-Feldnamen-Pfades
 						{
 
+							// Unternehmensart fehlt: für Menschen lesbar übersetzen
 							CStringArray csaErsetzteE6000017;
 							int nAnzahlErsetzteE6000017 = RegSearchReplace(csText, _T("(\\&apos;\\$/EUER\\[[0-9]+\\]/Allg\\[[0-9]+\\]/E6000017\\[[0-9]+\\]\\$\\&apos;)"), _T("'Unternehmensart'"), csaErsetzteE6000017);
 							if (nAnzahlErsetzteE6000017)
 								csText += _T(" Bitte die Unternehmensart unter Einstellungen -> pers. Daten (oder bei mehreren angelegten Betrieben im Filter-Menübereich unter Betrieb) korrigieren.");
+
+							// Fall: keine Einnahmen
+							if (csText == "Der Kontext &apos;/EUER[1]/BEin[1]&apos; ist leer.")
+								csText = "Es liegen keine Einnahmenbuchungen vor. Wenn dies beabsichtigt ist, legen Sie eine Dummy-Betriebseinnahmen-Buchung mit dem Betrag 0,01 € mit 0% MWSt. an, z.B. für das Feld 'umsatzsteuerfreie Betriebseinnahmen'. Dann legen Sie eine korrespondierende Dummy-Betriebsausgaben-Buchung mit dem Betrag 0,01 € an, z.B. für das Feld 'übrige unbeschränkt abziehbare Betriebsausgaben'.";
+
+							// Fall: keine Ausgaben
+							if (csText == "Der Kontext &apos;/EUER[1]/BAus[1]&apos; ist leer.")
+								csText = "Es liegen keine Ausgabenbuchungen vor. Wenn dies beabsichtigt ist, legen Sie zunächst eine Dummy-Betriebseinnahmen-Buchung mit dem Betrag 0,01 € mit 0% MWSt. an, z.B. für das Feld 'umsatzsteuerfreie Betriebseinnahmen'. Dann legen Sie eine korrespondierende Dummy-Betriebsausgaben-Buchung mit dem Betrag 0,01 € an, z.B. für das Feld 'übrige unbeschränkt abziehbare Betriebsausgaben'.";
+
 							CStringArray csaErsetzteAusdruecke;
 							int nAnzahlErsetzteAusdruecke = RegSearchReplace(csFeldidentifikator, _T("(\\[[0-9]+\\])"), _T(""), csaErsetzteAusdruecke);
 							if (nAnzahlErsetzteAusdruecke > 0 && csFeldidentifikator[0] == _T('/'))
