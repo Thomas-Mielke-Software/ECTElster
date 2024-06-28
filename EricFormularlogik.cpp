@@ -544,9 +544,13 @@ CString CEricFormularlogik::Render(
 							if (csText == "Der Kontext &apos;/EUER[1]/BEin[1]&apos; ist leer.")
 								csText = "Es liegen keine Einnahmenbuchungen vor. Wenn dies beabsichtigt ist, legen Sie eine Dummy-Betriebseinnahmen-Buchung mit dem Betrag 0,01 € mit 0% MWSt. an, z.B. für das Feld 'umsatzsteuerfreie Betriebseinnahmen'. Dann legen Sie eine korrespondierende Dummy-Betriebsausgaben-Buchung mit dem Betrag 0,01 € an, z.B. für das Feld 'übrige unbeschränkt abziehbare Betriebsausgaben'.";
 
-							// Fall: keine Ausgaben
+							// Fall: keine Ausgaben 
 							if (csText == "Der Kontext &apos;/EUER[1]/BAus[1]&apos; ist leer.")
 								csText = "Es liegen keine Ausgabenbuchungen vor. Wenn dies beabsichtigt ist, legen Sie zunächst eine Dummy-Betriebseinnahmen-Buchung mit dem Betrag 0,01 € mit 0% MWSt. an, z.B. für das Feld 'umsatzsteuerfreie Betriebseinnahmen'. Dann legen Sie eine korrespondierende Dummy-Betriebsausgaben-Buchung mit dem Betrag 0,01 € an, z.B. für das Feld 'übrige unbeschränkt abziehbare Betriebsausgaben'.";
+
+							// Fall: beschränkt abziehbaren Betriebsausgaben ohne den nicht abziehbaren Anteil erfasst
+							if (csText == "Der Kontext &apos;/EUER[1]/BAus[1]/Beschr_abziehbar[1]/Nicht_abziehbar[1]&apos; ist leer.")
+								csText = "Bei beschränkt abziehbaren Betriebsausgaben muss stets auch der Anteil angeben werden, der nicht abziehbar ist. Bitte EÜR Feld (1)162, (1)164, (1)165 und (1)168 checken.";
 
 							CStringArray csaErsetzteAusdruecke;
 							int nAnzahlErsetzteAusdruecke = RegSearchReplace(csFeldidentifikator, _T("(\\[[0-9]+\\])"), _T(""), csaErsetzteAusdruecke);
