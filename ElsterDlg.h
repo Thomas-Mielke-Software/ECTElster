@@ -42,6 +42,7 @@ struct Betrieb
 	CString art;
 	CString rechtsform;
 	CString steuernummer;
+	CString wirtschaftsidnr;
 	CString einkunftsart;
 	CString inhaber;
 };

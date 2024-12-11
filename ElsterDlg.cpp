@@ -226,19 +226,37 @@ BOOL CElsterDlg::OnInitDialog()
 			b.name = m_EinstellungCtrl.HoleEinstellung(csKey + _T("Name"));
 			if (b.name.IsEmpty()) break;
 			CString csUnternehmensart = m_EinstellungCtrl.HoleEinstellung(csKey + _T("Unternehmensart"));
-			int nTokenPos = 0;
-			CString csElem;  // jeweiliges Element in den durch Tabulatoren getrennten Betriebsangaben
-			if (!csUnternehmensart.IsEmpty() && (csElem = csUnternehmensart.Tokenize(_T("\t"), nTokenPos)) != "")
-				b.art = csElem;
-			if (nTokenPos > 0 && (csElem = csUnternehmensart.Tokenize(_T("\t"), nTokenPos)) != "")
-			b.rechtsform = csElem;
-			if (nTokenPos > 0 && (csElem = csUnternehmensart.Tokenize(_T("\t"), nTokenPos)) != "")
-			b.steuernummer = csElem;
-			if (nTokenPos > 0 && (csElem = csUnternehmensart.Tokenize(_T("\t"), nTokenPos)) != "")
-			b.einkunftsart = csElem;
-			if (nTokenPos > 0 && (csElem = csUnternehmensart.Tokenize(_T("\t"), nTokenPos)) != "")
-			b.inhaber = csElem;
 
+
+			int nPos;
+			CString strRest = "";
+			if ((nPos = csUnternehmensart.Find("\t")) < 0)
+				b.art = csUnternehmensart;
+			else	// Unternehmensart1, Unternehmensart2 (Rechtsform), Steuernummer und Wirtschaftsidentifikationsnummer sind durch Tabs getrennt
+			{
+				int nEndPos = nPos;
+				strRest = csUnternehmensart;
+				CString strToken;
+				for (int i = 0; nEndPos >= 0; i++, strRest = strRest.Mid(nEndPos + 1))
+				{
+					if ((nEndPos = strRest.Find(_T("\t"))) < 0)  // Tokenzize() verschluckte hier Tabs bei Leerstrings, deshalb wieder Find()
+					{
+						strToken = strRest.Mid(0);
+						strRest = "";
+					}
+					else
+						strToken = strRest.Mid(0, nEndPos);
+					switch (i)
+					{
+					case 0: b.art = strToken; break;
+					case 1: b.rechtsform = strToken; break;
+					case 2: b.steuernummer = strToken;	   break;
+					case 3: b.wirtschaftsidnr = strToken;  break;
+					case 4: b.einkunftsart = strToken;  break;
+					case 5: b.inhaber = strToken;  break;
+					}
+				}
+			}
 			m_Betriebe.push_back(b);
 		}
 	else
@@ -246,7 +264,6 @@ BOOL CElsterDlg::OnInitDialog()
 		Betrieb dummy;
 		m_Betriebe.push_back(dummy);
 	}
-
 
 	// Formular/Voranm.zeitr. Combobox aufbauen
 	m_VoranmeldungszeitraumCtrl.ResetContent();
@@ -261,7 +278,8 @@ BOOL CElsterDlg::OnInitDialog()
 				if (Formularname.GetLength() && m_FormularCtrl.HoleVoranmeldungszeitraum() != 0 &&
 					((Formularname.GetLength() < 21 || Formularname.Left(21) != "Umsatzsteuererklärung")))
 				{
-					if (formularart == 0 && !b.name.IsEmpty()) Formularname += " für " + b.name;  // ggf Ein EÜR-Formular pro Betrieb anbieten
+					if (formularart == 0 && !b.name.IsEmpty())  // ggf Ein EÜR-Formular pro Betrieb anbieten
+						Formularname += " für " + b.name;
 					m_VoranmeldungszeitraumCtrl.AddString(Formularname);
 					m_VoranmeldungszeitraumCtrl.SetItemData(m_VoranmeldungszeitraumCtrl.GetCount() - 1, i);	// Index speichern, um darüber bei Verarbeitung den Pfad zu gewinnen
 					if (formularart == 1) break;  // nur ein USt.-VA-Formular für alle Betriebe
@@ -701,15 +719,6 @@ void CElsterDlg::ERiC(BOOL bNurValidieren = FALSE)
 		}
 	}
 
-	if (m_pEric && m_pEric->IsKindOf(RUNTIME_CLASS(CEricFormularlogikEUeR)))
-	{
-		int nSel = m_RechtsformCtrl.GetCurSel();
-		if (nSel > 0) csRechtsform.Format("%d", m_RechtsformCtrl.GetItemData(nSel));
-		if ((nSel = m_EinkunftsartCtrl.GetCurSel()) > 0) csEinkunftsart.Format("%d", nSel);
-		if ((nSel = m_BetriebsinhaberCtrl.GetCurSel()) > 0) csBetriebsinhaber.Format("%d", nSel);
-		if ((nSel = m_GrundstuecksveraeusserungenCtrl.GetCurSel()) > 0) csGrundstuecksveraeusserungen.Format("%d", nSel);	
-	}
-
 	CString Jahr;
 	Jahr.Format(_T("%-0.0d"), (int)m_DokumentCtrl.GetJahr());
 	int nBundesfinanzamtsnummer = m_FinanzamtCtrl.GetItemData(m_FinanzamtCtrl.GetCurSel());	// Index speichern, um darüber bei Verarbeitung den Pfad zu gewinnen
@@ -732,6 +741,33 @@ void CElsterDlg::ERiC(BOOL bNurValidieren = FALSE)
 		}
 	CString Bundesfinanzamtsnummer;
 	CString NormaleSteuernummer = m_EinstellungCtrl.HoleEinstellung(_T("fsteuernummer"));
+	CString csWirtschaftsIdNr = m_EinstellungCtrl.HoleEinstellung(_T("wirtschaftsidnr"));
+		if (m_pEric && m_pEric->IsKindOf(RUNTIME_CLASS(CEricFormularlogikEUeR)))
+	{
+		int nSel = m_RechtsformCtrl.GetCurSel();
+		if (nSel > 0) csRechtsform.Format("%d", m_RechtsformCtrl.GetItemData(nSel));
+		if ((nSel = m_EinkunftsartCtrl.GetCurSel()) > 0) csEinkunftsart.Format("%d", nSel);
+		if ((nSel = m_BetriebsinhaberCtrl.GetCurSel()) > 0) csBetriebsinhaber.Format("%d", nSel);
+		if ((nSel = m_GrundstuecksveraeusserungenCtrl.GetCurSel()) > 0) csGrundstuecksveraeusserungen.Format("%d", nSel);
+
+		if (m_csBetrieb != "")
+		{
+			if (m_Betriebe.size() > 1 || (m_Betriebe.size() == 1 && !m_Betriebe[0].name.IsEmpty()))
+			{
+				for (const auto& b : m_Betriebe)
+				{
+					if (b.name == m_csBetrieb)
+					{
+						if (!b.steuernummer.IsEmpty())
+							NormaleSteuernummer = b.steuernummer;  // Betriebssteuernummer nutzen, wenn vorhanden
+						if (!b.wirtschaftsidnr.IsEmpty())
+							csWirtschaftsIdNr = b.wirtschaftsidnr; // Wirtschaftsidentifikationsnummer vorhanden?
+						break;
+					}
+				}
+			}
+		}
+	}		
 	if (NormaleSteuernummer.GetLength() != 10 && NormaleSteuernummer.GetLength() != 11)
 	{
 		AfxMessageBox(_T("Die Steuernummer in den EC&T-Einstellungen ist ungültig. Es wird eine 10- bzw. 11-stellige Steuernummer benötigt."));
@@ -772,6 +808,7 @@ void CElsterDlg::ERiC(BOOL bNurValidieren = FALSE)
 		m_VerrechnungDesErstattungsanspruchs,
 		m_EinzugsermaechtigungWiderrufen,
 		csRechtsform,
+		csWirtschaftsIdNr, 
 		csEinkunftsart,
 		csBetriebsinhaber,
 		csGrundstuecksveraeusserungen,

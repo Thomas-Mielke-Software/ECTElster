@@ -67,6 +67,7 @@ CString CEricFormularlogik::Render(
 	BOOL bVerrechnungDesErstattungsanspruchs,
 	BOOL bEinzugsermaechtigungWiderrufen,
 	CString& csRechtsform,
+	CString& csWirtschaftsIdNr,
 	CString& csEinkunftsart,
 	CString& csBetriebsinhaber,
 	CString&csGrundstuecksveraeusserungen,
@@ -103,6 +104,7 @@ CString CEricFormularlogik::Render(
 	m_VerrechnungDesErstattungsanspruchs = bVerrechnungDesErstattungsanspruchs;
 	m_EinzugsermaechtigungWiderrufen = bEinzugsermaechtigungWiderrufen;
 	m_csRechtsform = csRechtsform;
+	m_csWirtschaftsIdNr = csWirtschaftsIdNr;
 	m_csEinkunftsart = csEinkunftsart;
 	m_csBetriebsinhaber = csBetriebsinhaber;
 	m_csGrundstuecksveraeusserungen = csGrundstuecksveraeusserungen;

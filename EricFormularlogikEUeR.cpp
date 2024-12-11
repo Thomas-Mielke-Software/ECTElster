@@ -100,6 +100,8 @@ CString CEricFormularlogikEUeR::GetDatenteil()
     ZuXmlBaumHinzufuegen(pAllg, "E6000025", XMLEscape(m_pEinstellungCtrl->HoleEinstellung(_T("ort"))));
     ZuXmlBaumHinzufuegen(pAllg, "E6000017", XMLEscape(m_pEinstellungCtrl->HoleEinstellung(_T("unternehmensart1"))));
     ZuXmlBaumHinzufuegen(pAllg, "E6000602", m_csRechtsform);
+	if (!m_csWirtschaftsIdNr.IsEmpty())
+		ZuXmlBaumHinzufuegen(pAllg, "E6000404", m_csWirtschaftsIdNr);
 	ZuXmlBaumHinzufuegen(pAllg, "E6000603", m_csEinkunftsart);
 	ZuXmlBaumHinzufuegen(pAllg, "E6000604", m_csBetriebsinhaber);
 	ZuXmlBaumHinzufuegen(pAllg, "E6000019", m_csGrundstuecksveraeusserungen);
@@ -126,11 +128,11 @@ CString CEricFormularlogikEUeR::GetDatenteil()
 	ZuXmlBaumHinzufuegen(pVorsatz, "AbsStr", XMLEscape(m_pEinstellungCtrl->HoleEinstellung(_T("strasse"))));
 	ZuXmlBaumHinzufuegen(pVorsatz, "AbsPlz", XMLEscape(m_pEinstellungCtrl->HoleEinstellung(_T("plz"))));
 	ZuXmlBaumHinzufuegen(pVorsatz, "AbsOrt", XMLEscape(m_pEinstellungCtrl->HoleEinstellung(_T("ort"))));
-	ZuXmlBaumHinzufuegen(pVorsatz, "Copyright", _T("Copyleft 2023 Thomas Mielke Softwareentwicklung"));
+	ZuXmlBaumHinzufuegen(pVorsatz, "Copyright", _T("Copyleft 2024 Thomas Mielke Softwareentwicklung"));
 	ZuXmlBaumHinzufuegen(pVorsatz, "OrdNrArt", "S");
 	ZuXmlBaumHinzufuegen(pVorsatz, "Rueckuebermittlung/Bescheid", "2");  // TODO: Rueckuebermittlung/Bescheid Checkbox
 
-    return xmlDatenTeil.GetXML();  
+    return xmlDatenTeil.GetXML();
 }
 
 CString CEricFormularlogikEUeR::GetLoginfo()

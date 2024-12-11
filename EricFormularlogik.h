@@ -41,6 +41,7 @@ public:
 	BOOL m_VerrechnungDesErstattungsanspruchs;
 	BOOL m_EinzugsermaechtigungWiderrufen;
 	CString m_csRechtsform;
+	CString m_csWirtschaftsIdNr;
 	CString m_csEinkunftsart;
 	CString m_csBetriebsinhaber;
 	CString m_csGrundstuecksveraeusserungen;
@@ -99,6 +100,7 @@ public:
 		BOOL bVerrechnungDesErstattungsanspruchs,
 		BOOL bEinzugsermaechtigungWiderrufen,
 		CString &csRechtsform,
+		CString & m_csWirtschaftsIdNr,
 		CString &csEinkunftsart,
 		CString &csBetriebsinhaber,
 		CString &csGrundstuecksveraeusserungen,
