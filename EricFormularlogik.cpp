@@ -291,16 +291,19 @@ CString CEricFormularlogik::Render(
 	EricInitialisierePtr(pluginpfad, temp_path);
 
 	eric_druck_parameter_t druckEinstellungen;
+	ZeroMemory((void*)&druckEinstellungen, sizeof(druckEinstellungen));
 	druckEinstellungen.vorschau = 0;
-	druckEinstellungen.ersteSeite = 0;
 	PDFDatei = (CString)temp_path + GetVersandbestaetigungPrefix() + Jetzt.Format(_T("Elster-Versandbestätigung-%Y%m%d%H%M%S.pdf"));
 	druckEinstellungen.pdfName = PDFDatei;
 	druckEinstellungen.fussText = _T("EasyCash&Tax Elster-Export");
 	druckEinstellungen.duplexDruck = 0;
-	druckEinstellungen.version = 2;
+	druckEinstellungen.version = 4;
+	druckEinstellungen.pdfCallback = NULL;
+	druckEinstellungen.pdfCallbackBenutzerdaten = NULL;
 
 	int rc;
 	eric_verschluesselungs_parameter_t verschluesselung;
+	ZeroMemory((void*)&verschluesselung, sizeof(verschluesselung));
 	if (!bNurValidieren)
 	{
 		uint32_t pinErforderlich = 1;
@@ -321,8 +324,7 @@ CString CEricFormularlogik::Render(
 
 		verschluesselung.pin = Passwort;
 		verschluesselung.zertifikatHandle = zertifikat;
-		verschluesselung.abrufCode = NULL;
-		verschluesselung.version = 2;
+		verschluesselung.version = 3;
 	}
 
 	// Platz für den Meldungstext

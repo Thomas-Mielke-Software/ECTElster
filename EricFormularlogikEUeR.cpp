@@ -317,11 +317,6 @@ void CEricFormularlogikEUeR::UpdateListe(CString& csMomentanerFormularAnzeigenam
 	Zeile = 0;
 
 	Zeile++;
-	ListeInhalt[Zeile++][0] = "ACHTUNG: Dies ist Beta-Version der EÜR-Übertragung mittels Elster-Schnittstelle, die noch Fehler enthalten kann.";
-	ListeInhalt[Zeile++][0] = "      Es empfiehlt sich die Werte auf dem Versandbestätigungs-PDF, das nach dem Senden erstellt wird, noch einmal genau zu prüfen.";
-	ListeInhalt[Zeile++][0] = "      Sollten hier Warnungen (gelb) oder Fehler (rot) aufgelistet werden, die keinen Sinn ergeben, bitte eine der Kontaktoptionen nutzen (Infoknopf unten rechts).";
-	ListeInhalt[Zeile++][0] = "      Ansonsten gibt es keinen Grund, die Funktion nicht auszuprobieren: Im schlimmsten Fall muss eine korrigierte EÜR, wie gehabt, über das Elster-Onlineportal erstellt werden.";
-	Zeile++;
 
 	if (!csMsgBetrieb.IsEmpty())
 	{

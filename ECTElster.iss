@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=Elster-Export Plugin für EasyCash&Tax
-AppVerName=Elster-Export 3.10
+AppVerName=Elster-Export 3.11
 DiskSpanning=no
 AppPublisher=tm
 AppPublisherURL=http://www.easyct.de
@@ -20,36 +20,37 @@ SignTool=winsdk10sha1   ; dual sign the
 SignTool=winsdk10sha256 ; installer
 
 [Files]                                                                                                    
-Source: "C:\Programme (noinstall)\ERiC\ERiC-39.3.2.0\Windows-x86\VC_redist.x86.exe"; DestDir: {tmp}; Flags: dontcopy
+Source: "C:\Programme (noinstall)\ERiC\ERiC-41.2.6.0\Windows-x86\VC_redist.x86.exe"; DestDir: {tmp}; Flags: dontcopy
 
 Source: C:\Users\mielk\Work\ECTElster\Release\ECTElster.ocx; DestDir: {app}; Flags: regserver ignoreversion
 Source: C:\Users\mielk\Work\ECTElster\Elster.gif; DestDir: {app}; Flags: ignoreversion
 
-Source: "C:\Programme (noinstall)\ERiC\ERiC-39.3.2.0\Windows-x86\dll\ericapi.dll"; DestDir: {app}; Flags: ignoreversion 
-Source: "C:\Programme (noinstall)\ERiC\ERiC-39.3.2.0\Windows-x86\dll\ericxerces.dll"; DestDir: {app}; Flags: ignoreversion
-Source: "C:\Programme (noinstall)\ERiC\ERiC-39.3.2.0\Windows-x86\dll\eSigner.dll"; DestDir: {app}; Flags: ignoreversion
+Source: "C:\Programme (noinstall)\ERiC\ERiC-41.2.6.0\Windows-x86\dll\ericapi.dll"; DestDir: {app}; Flags: ignoreversion 
+Source: "C:\Programme (noinstall)\ERiC\ERiC-41.2.6.0\Windows-x86\dll\ericxerces.dll"; DestDir: {app}; Flags: ignoreversion
+Source: "C:\Programme (noinstall)\ERiC\ERiC-41.2.6.0\Windows-x86\dll\eSigner.dll"; DestDir: {app}; Flags: ignoreversion
 
 ; Zur Sicherheit die aktuellsten fünf checkEUERs und checkUStVAs im Installer einbinden:                                                                             
-Source: "C:\Programme (noinstall)\ERiC\ERiC-39.3.2.0\Windows-x86\dll\plugins2\checkEUER_2022.dll"; DestDir: {app}\plugins2; Flags: ignoreversion
-Source: "C:\Programme (noinstall)\ERiC\ERiC-39.3.2.0\Windows-x86\dll\plugins2\checkEUER_2023.dll"; DestDir: {app}\plugins2; Flags: ignoreversion
-Source: "C:\Programme (noinstall)\ERiC\ERiC-39.3.2.0\Windows-x86\dll\plugins2\checkUStVA_2020.dll"; DestDir: {app}\plugins2; Flags: ignoreversion     
-Source: "C:\Programme (noinstall)\ERiC\ERiC-39.3.2.0\Windows-x86\dll\plugins2\checkUStVA_2021.dll"; DestDir: {app}\plugins2; Flags: ignoreversion     
-Source: "C:\Programme (noinstall)\ERiC\ERiC-39.3.2.0\Windows-x86\dll\plugins2\checkUStVA_2022.dll"; DestDir: {app}\plugins2; Flags: ignoreversion       
-Source: "C:\Programme (noinstall)\ERiC\ERiC-39.3.2.0\Windows-x86\dll\plugins2\checkUStVA_2023.dll"; DestDir: {app}\plugins2; Flags: ignoreversion
-Source: "C:\Programme (noinstall)\ERiC\ERiC-39.3.2.0\Windows-x86\dll\plugins2\checkUStVA_2024.dll"; DestDir: {app}\plugins2; Flags: ignoreversion     
-Source: "C:\Programme (noinstall)\ERiC\ERiC-39.3.2.0\Windows-x86\dll\plugins2\commonData.dll"; DestDir: {app}\plugins2; Flags: ignoreversion
+Source: "C:\Programme (noinstall)\ERiC\ERiC-41.2.6.0\Windows-x86\dll\plugins2\checkEUER_2022.dll"; DestDir: {app}\plugins2; Flags: ignoreversion
+Source: "C:\Programme (noinstall)\ERiC\ERiC-41.2.6.0\Windows-x86\dll\plugins2\checkEUER_2023.dll"; DestDir: {app}\plugins2; Flags: ignoreversion  
+Source: "C:\Programme (noinstall)\ERiC\ERiC-41.2.6.0\Windows-x86\dll\plugins2\checkEUER_2024.dll"; DestDir: {app}\plugins2; Flags: ignoreversion    
+Source: "C:\Programme (noinstall)\ERiC\ERiC-41.2.6.0\Windows-x86\dll\plugins2\checkUStVA_2021.dll"; DestDir: {app}\plugins2; Flags: ignoreversion     
+Source: "C:\Programme (noinstall)\ERiC\ERiC-41.2.6.0\Windows-x86\dll\plugins2\checkUStVA_2022.dll"; DestDir: {app}\plugins2; Flags: ignoreversion       
+Source: "C:\Programme (noinstall)\ERiC\ERiC-41.2.6.0\Windows-x86\dll\plugins2\checkUStVA_2023.dll"; DestDir: {app}\plugins2; Flags: ignoreversion
+Source: "C:\Programme (noinstall)\ERiC\ERiC-41.2.6.0\Windows-x86\dll\plugins2\checkUStVA_2024.dll"; DestDir: {app}\plugins2; Flags: ignoreversion  
+Source: "C:\Programme (noinstall)\ERiC\ERiC-41.2.6.0\Windows-x86\dll\plugins2\checkUStVA_2025.dll"; DestDir: {app}\plugins2; Flags: ignoreversion     
+Source: "C:\Programme (noinstall)\ERiC\ERiC-41.2.6.0\Windows-x86\dll\plugins2\commonData.dll"; DestDir: {app}\plugins2; Flags: ignoreversion
 
 ; .ecf-Dateien für EÜR
-;Source: C:\Users\mielk\Work\EasyCash\EUeR\2022\EUeR-d-2022-1.png; DestDir: {app}\..\..; Flags: ignoreversion
-;Source: C:\Users\mielk\Work\EasyCash\EUeR\2022\EUeR-d-2022-2.png; DestDir: {app}\..\..; Flags: ignoreversion
-;Source: C:\Users\mielk\Work\EasyCash\EUeR\2022\EUeR-d-2022-3.png; DestDir: {app}\..\..; Flags: ignoreversion
-;Source: C:\Users\mielk\Work\EasyCash\EUeR\2022\EUeR-d-2022-4.png; DestDir: {app}\..\..; Flags: ignoreversion
-;Source: C:\Users\mielk\Work\EasyCash\EUeR\2022\EUeR-d-2022.ecf; DestDir: {app}\..\..; Flags: ignoreversion     
 ;Source: C:\Users\mielk\Work\EasyCash\EUeR\2023\EUeR-d-2023-1.png; DestDir: {app}\..\..; Flags: ignoreversion
 ;Source: C:\Users\mielk\Work\EasyCash\EUeR\2023\EUeR-d-2023-2.png; DestDir: {app}\..\..; Flags: ignoreversion
 ;Source: C:\Users\mielk\Work\EasyCash\EUeR\2023\EUeR-d-2023-3.png; DestDir: {app}\..\..; Flags: ignoreversion
 ;Source: C:\Users\mielk\Work\EasyCash\EUeR\2023\EUeR-d-2023-4.png; DestDir: {app}\..\..; Flags: ignoreversion
-;Source: C:\Users\mielk\Work\EasyCash\EUeR\2023\EUeR-d-2023.ecf; DestDir: {app}\..\..; Flags: ignoreversion
+;Source: C:\Users\mielk\Work\EasyCash\EUeR\2023\EUeR-d-2023.ecf; DestDir: {app}\..\..; Flags: ignoreversion     
+Source: C:\Users\mielk\Work\EasyCash\EUeR\2024\EUeR-d-2024-1.png; DestDir: {app}\..\..; Flags: ignoreversion
+Source: C:\Users\mielk\Work\EasyCash\EUeR\2024\EUeR-d-2024-2.png; DestDir: {app}\..\..; Flags: ignoreversion
+Source: C:\Users\mielk\Work\EasyCash\EUeR\2024\EUeR-d-2024-3.png; DestDir: {app}\..\..; Flags: ignoreversion
+Source: C:\Users\mielk\Work\EasyCash\EUeR\2024\EUeR-d-2024-4.png; DestDir: {app}\..\..; Flags: ignoreversion
+Source: C:\Users\mielk\Work\EasyCash\EUeR\2024\EUeR-d-2024.ecf; DestDir: {app}\..\..; Flags: ignoreversion     
 
 ; .ecf-Dateien für USt-VA
 ;Source: C:\Users\mielk\Work\EasyCash\UVA\D-2023\uva-d-2023-1.png; DestDir: {app}\..\..; Flags: ignoreversion
