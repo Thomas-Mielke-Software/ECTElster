@@ -84,7 +84,7 @@ CString CEricFormularlogik::Render(
 	CString csReturn = "";
 
 #ifdef TESTVERBINDUNG
-	CString HerstellerID = _T("74931");
+	CString HerstellerID = _T("21734");
 	CString Testmerker = _T("700000001");
 #else
 	CString HerstellerID = _T("21734");
@@ -554,7 +554,7 @@ CString CEricFormularlogik::Render(
 
 							// Fall: beschränkt abziehbaren Betriebsausgaben ohne den nicht abziehbaren Anteil erfasst
 							if (csText == "Der Kontext &apos;/EUER[1]/BAus[1]/Beschr_abziehbar[1]/Nicht_abziehbar[1]&apos; ist leer.")
-								csText = "Bei beschränkt abziehbaren Betriebsausgaben muss stets auch der Anteil angeben werden, der nicht abziehbar ist. Bitte EÜR Feld (1)162, (1)164, (1)165 und (1)168 checken.";
+								csText = "Bei beschränkt abziehbaren Betriebsausgaben muss stets auch der Anteil angeben werden, der nicht abziehbar ist. Bitte EÜR Feld (1)162, (1)164, (1)165 und (1)168 checken, sofern sich Beträge in den Feldern (1)174, (1)175, (1)172 oder (1)177 befinden.";
 
 							CStringArray csaErsetzteAusdruecke;
 							int nAnzahlErsetzteAusdruecke = RegSearchReplace(csFeldidentifikator, _T("(\\[[0-9]+\\])"), _T(""), csaErsetzteAusdruecke);
