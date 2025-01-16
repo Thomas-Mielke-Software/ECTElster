@@ -103,6 +103,7 @@ private:
     // interne Hilfsfunktion
     BOOL WerteAusEcaFormularGenerieren(LPXNode pXmlOut, std::vector<Formularfeld> &felder, std::vector<Formularabschnitt>& abschnittarray, int flagsGen);
     LPXNode ZuXmlBaumHinzufuegen(LPXNode pEricXml, const CString &csElsterFeldname, const CString &csFeldwert, BOOL bRecycleBestehendenNode = TRUE);
+    void VomXmlBaumEntfernenWennLeer(LPXNode pEricXml, const CString& csElsterFeldname);
     static bool CompareInterval(Formularfeld f1, Formularfeld f2);  // Hilfsfunktion für vector-sort
     void AveuerGenerieren(CString(&ListeInhalt)[500][6], int& Zeile, LPXNode xml, int flagsGen);
 };

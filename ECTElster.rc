@@ -57,8 +57,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 3,11,0,1
- PRODUCTVERSION 3,11,0,1
+ FILEVERSION 3,12,0,1
+ PRODUCTVERSION 3,12,0,1
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -75,12 +75,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Thomas Mielke Softwareentwicklung"
             VALUE "FileDescription", "Elster Export Plugin ActiveX"
-            VALUE "FileVersion", "3.11.0.1"
+            VALUE "FileVersion", "3.12.0.1"
             VALUE "InternalName", "ECTElster.ocx"
-            VALUE "LegalCopyright", "copyleft (LGPL v2.1) 1999-2024 Thomas Mielke. "
+            VALUE "LegalCopyright", "copyleft (LGPL v2.1) 1999-2025 Thomas Mielke. "
             VALUE "OriginalFilename", "ECTElster.ocx"
             VALUE "ProductName", "Elster Export Plugin"
-            VALUE "ProductVersion", "3.11.0.1"
+            VALUE "ProductVersion", "3.12.0.1"
         END
     END
     BLOCK "VarFileInfo"
@@ -122,7 +122,7 @@ FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     CONTROL         IDC_EINSTELLUNGCTRL1,IDC_STATIC,"Static",SS_BITMAP,12,14,32,30
     LTEXT           "Elster Plugin für EasyCash&Tax",IDC_STATIC,53,17,102,8,SS_NOPREFIX
-    LTEXT           "Copyleft (c) 2024 Thomas Mielke ",IDC_STATIC,53,29,114,8
+    LTEXT           "Copyleft (c) 2025 Thomas Mielke ",IDC_STATIC,53,29,114,8
     DEFPUSHBUTTON   "OK",IDOK,288,227,50,14,WS_GROUP
     LTEXT           "",IDC_VERSION,171,17,55,8
     LTEXT           "Bei Problemen oder Wünschen bitte einen Post im EC&&T-Forum 'Elster-Export-Plugin' hinterlassen. Besser wäre allerdings noch auf GitHub einen 'Issue' aufzumachen:",IDC_STATIC,54,69,284,26

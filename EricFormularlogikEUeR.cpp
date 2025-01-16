@@ -25,8 +25,8 @@
 IMPLEMENT_DYNAMIC(CEricFormularlogikEUeR, CEricFormularlogik)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-//	HILFSFUNKTION FÜR DAS LESEN DES .ECA-FORMULARS
-//
+//	ZWEI HILFSFUNKTIONEN FÜR DAS LESEN DES .ECA-FORMULARS
+
 LPXNode CEricFormularlogikEUeR::ZuXmlBaumHinzufuegen(LPXNode pEricXml, const CString& csElsterFeldname, const CString& csFeldwert, BOOL bRecycleBestehendenNode)
 {
 	// Elster-Feldnamen auseinanderpflücken und in vector packen
@@ -61,6 +61,43 @@ LPXNode CEricFormularlogikEUeR::ZuXmlBaumHinzufuegen(LPXNode pEricXml, const CSt
 		node->value = csFeldwert;
 
 	return node;
+}
+
+void CEricFormularlogikEUeR::VomXmlBaumEntfernenWennLeer(LPXNode pEricXml, const CString& csElsterFeldname)
+{
+	// Elster-Feldnamen auseinanderpflücken und in vector packen
+	int nTokenPos = 0;
+	std::vector<CString> ElsterFeldnamenselemente;
+	CString csElem;  // jeweiliges Element im durch '/' getrennten 'Pfad'
+	while ((csElem = csElsterFeldname.Tokenize(_T("/"), nTokenPos)) != "")
+		ElsterFeldnamenselemente.push_back(csElem);
+
+	// gemäß Elster-Feldnamen in XML-Baumstruktur herabsteigen und ggf neu einsortieren (absteigend)
+	LPXNode node = pEricXml;
+	for (int i = 0; i < ElsterFeldnamenselemente.size(); i++)
+	{
+		LPXNode foundNode = NULL;
+		for (auto const& child : node->GetChilds())
+			if (child->name == ElsterFeldnamenselemente[i])		// node->Find(ElsterFeldnamenselemente[i]) würde rekursiv durchsuchen :/
+			{
+				foundNode = child;
+				break;
+			}
+		if (foundNode)											// existiert Pfadebene im Baum?
+		{
+			if (i < ElsterFeldnamenselemente.size() - 1)		// noch nicht beim letzten Pfad-Element angelangt?
+				node = foundNode;								// dann einfach weiter herabsteigen
+			else
+			{
+				if ((foundNode->value).IsEmpty())
+					node->RemoveChild(foundNode);
+				return;
+			}
+		}
+		else
+			return;												// zu löschender node existiert gar nicht? einfach zurückspringen.
+
+	}
 }
 
 bool CEricFormularlogikEUeR::CompareInterval(Formularfeld f1, Formularfeld f2)
@@ -128,7 +165,7 @@ CString CEricFormularlogikEUeR::GetDatenteil()
 	ZuXmlBaumHinzufuegen(pVorsatz, "AbsStr", XMLEscape(m_pEinstellungCtrl->HoleEinstellung(_T("strasse"))));
 	ZuXmlBaumHinzufuegen(pVorsatz, "AbsPlz", XMLEscape(m_pEinstellungCtrl->HoleEinstellung(_T("plz"))));
 	ZuXmlBaumHinzufuegen(pVorsatz, "AbsOrt", XMLEscape(m_pEinstellungCtrl->HoleEinstellung(_T("ort"))));
-	ZuXmlBaumHinzufuegen(pVorsatz, "Copyright", _T("Copyleft 2024 Thomas Mielke Softwareentwicklung"));
+	ZuXmlBaumHinzufuegen(pVorsatz, "Copyright", _T("Copyleft 2025 Thomas Mielke Softwareentwicklung"));
 	ZuXmlBaumHinzufuegen(pVorsatz, "OrdNrArt", "S");
 	ZuXmlBaumHinzufuegen(pVorsatz, "Rueckuebermittlung/Bescheid", "2");  // TODO: Rueckuebermittlung/Bescheid Checkbox
 
@@ -205,6 +242,9 @@ BOOL CEricFormularlogikEUeR::WerteAusEcaFormularGenerieren(LPXNode pXmlOut, std:
 				}
             }
         }
+
+		if (flagsGen & FLAG_GEN_XML)
+			VomXmlBaumEntfernenWennLeer(pXmlOut, "EUER/BAus/Beschr_abziehbar/Nicht_abziehbar");
 
 		LPXNode abschnitte = NULL;
 		abschnitte = xmlIn->Find("abschnitte");
