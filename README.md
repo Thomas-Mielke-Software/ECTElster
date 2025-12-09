@@ -1,4 +1,4 @@
-# ECTElster - Elster-Plugin für die Finanzbuchhaltung EasyCash&Tax
+# ECTElster - Elster-Plugin für die Finanzbuchhaltung [EasyCash&Tax](https://github.com/Thomas-Mielke-Software/EasyCash)
 
 ## Voraussetzungen:
 - VS2022 Community Edition
@@ -17,14 +17,14 @@
 - Bei den Projekteigenschaften -> Konfigurationseigenschaften -> Bibliotheksverzeichnisse sicherstellen, dass die ein geeignetes SDK für die ucrt library enthalten ist, z.B. *"C:\Program Files (x86)\Windows Kits\10\Lib\10.0.17763.0\ucrt\x86"*
 - gleiches unter C/C++ -> Allgemein -> zusätzliche Header-Dateien, z.B. *"C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt"*
 - wenn man Visual Studio nicht ständig als Admin laufen lassen will, kann es die .ocx-Datei nicht während des Build-Vorgangs mit registrieren. Das ist nicht schlimm. Man kann es einmal manuell mit regsvr32.exe ECTElster.ocx im Debug-Verzeichnis machen und dann den Fehler ignorieren:
-```
+```console
 # für 32-bit den regsvr32 aus dem SysWOW64 benutzen!
 c:\windows\SysWOW64\regsvr32.exe "C:\Pfad\zu\meinen\Softwareprojekten\ECTElster\Debug\ECTElster.ocx"
 ```
 
 ## Debuggen:
 ericapi.dll, ericxerces.dll und eSigner.dll aus dem ERiC-SDK ( z.B. C:\Program Files (x86)\Elster\ERiC-XX.X.X.X\Windows-x86\dll ) sowie das gesamte plugins2-Verzeichnis in das Debug-Unterverzeichnis kopieren. Dort auch Kopien der Dateien des EC&T-Hauptprogramms ablegen (EasyCT.exe, EasyCTXP.dll, ECTIFace.dll, CrashSender1402.exe und crashrpt_lang.ini werden benötigt). Das .ocx der Schnittstelle zum Hauptprogramm registrieren:
-```
+```console
 # für 32-bit den regsvr32 aus dem SysWOW64 benutzen!
 c:\windows\SysWOW64\regsvr32.exe "C:\Pfad\zu\meinen\Softwareprojekten\ECTElster\Debug\EasyCTX.ocx"
 ```
