@@ -47,6 +47,8 @@ END_MESSAGE_MAP()
 BEGIN_DISPATCH_MAP(CECTElsterCtrl, COleControl)
 	DISP_FUNCTION_ID(CECTElsterCtrl, "AboutBox", DISPID_ABOUTBOX, AboutBox, VT_EMPTY, VTS_NONE)
 	DISP_FUNCTION_ID(CECTElsterCtrl, "Init", dispidInit, Init, VT_EMPTY, VTS_I4)
+	// Exponierte TranslateAccelerator-Funktion: übergibt einen Pointer-Wert (LONG) auf ein MSG*
+	DISP_FUNCTION_ID(CECTElsterCtrl, "TranslateAccelerator", dispidTranslateAccelerator, TranslateAcceleratorDisp, VT_BOOL, VTS_I4)
 END_DISPATCH_MAP()
 
 
@@ -89,6 +91,7 @@ const IID BASED_CODE IID_DECTElsterEvents =
 
 
 
+
 // Control type information
 
 static const DWORD BASED_CODE _dwECTElsterOleMisc =
@@ -99,6 +102,7 @@ static const DWORD BASED_CODE _dwECTElsterOleMisc =
 	OLEMISC_RECOMPOSEONRESIZE;
 
 IMPLEMENT_OLECTLTYPE(CECTElsterCtrl, IDS_ECTELSTER, _dwECTElsterOleMisc)
+
 
 
 
@@ -142,7 +146,7 @@ CECTElsterCtrl::CECTElsterCtrl()
 
 
 
-// CECTElsterCtrl::~CECTElsterCtrl - Destructor
+ // CECTElsterCtrl::~CECTElsterCtrl - Destructor
 
 CECTElsterCtrl::~CECTElsterCtrl()
 {
@@ -151,7 +155,7 @@ CECTElsterCtrl::~CECTElsterCtrl()
 
 
 
-// CECTElsterCtrl::OnDraw - Drawing function
+ // CECTElsterCtrl::OnDraw - Drawing function
 
 void CECTElsterCtrl::OnDraw(
 			CDC* pdc, const CRect& rcBounds, const CRect& rcInvalid)
@@ -222,3 +226,62 @@ void CECTElsterCtrl::OnDestroy()
 
 	if (m_pElsterDlg) delete m_pElsterDlg;
 }
+
+
+// IDispatch-exponierter Wrapper für TranslateAccelerator.
+// Erwartet als Parameter den Pointer-Wert (als LONG) auf ein MSG-Struct.
+// Achtung: Dies funktioniert zuverlässig in 32-bit Hosts. Bei 64-bit Hosts
+// müsste der Parameter als 64-bit Integer (VT_I8) exponiert werden.
+BOOL CECTElsterCtrl::TranslateAcceleratorDisp(LONG lMsgPtr)
+{
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+
+	LPMSG lpMsg = reinterpret_cast<LPMSG>(IntToPtr(lMsgPtr));
+	if (!lpMsg)
+		return FALSE;
+
+	// Delegieren an die vorhandene Implementierung
+	return TranslateAccelerator(lpMsg) ? TRUE : FALSE;
+}
+
+
+// Überschreibung, damit Tastenkombinationen (Strg+X / Strg+V) aus PreTranslateMessage verarbeitet werden.
+// Wird vom Container aufgerufen; lpMsg stammt typischerweise aus PreTranslateMessage des Host-Prozesses.
+BOOL CECTElsterCtrl::TranslateAccelerator(LPMSG lpMsg)
+{
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+
+	// keine Verarbeitung, wenn kein Message-Pointer
+	if (!lpMsg)
+		return FALSE;
+
+	// Nur auf KEYDOWN/SYSKEYDOWN achten
+	if (lpMsg->message == WM_KEYDOWN || lpMsg->message == WM_SYSKEYDOWN)
+	{
+		// Kontrolltaste gedrückt?
+		bool bCtrl = (GetKeyState(VK_CONTROL) & 0x8000) != 0;
+		WORD vk = (WORD)lpMsg->wParam;
+
+		// Tasten prüfen: 'X' = Ausschneiden, 'V' = Einfügen
+		if (bCtrl && (vk == 'X' || vk == 'V'))
+		{
+			// Fokusfenster holen und sicherstellen, dass es ein Kind unseres Dialogs ist
+			HWND hFocus = ::GetFocus();
+			if (hFocus && m_pElsterDlg && ::IsWindow(m_pElsterDlg->m_hWnd) && ::IsChild(m_pElsterDlg->m_hWnd, hFocus))
+			{
+				// CUT / PASTE an das fokussierte Fenster senden
+				if (vk == 'X')
+					::SendMessage(hFocus, WM_CUT, 0, 0);
+				else
+					::SendMessage(hFocus, WM_PASTE, 0, 0);
+
+				// Nachricht vollständig verarbeitet
+				return TRUE;
+			}
+		}
+	}
+
+	return FALSE;
+}
+
+

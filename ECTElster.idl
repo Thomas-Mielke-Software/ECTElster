@@ -26,6 +26,7 @@ library ECTElsterLib
 
 			[id(DISPID_ABOUTBOX)] void AboutBox();
 			[id(1), helpstring("method Init")] void Init(LONG ID);
+			[id(2), helpstring("method TranslateAccelerator")] void TranslateAccelerator(LONG MSG);
 	};
 
 	//  Event dispatch interface for CECTElsterCtrl

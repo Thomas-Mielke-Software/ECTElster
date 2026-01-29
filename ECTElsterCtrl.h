@@ -34,6 +34,10 @@ public:
 	virtual void DoPropExchange(CPropExchange* pPX);
 	virtual void OnResetState();
 
+	// Überschreibung, damit Tastenkombinationen (z.B. Strg+X / Strg+V)
+	// aus PreTranslateMessage im ActiveX verarbeitet werden können.
+	BOOL TranslateAccelerator(LPMSG lpMsg);
+
 // Implementation
 protected:
 	~CECTElsterCtrl();
@@ -51,13 +55,24 @@ protected:
 
 	afx_msg void AboutBox();
 
+	// Exposed via IDispatch: wrapper, damit TranslateAccelerator von außen aufrufbar ist.
+public:
+	enum {
+		dispidInit = 1L,
+		dispidTranslateAccelerator = 2L
+	};
+protected:
+	// COM-freundlicher Wrapper: erwartet den Pointer-Wert (als LONG) auf ein MSG-Struct.
+	// Rückgabe: BOOL (VT_BOOL).
+	afx_msg BOOL TranslateAcceleratorDisp(LONG lMsgPtr);
+
 // Event maps
 	DECLARE_EVENT_MAP()
 
 // Dispatch and event IDs
 public:
 	enum {
-		dispidInit = 1L
+		// dispids oben
 	};
 protected:
 	void Init(LONG ID);
