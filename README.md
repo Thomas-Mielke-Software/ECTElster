@@ -11,7 +11,6 @@
     - ericapi.lib und .h Dateien in das Solution-Verzeichnis kopieren
     - siehe unten bei *ERiC Update Checkliste*
 
-
 ## Bauen:
 - ECTElster.sln in VS2022 öffnen
 - Bei den Projekteigenschaften -> Konfigurationseigenschaften -> Bibliotheksverzeichnisse sicherstellen, dass die ein geeignetes SDK für die ucrt library enthalten ist, z.B. *"C:\Program Files (x86)\Windows Kits\10\Lib\10.0.17763.0\ucrt\x86"*
@@ -44,24 +43,25 @@ Die eigentliche Musik bei der Oberfläche spielt in ElsterDlg.cpp. Es wird dort 
 ## ERiC Update Checkliste
 
 1) aktuelle Version des ERiC-SDK downloaden (wofür man erst einmal ein Passwort anfragen muss): https://www.elster.de/elsterweb/entwickler/infoseite/eric (als entwickler einloggen)
-2) common.zip nach C:\Programme (x86)\Elster entpacken
-3) windows-x86.jar mit 7zip öffnen, Setup.exe entpacken & starten
+2) Dokumentation.zip nach C:\Programme\ERiC o.ä. entpacken
+3) windows-x86.jar mit 7zip öffnen und auch dorthin entpacken
 4) Windows-x86\dll Verzeichnis mit Vorversion anhand ECTElster.iss abgleichen (manchmal gibt es neue DLLs, die eingebunden werden müssen oder aber DLLs fallen weg)
-5) Windows-x86\dll\plugins2 Verzeichnis checkUStVA_20XX.dll und commonData.dll mit Vorversion anhand ECTElster.iss abgleichen (oft sind nur die neuen Jahres-Versionen der DLLs zu ergänzen, manchmal gibt es aber auch neue DLLs, die eingebunden werden müssen oder aber DLLs fallen weg -- achte insbesondere auf alle Dateien, das nicht mit "check" anfangen). Zur Sicherheit die aktuellsten fünf checkUStVAs im Installer einbinden.
-6) Änderungen in ECTElster.iss anpassen und Pfad ändern (replace all "C:\Program Files (x86)\Elster\ERiC-##.#.#.#\", neue checkUStVA_20XX.dll nicht vergessen!)
-7) VC_redist.x86.exe aus dem alten ERiC-Basisverzeichnis ins neue kopieren (da speichere ich es zumindest immer zu Archivzwecken, ansonsten von Microsoft herunterladen).
-8) checken, ob eriapi.dll immer noch die VC2017 runtime version benutzt (steht in Dokumentation\ERiC-Entwicklerhandbuch.pdf, in ERiC v31 auf Seite 26 im Abschnitt "2.4.5 Mindestanforderungen an benötigte Software"; im Zweifel Suche im PDF nach "Visual C++ Redistributable")
-9) Windows-x86\lib\ericapi.lib nach ECTElster kopieren
-10) Windows-x86\include\\*.h nach ECTElster kopieren
+5) Windows-x86\dll\plugins2 Verzeichnis checkUStVA_20XX.dll, checkEUER_20XX.dll und commonData.dll mit Vorversion anhand ECTElster.iss abgleichen (oft sind nur die neuen Jahres-Versionen der DLLs zu ergänzen, manchmal gibt es aber auch neue DLLs, die eingebunden werden müssen oder aber DLLs fallen weg -- achte insbesondere auf alle Dateien, das nicht mit "check" anfangen). Zur Sicherheit die aktuellsten fünf checkUStVAs und checkEUERs im Installer einbinden.
+6) Änderungen in ECTElster.iss anpassen und Pfad ändern (replace all "C:\Program Files (x86)\Elster\ERiC-##.#.#.#\", neue checkUStVA_20XX.und checkEUER_20XX dlls nicht vergessen!)
+7) VC_redist.x86.exe aus dem alten Basisverzeichnis ERiC\ERiC-#.#.#.#\Windows-x86 ins neue kopieren (da speichere ich es zumindest immer zu Archivzwecken, ansonsten von Microsoft herunterladen).
+8) checken, ob eriapi.dll immer noch die VC2022 runtime version benutzt (steht in Dokumentation\ERiC-Entwicklerhandbuch.pdf, in ERiC v41 auf Seite 26 im Abschnitt "2.4.5 Mindestanforderungen an benötigte Software"; im Zweifel Suche im PDF nach "Visual C++ Redistributable")
+9) Windows-x86\lib\ericapi.lib nach ECTElster kopieren (otto.lib wird nicht benötigt)
+10) Windows-x86\include\*.h nach ECTElster kopieren
 11) Version in den ECTElster-Ressouces und der .iss hochsetzen, copyright in About-Dialog aktualisieren
-12) #define TESTVERBINDUNG in ElsterDlg.cpp -- Kommentarzeichen entfernen
-13) ECTElster.sln mit Debug-Konfiguration neu bauen, ggf. Compilerfehler beseitigen (Abwärtskompatibilität ist nicht vorgesehen, es kann jedesmal Überraschungen geben; common\ERiC-Aenderungsdokumentation.pdf ist dann ein Blick wert) -- ggf. .ocx dorthin kopieren, wo es registriert ist
-14) Test-Datei mit aktuellem Buchungsjahr übertragen
-15) // #define TESTVERBINDUNG -- wieder auskommentieren, um Plugin scharf zu schalten
+12) #define TESTVERBINDUNG in ElsterDlg.h -- Kommentarzeichen entfernen
+13) ECTElster.sln mit Debug-Konfiguration neu bauen, ggf. Compilerfehler beseitigen (Abwärtskompatibilität ist nicht vorgesehen, es kann jedesmal Überraschungen geben; common\ERiC-Aenderungsdokumentation.pdf ist dann ein Blick wert) -- ggf. .ocx dorthin kopieren, wo es registriert ist oder besser register-activex-debug.bat mit Admin-Rechten ausführen, dadurch kann der ActiveX-Registrierungsfehler nach dem Erstellen ignoriert werden (Nein wählen und dann noch mal F5).
+14) Test-Datei mit aktuellem Buchungsjahr übertragen (die neuen Formulare müssen zuvor in das Debug-Verzeichnis kopiert werden).
+15) // #define TESTVERBINDUNG -- wieder auskommentieren, um Plugin scharf zu schalten und reset-register-activex-debug.bat mit Admin-Rechten ausführen, damit wieder die Release-Version des .ocx unter C:\Programme (x86)\... benutzt wird.
 16) ECTElster.sln mit Release-Konfiguration neu bauen
 17) .iss bauen und installieren
 
 ## Credits:
+
 Dank gebührt Olaf Stüben von Winston, der bei der ersten Version des Plugins behilflich war. Außerdem wird folgende Software vom Plugin verwendet:
 - ERiC-API der bayrischen Finanzverwaltung
 - XMLite: leichtgewichtige Klassen für XML-Parsing von Cho Kyung Min
