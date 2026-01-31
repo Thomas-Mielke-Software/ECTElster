@@ -40,7 +40,7 @@ extern const WORD _wVerMajor;
 extern const WORD _wVerMinor;
 
 // auskommentieren, um echte Daten senden zu können:
-#define TESTVERBINDUNG 
+//#define TESTVERBINDUNG 
 //!!! nach Änderung hier das Projekt komplett neu bauen, weil die Compile-Optimierung das sonst nicht merkt
 //!!! Plugin-Komponente registrieren: c:\windows\SysWOW64\regsvr32.exe C:\Users\mielk\Work\ECTElster\Debug\ECTElster.ocx
 //!!! EC&T-Schnittstelle für EC&T-Programmdateien im Debug-Verzeichnis registrieren: 
