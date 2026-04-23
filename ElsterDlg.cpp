@@ -635,7 +635,13 @@ void CElsterDlg::EricKontext(BOOL bNurValidieren, CTime& Jetzt, CString& Momenta
 	}
 	else
 	{
-		if (Jetzt - CTime(m_DokumentCtrl.GetJahr(), nZeitraum <= 12 ?  // check nach möglicherweise falschem Voranmeldungszeitraum
+		int nJahr = m_DokumentCtrl.GetJahr();
+		if (nJahr <= 1970 || nJahr > 3000)
+		{
+			AfxMessageBox(_T("Das Jahr für das Formular liegt außerhalb der gültigen Bereichs. Irgendwas ist da schief gelaufen. Tut mir Leid!"));
+			return;
+		}
+		if (Jetzt - CTime(nJahr, nZeitraum <= 12 ?  // check nach möglicherweise falschem Voranmeldungszeitraum
 			nZeitraum : (nZeitraum - 41) * 3 + 1, 1, 0, 0, 0) > CTimeSpan(180, 0, 0, 0))
 		{
 			int n;
