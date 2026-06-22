@@ -578,6 +578,13 @@ CString CEricFormularlogik::Render(
 							ListeInhalt[Zeile++][0] = csMeldungTyp + _T(": ") + csText;
 							m_pListe->SetItemCount(Zeile);
 							m_pListe->EnsureVisible(Zeile - 1, FALSE);
+							if (csText.Find("es fehlt jedoch der entsprechende Wert") > 0 && csText.Find("in der Anlage AVEÜR") > 0)
+							{
+								csText = _T("Oft passiert der obige Fehler dadurch, dass auf ein AfA-Konto gebucht wird aber eine Abschreibungsdauer von einem Jahr angegeben wurde, was dazu führt, dass das Plugin die Buchung nicht in der Anlage AVEÜR aufführt.");
+								ListeInhalt[Zeile++][0] = csMeldungTyp + _T(": ") + csText;
+							}
+							m_pListe->SetItemCount(Zeile);
+							m_pListe->EnsureVisible(Zeile - 1, FALSE);
 						}
 					}
 				}
