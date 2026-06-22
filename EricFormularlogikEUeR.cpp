@@ -220,6 +220,8 @@ BOOL CEricFormularlogikEUeR::WerteAusEcaFormularGenerieren(LPXNode pXmlOut, std:
 					csElsterFeldname = "";	// "EUER/BEin/USt_Vereinnahmt_Unentgeltl/Sum/E6000601" war auch in Feld 7 und somit doppelt definiert
 				if (!csElsterFeldname.IsEmpty())
 					bElsterFeldnamenGefunden = TRUE;
+				if (nID == 142 && csFeldwert[0] == '-')		// km-Pauschale muss für Elster positiv sein, siehe aber auch UpdateListe
+					csFeldwert = csFeldwert.Mid(1);
 				if (flagsGen & FLAG_GEN_XML)
 				{
 					const PTCHAR abziehbarNode = _T("EUER/BAus/Beschr_abziehbar/Abziehbar");
@@ -400,7 +402,19 @@ void CEricFormularlogikEUeR::UpdateListe(CString& csMomentanerFormularAnzeigenam
 			int nAbziehbarOffset = 0;
 			if (feld.horizontal > 700) nAbziehbarOffset = 2;
 			ListeInhalt[Zeile][1 + nAbziehbarOffset] = FeldIdAlsString;	// Feld ID (KZ) in 2. Spalte eintragen
-			ListeInhalt[Zeile][2 + nAbziehbarOffset] = m_pFormularCtrl->HoleFeldwertUeberID(feld.id);
+			CString csWert = m_pFormularCtrl->HoleFeldwertUeberID(feld.id);
+			if (feld.id == 142 && csWert != "0,00")		// km-Pauschale muss für Elster positiv sein, siehe aber auch WerteAusEcaFormularGenerieren
+			{
+				if (csWert[0] != '-')
+					ListeInhalt[++Zeile][0] = _T("Hinweis: Der Wert für die (quasi private) Kilometerpauschale in Feld 142 muss negativ sein, da er die regulären (also als Betriebsausgaben abziehbaren) Fahrtkosten mindert.");
+				else
+					if (csWert[0] == '-')
+					{
+						csWert = csWert.Mid(1);
+						ListeInhalt[Zeile][2] = _T("-");
+					}
+			}
+			ListeInhalt[Zeile][2 + nAbziehbarOffset] = csWert;
 			ListeInhalt[Zeile][5] = feld.elsterFeldname;
 			Zeile++;
 		}
